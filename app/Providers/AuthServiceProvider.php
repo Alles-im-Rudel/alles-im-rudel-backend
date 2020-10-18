@@ -35,9 +35,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Passport::routes(static function ($router) {
-            $router->forAccessTokens();
-        });
+        Passport::routes(null, ['middleware' => [ \Fruitcake\Cors\HandleCors::class ]]);
 
         Passport::tokensExpireIn(now()->addDay());
     }
