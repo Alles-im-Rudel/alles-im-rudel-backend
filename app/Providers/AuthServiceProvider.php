@@ -35,7 +35,8 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
-        Passport::routes(static function($router) {
+
+        Passport::routes(static function ($router) {
             $router->forAccessTokens();
         });
 
