@@ -50,15 +50,15 @@ class AuthController extends Controller
                     'grant_type'    => 'password',
                     'client_id'     => (string) env('PASSPORT_CLIENT_ID'),
                     'client_secret' => (string) env('PASSPORT_CLIENT_SECRET'),
-                    'email'      => $request->email,
+                    'username'      => $request->email,
                     'password'      => $request->password
                 ],
             ]);
         } catch (GuzzleException $exception) {
             return response()->json([
-                "message" => 'Passport Fehler',
-                "asdf" => $request->email,
-                "sdfgsdfg" => $request->password
+                "message"  => 'Passport Fehler',
+                "asdf"     => $request->email,
+                "sdfgsdfg" => env('OAUTH2_AUTH_URL')
             ], Response::HTTP_UNAUTHORIZED);
         }
         try {
