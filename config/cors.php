@@ -18,7 +18,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://allesimrudel.de', 'https://backend.allesimrudel.de'],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
