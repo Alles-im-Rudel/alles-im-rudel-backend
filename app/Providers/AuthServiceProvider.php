@@ -23,7 +23,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //Passport::ignoreMigrations();
+        Passport::ignoreMigrations();
     }
 
     /**
