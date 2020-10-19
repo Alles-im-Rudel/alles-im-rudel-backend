@@ -50,7 +50,7 @@ class AuthController extends Controller
                     'grant_type'    => 'password',
                     'client_id'     => (string) env('PASSPORT_CLIENT_ID'),
                     'client_secret' => (string) env('PASSPORT_CLIENT_SECRET'),
-                    'username'      => $request->email,
+                    'email'      => $request->email,
                     'password'      => $request->password
                 ],
             ]);
