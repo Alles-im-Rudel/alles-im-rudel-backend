@@ -38,7 +38,7 @@ class AuthController extends Controller
 
         if (!$user) {
             return response()->json([
-                "message" => __('auth.failed')
+                "message" => 'Kein Valider User'
             ], Response::HTTP_UNAUTHORIZED);
         }
 
@@ -56,7 +56,7 @@ class AuthController extends Controller
             ]);
         } catch (GuzzleException $exception) {
             return response()->json([
-                "message" => __('auth.failed')
+                "message" => 'Passport Fehler'
             ], Response::HTTP_UNAUTHORIZED);
         }
         try {
