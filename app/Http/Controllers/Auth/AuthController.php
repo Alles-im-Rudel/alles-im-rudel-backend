@@ -57,8 +57,8 @@ class AuthController extends Controller
         } catch (GuzzleException $exception) {
             return response()->json([
                 "message" => 'Passport Fehler',
-                "asdf" => env('PASSPORT_CLIENT_ID'),
-                "sdfgsdfg" => env('PASSPORT_CLIENT_SECRET')
+                "asdf" => $request->email,
+                "sdfgsdfg" => $request->password
             ], Response::HTTP_UNAUTHORIZED);
         }
         try {
