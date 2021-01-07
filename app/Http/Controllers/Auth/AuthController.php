@@ -19,13 +19,21 @@ use Psr\Http\Message\ResponseInterface;
 
 class AuthController extends Controller
 {
-    public function index()
-    {
+	/**
+	 * @return JsonResponse
+	 */
+    public function index(): JsonResponse
+	{
         $user = Auth::guard('api')->user();
-        return response()->json([
-            'user'        => new UserResource($user),
-            'permissions' => PermissionResource::collection($user->getAllPermissions())
-        ]);
+        if($user) {
+			return response()->json([
+				'user'        => new UserResource($user),
+				'permissions' => PermissionResource::collection($user->getAllPermissions())
+			]);
+		}
+       return response()->json([
+		   'message' => 'Kein Auth User!'
+	   ], Response::HTTP_FORBIDDEN);
     }
 
     /**
