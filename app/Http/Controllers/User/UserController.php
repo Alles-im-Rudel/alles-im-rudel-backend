@@ -9,6 +9,7 @@ use App\Http\Requests\User\UserShowRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Traits\Functions\OrderByTraitJson;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -16,6 +17,8 @@ use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
+	use OrderByTraitJson;
+
 	/**
 	 * @param  UserIndexRequest  $request
 	 * @return AnonymousResourceCollection
@@ -31,10 +34,18 @@ class UserController extends Controller
 				->where('email', 'LIKE', "%{$request->search}%");
 		}
 		if ($request->sortBy) {
-			foreach (json_decode($request->sortBy, true) as $sortBy => $desc) {
-				$direction = filter_var($desc, FILTER_VALIDATE_BOOLEAN) === true ? 'DESC' : 'ASC';
-				$query->orderBy($sortBy, $direction);
-			}
+			$this->availableOrderByFields = [
+				'id',
+				'salutation',
+				'first_name',
+				'last_name',
+				'username',
+				'email',
+				'activated_at',
+				'created_at',
+				'updated_at'
+			];
+			$query = $this->orderByJson($query, $request->sortBy);
 		}
 		return UserResource::collection($query->paginate($request->perPage, ['*'], 'page', $request->page));
 	}
