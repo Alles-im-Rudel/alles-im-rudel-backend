@@ -51,6 +51,24 @@ class PermissionsSeeder extends Seeder
 			[
 				'name' => 'users.index'
 			],
+			[
+				'name' => 'users.update'
+			],
+			[
+				'name' => 'users.delete'
+			],
+			[
+				'name' => 'permissions.index'
+			],
+			[
+				'name' => 'permissions.user.sync'
+			],
+			[
+				'name' => 'user_groups.index'
+			],
+			[
+				'name' => 'user_groups.user.sync'
+			]
 		];
 	}
 }

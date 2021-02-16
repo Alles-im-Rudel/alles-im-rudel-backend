@@ -23,11 +23,14 @@ class UserUpdateRequest extends FormRequest
 	public function prepareForValidation(): void
 	{
 		$this->convertToInteger('userId');
+		$this->convertToInteger('levelId');
 		$this->convertToString('firstName');
 		$this->convertToString('lastName');
 		$this->convertToString('username');
 		$this->convertToString('email');
 		$this->convertToBoolean('isActive');
+		$this->convertToString('password');
+		$this->convertToString('passwordRepeat');
 	}
 
 	/**
@@ -38,12 +41,15 @@ class UserUpdateRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'userId'    => 'required|integer|exists:users,id',
-			'firstName' => 'nullable|max:30|min:2',
-			'lastName'  => 'nullable|max:30|min:2',
-			'username'  => 'requierd|max:20|min:1',
-			'email'     => 'requierd|email|max:50|min:3',
-			'isActive'  => 'requierd|boolean',
+			'userId'         => 'required|integer|exists:users,id',
+			'levelId'        => 'required|integer|exists:levels,id',
+			'firstName'      => 'nullable|max:30|min:2',
+			'lastName'       => 'nullable|max:30|min:2',
+			'username'       => 'required|max:20|min:1',
+			'email'          => 'required|email|max:50|min:3',
+			'isActive'       => 'required|boolean',
+			'password'       => 'nullable|string',
+			'passwordRepeat' => 'nullable|string',
 		];
 	}
 }

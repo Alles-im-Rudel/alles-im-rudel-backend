@@ -23,7 +23,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        Passport::ignoreMigrations();
+		if (env('PASSPORT_MIGRATE', false) === false) {
+			Passport::ignoreMigrations();
+		}
     }
 
     /**

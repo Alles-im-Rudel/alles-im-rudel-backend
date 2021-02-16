@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Level;
 
 use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UserShowRequest extends FormRequest
+class LevelIndexRequest extends FormRequest
 {
 	use RequestHelper;
 
@@ -17,12 +17,7 @@ class UserShowRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::user()->can('users.update');
-	}
-
-	public function prepareForValidation(): void
-	{
-		$this->convertToInteger('userId');
+		return Auth::check();
 	}
 
 	/**
@@ -32,8 +27,6 @@ class UserShowRequest extends FormRequest
 	 */
 	public function rules(): array
 	{
-		return [
-			'userId' => 'required|integer|exists:users,id'
-		];
+		return [];
 	}
 }

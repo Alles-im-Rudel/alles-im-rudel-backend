@@ -6,7 +6,7 @@ use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UserShowRequest extends FormRequest
+class UserSyncUserGroupRequest extends FormRequest
 {
 	use RequestHelper;
 
@@ -17,7 +17,7 @@ class UserShowRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::user()->can('users.update');
+		return Auth::user()->can('user_groups.user.sync');
 	}
 
 	public function prepareForValidation(): void
@@ -33,7 +33,9 @@ class UserShowRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'userId' => 'required|integer|exists:users,id'
+			'userId'          => 'required|exists:users,id',
+			'userGroupsIds'   => 'nullable|array',
+			'userGroupsIds.*' => 'nullable|exists:user_groups,id'
 		];
 	}
 }

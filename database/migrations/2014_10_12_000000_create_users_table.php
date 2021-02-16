@@ -15,6 +15,7 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('level_id')->default(1);
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable( );
             $table->string('email')->unique();
@@ -22,8 +23,11 @@ class CreateUsersTable extends Migration
             $table->dateTime('activated_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+			$table->rememberToken();
+			$table->softDeletes();
             $table->timestamps();
+
+			$table->foreign('level_id')->references('id')->on('levels');
         });
     }
 
@@ -32,8 +36,8 @@ class CreateUsersTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down(): void
+	{
         Schema::dropIfExists('users');
     }
 }

@@ -2,22 +2,48 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Http\Requests\User\UserDeleteRequest;
 use App\Http\Requests\User\UserIndexRequest;
 use App\Http\Requests\User\UserShowRequest;
+use App\Http\Requests\User\UserSyncPermissionRequest;
+use App\Http\Requests\User\UserSyncUserGroupRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
-use App\Traits\Functions\OrderByTraitJson;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
-	use OrderByTraitJson;
+
+	/**
+	 * UserController constructor.
+	 */
+	public function __construct()
+	{
+		$this->builder = User::query();
+		$this->tableName = 'users';
+		$this->availableOrderByFields = [
+			'first_name',
+			'last_name',
+			'email',
+			'username',
+			'salutation',
+			'activated_at',
+			'updated_at',
+		];
+		$this->searchFields = [
+			'email',
+			'first_name',
+			'last_name',
+			'username'
+		];
+	}
+
 
 	/**
 	 * @param  UserIndexRequest  $request
@@ -25,29 +51,12 @@ class UserController extends Controller
 	 */
 	public function index(UserIndexRequest $request): AnonymousResourceCollection
 	{
-		$query = User::query();
+		$this->orderByJson($request->sortBy);
+		$this->onlyTrashed($request->onlyTrashed);
+		$this->search("%{$request->search}%")
+			->withCount('roles', 'permissions', 'userGroups');
 
-		if ($request->search) {
-			$query->where('first_name', 'LIKE', "%{$request->search}%")
-				->where('last_name', 'LIKE', "%{$request->search}%")
-				->where('username', 'LIKE', "%{$request->search}%")
-				->where('email', 'LIKE', "%{$request->search}%");
-		}
-		if ($request->sortBy) {
-			$this->availableOrderByFields = [
-				'id',
-				'salutation',
-				'first_name',
-				'last_name',
-				'username',
-				'email',
-				'activated_at',
-				'created_at',
-				'updated_at'
-			];
-			$query = $this->orderByJson($query, $request->sortBy);
-		}
-		return UserResource::collection($query->paginate($request->perPage, ['*'], 'page', $request->page));
+		return UserResource::collection($this->paginate($request->perPage, $request->page));
 	}
 
 	/**
@@ -57,7 +66,7 @@ class UserController extends Controller
 	 */
 	public function show(UserShowRequest $request, User $user): UserResource
 	{
-		$user->loadMissing('permissions', 'roles');
+		$user->loadMissing('permissions', 'roles', 'userGroups');
 		return new UserResource($user);
 	}
 
@@ -68,19 +77,57 @@ class UserController extends Controller
 	 */
 	public function update(UserUpdateRequest $request, User $user): JsonResponse
 	{
-		$user->update([
+		$userData = [
 			'first_name'   => $request->firstName,
 			'last_name'    => $request->lastName,
 			'username'     => $request->username,
 			'email'        => $request->email,
+			'level_id'     => $request->levelId,
 			'activated_at' => $request->isActive ? now() : null,
-		]);
+		];
 
-		$user->loadMissing('permissions', 'roles');
+		if ($request->password && $request->passwordRepeat) {
+			if ($request->password !== $request->passwordRepeat) {
+				return response()->json([
+					"message" => "Die Passwörter stimmen nicht überein."
+				], Response::HTTP_UNPROCESSABLE_ENTITY);
+			}
+			$userData['password'] = Hash::make($request->password);
+		}
+
+		$user->update($userData);
+
+		$user->loadMissing('permissions', 'roles', 'userGroups');
 
 		return response()->json([
 			'message' => 'Der Benutzer wurde erfolgreich gelöscht.',
 			'user'    => new UserResource($user)
+		], Response::HTTP_OK);
+	}
+
+	/**
+	 * @param  UserSyncPermissionRequest  $request
+	 * @param  User  $user
+	 * @return JsonResponse
+	 */
+	public function syncPermissions(UserSyncPermissionRequest $request, User $user): JsonResponse
+	{
+		$user->syncPermissions($request->permissionIds);
+		return response()->json([
+			'message' => 'Die Berechtigungen wurden erfolgreich mit dem Benutzer verknüpft'
+		], Response::HTTP_OK);
+	}
+
+	/**
+	 * @param  UserSyncUserGroupRequest  $request
+	 * @param  User  $user
+	 * @return JsonResponse
+	 */
+	public function syncUserGroups(UserSyncUserGroupRequest $request, User $user): JsonResponse
+	{
+		$user->userGroups()->sync($request->userGroupIds);
+		return response()->json([
+			'message' => 'Die Berechtigungen wurden erfolgreich mit dem Benutzer verknüpft'
 		], Response::HTTP_OK);
 	}
 
