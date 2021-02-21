@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Relations\BelongsToLevel;
+use App\Traits\Relations\BelongsToManySummoners;
 use App\Traits\Relations\BelongsToManyUserGroups;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,7 +19,8 @@ class User extends Authenticatable
 		HasApiTokens,
 		HasRoles,
 		BelongsToLevel,
-		BelongsToManyUserGroups;
+		BelongsToManyUserGroups,
+		BelongsToManySummoners;
 
 	public const DEVELOPER_ID = 1;
 

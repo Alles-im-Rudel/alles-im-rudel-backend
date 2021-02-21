@@ -68,6 +68,33 @@ class PermissionsSeeder extends Seeder
 			],
 			[
 				'name' => 'user_groups.user.sync'
+			],
+			[
+				'name' => 'lol_users.index'
+			],
+			[
+				'name' => 'lol_users.show'
+			],
+			[
+				'name' => 'lol_users.update'
+			],
+			[
+				'name' => 'lol_users.delete'
+			],
+			[
+				'name' => 'summoners.index'
+			],
+			[
+				'name' => 'summoners.show'
+			],
+			[
+				'name' => 'summoners.delete'
+			],
+			[
+				'name' => 'summoners.update'
+			],
+			[
+				'name' => 'summoners.reload'
 			]
 		];
 	}

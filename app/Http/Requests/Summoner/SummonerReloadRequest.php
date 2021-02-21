@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Summoner;
 
 use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UserSyncUserGroupRequest extends FormRequest
+class SummonerReloadRequest extends FormRequest
 {
 	use RequestHelper;
 
@@ -17,12 +17,12 @@ class UserSyncUserGroupRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::user()->can('user_groups.user.sync');
+		return Auth::user()->can('summoners.reload');
 	}
 
 	public function prepareForValidation(): void
 	{
-		$this->convertToInteger('userId');
+		$this->convertToInteger('id');
 	}
 
 	/**
@@ -33,9 +33,7 @@ class UserSyncUserGroupRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'userId'         => 'required|exists:users,id',
-			'userGroupIds'   => 'nullable|array',
-			'userGroupIds.*' => 'nullable|exists:user_groups,id'
+			'id' => 'required|exists:summoners,id'
 		];
 	}
 }

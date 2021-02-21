@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Level\LevelController;
+use App\Http\Controllers\Lol\LolApiController;
+use App\Http\Controllers\Lol\SummonerController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\UserGroup\UserGroupController;
@@ -43,5 +45,13 @@ Route::group(['middleware' => ['auth:api']], static function () {
 	});
 	Route::group(['prefix' => '/user-groups'], static function () {
 		Route::get('', [UserGroupController::class, 'index']);
+	});
+	Route::group(['prefix' => '/summoners'], static function () {
+		Route::get('', [SummonerController::class, 'index']);
+		Route::get('/show', [SummonerController::class, 'show']);
+		Route::get('/reload/{summoner}', [SummonerController::class, 'reload']);
+	});
+	Route::group(['prefix' => '/lol'], static function () {
+		Route::get('', [LolApiController::class, 'index']);
 	});
 });

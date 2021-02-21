@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\LolUser;
 
 use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UserSyncUserGroupRequest extends FormRequest
+class LolUserSyncUserRequest extends FormRequest
 {
 	use RequestHelper;
 
@@ -17,12 +17,12 @@ class UserSyncUserGroupRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::user()->can('user_groups.user.sync');
+		return Auth::user()->can('lol_users.update');
 	}
 
 	public function prepareForValidation(): void
 	{
-		$this->convertToInteger('userId');
+		$this->convertToInteger('lolUserId');
 	}
 
 	/**
@@ -33,9 +33,9 @@ class UserSyncUserGroupRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'userId'         => 'required|exists:users,id',
-			'userGroupIds'   => 'nullable|array',
-			'userGroupIds.*' => 'nullable|exists:user_groups,id'
+			'lolUserId'  => 'required|exists:lol_users,id',
+			'userIds'   => 'nullable|array',
+			'userIds.*' => 'nullable|exists:users,id'
 		];
 	}
 }
