@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Lol;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Summoner\SummonerEntriesRequest;
 use App\Http\Requests\Summoner\SummonerIndexRequest;
 use App\Http\Requests\Summoner\SummonerReloadRequest;
 use App\Http\Requests\Summoner\SummonerShowRequest;
@@ -14,6 +15,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class SummonerController extends BaseController
 {
@@ -58,13 +60,10 @@ class SummonerController extends BaseController
 	 */
 	public function show(SummonerShowRequest $request): JsonResponse
 	{
-		$summoner = Summoner::where('name', $request->summonerName)
-			->with('mainUser')
-			->withCount('users')
-			->first();
+		$summoner = Summoner::where('name', $request->summonerName)->first();
 		if ($summoner) {
+			$summoner->loadMissing(['mainUser', 'leagueEntries.queueType'])->loadCount('users');
 			return response()->json([
-				'message'  => 'Der Lol Benutzer wurde erfolgreich gelöscht.',
 				'summoner' => new SummonerResource($summoner)
 			], Response::HTTP_OK);
 
@@ -88,11 +87,53 @@ class SummonerController extends BaseController
 			'puuid'           => $summonerData['puuid'],
 			'summoner_level'  => $summonerData['summonerLevel'],
 		]);
-		$summoner->loadMissing('mainUser')->loadCount('user');
+		$summoner->loadMissing(['mainUser', 'leagueEntries.queueType'])->loadCount('users');
 
 		return response()->json([
-			'message'  => 'Der Lol Benutzer wurde erfolgreich gelöscht.',
 			'summoner' => new SummonerResource($summoner)
+		], Response::HTTP_OK);
+	}
+
+	/**
+	 * @param  SummonerEntriesRequest  $request
+	 * @param  Summoner  $summoner
+	 * @return JsonResponse
+	 * @throws \JsonException
+	 */
+	public function getEntries(SummonerEntriesRequest $request, Summoner $summoner): JsonResponse
+	{
+		$http = new Client();
+		try {
+			$response = $http->get(env('RIOT_API_URL').'/lol/league/v4/entries/by-summoner/'.$summoner->summoner_id.'?api_key='.env('RIOT_API_KEY'));
+		} catch (GuzzleException $exception) {
+			Log::error($exception);
+			return response()->json([
+				'message' => 'Voll der Fehler.',
+			]);
+		}
+		$leagueEntries = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+
+		foreach ($leagueEntries as $leagueEntry) {
+			$summoner->leagueEntries()->updateOrCreate(
+				[
+					'summoner_id' => $leagueEntry['summonerId'],
+					'queue_type'  => $leagueEntry['queueType']
+				], [
+				'league_id'     => $leagueEntry['leagueId'],
+				'tier'          => $leagueEntry['tier'],
+				'rank'          => $leagueEntry['rank'],
+				'league_points' => (int) $leagueEntry['leaguePoints'],
+				'wins'          => (int) $leagueEntry['wins'],
+				'losses'        => (int) $leagueEntry['losses'],
+				'hot_streak'    => (bool) $leagueEntry['hotStreak'],
+				'veteran'       => (bool) $leagueEntry['veteran'],
+				'fresh_blood'   => (bool) $leagueEntry['freshBlood'],
+				'inactive'      => (bool) $leagueEntry['inactive'],
+			]);
+		}
+
+		return response()->json([
+			'message' => 'Der Summoner wurde erfolgreich aktualisiert ',
 		], Response::HTTP_OK);
 	}
 
@@ -124,7 +165,7 @@ class SummonerController extends BaseController
 		]);
 
 		return response()->json([
-			'message' => 'Der Summoner wurde erfolgreich aktualiesert',
+			'message' => 'Der Summoner wurde erfolgreich aktualisiert ',
 		], Response::HTTP_OK);
 	}
 }

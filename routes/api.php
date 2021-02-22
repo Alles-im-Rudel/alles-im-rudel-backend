@@ -50,6 +50,7 @@ Route::group(['middleware' => ['auth:api']], static function () {
 		Route::get('', [SummonerController::class, 'index']);
 		Route::get('/show', [SummonerController::class, 'show']);
 		Route::get('/reload/{summoner}', [SummonerController::class, 'reload']);
+		Route::get('/entries/{summoner}', [SummonerController::class, 'getEntries']);
 	});
 	Route::group(['prefix' => '/lol'], static function () {
 		Route::get('', [LolApiController::class, 'index']);

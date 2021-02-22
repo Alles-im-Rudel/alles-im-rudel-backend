@@ -22,15 +22,20 @@ class CreateSummonersTable extends Migration
 			$table->string('summoner_id');
 			$table->string('puuid');
 			$table->string('summoner_level');
-			$table->foreignId('main_user_id')->nullable();
+			$table->unsignedBigInteger('main_user_id')->nullable();
 			$table->timestamps();
+
+			$table->foreign('main_user_id')->references('id')->on('users');
 		});
 
 		Schema::create('summoner_user', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('summoner_id');
-			$table->foreignId('user_id');
+			$table->unsignedBigInteger('summoner_id');
+			$table->unsignedBigInteger('user_id');
 			$table->timestamps();
+
+			$table->foreign('summoner_id')->references('id')->on('summoners');
+			$table->foreign('user_id')->references('id')->on('users');
 		});
 	}
 

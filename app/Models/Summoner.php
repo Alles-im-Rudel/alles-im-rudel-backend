@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Summoner extends Model
 {
@@ -49,5 +50,13 @@ class Summoner extends Model
 	public function mainUser(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'main_user_id', 'id');
+	}
+
+	/**
+	 * @return HasMany
+	 */
+	public function leagueEntries(): HasMany
+	{
+		return $this->hasMany(LeagueEntry::class, 'summoner_id', 'summoner_id');
 	}
 }
