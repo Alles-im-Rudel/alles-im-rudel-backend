@@ -95,49 +95,6 @@ class SummonerController extends BaseController
 	}
 
 	/**
-	 * @param  SummonerEntriesRequest  $request
-	 * @param  Summoner  $summoner
-	 * @return JsonResponse
-	 * @throws \JsonException
-	 */
-	public function getEntries(SummonerEntriesRequest $request, Summoner $summoner): JsonResponse
-	{
-		$http = new Client();
-		try {
-			$response = $http->get(env('RIOT_API_URL').'/lol/league/v4/entries/by-summoner/'.$summoner->summoner_id.'?api_key='.env('RIOT_API_KEY'));
-		} catch (GuzzleException $exception) {
-			Log::error($exception);
-			return response()->json([
-				'message' => 'Voll der Fehler.',
-			]);
-		}
-		$leagueEntries = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-
-		foreach ($leagueEntries as $leagueEntry) {
-			$summoner->leagueEntries()->updateOrCreate(
-				[
-					'summoner_id' => $leagueEntry['summonerId'],
-					'queue_type'  => $leagueEntry['queueType']
-				], [
-				'league_id'     => $leagueEntry['leagueId'],
-				'tier'          => $leagueEntry['tier'],
-				'rank'          => $leagueEntry['rank'],
-				'league_points' => (int) $leagueEntry['leaguePoints'],
-				'wins'          => (int) $leagueEntry['wins'],
-				'losses'        => (int) $leagueEntry['losses'],
-				'hot_streak'    => (bool) $leagueEntry['hotStreak'],
-				'veteran'       => (bool) $leagueEntry['veteran'],
-				'fresh_blood'   => (bool) $leagueEntry['freshBlood'],
-				'inactive'      => (bool) $leagueEntry['inactive'],
-			]);
-		}
-
-		return response()->json([
-			'message' => 'Der Summoner wurde erfolgreich aktualisiert ',
-		], Response::HTTP_OK);
-	}
-
-	/**
 	 * @param  SummonerReloadRequest  $request
 	 * @param  Summoner  $summoner
 	 * @return JsonResponse
@@ -163,6 +120,35 @@ class SummonerController extends BaseController
 			'puuid'           => $summonerData['puuid'],
 			'summoner_level'  => $summonerData['summonerLevel'],
 		]);
+
+		$http = new Client();
+		try {
+			$response = $http->get(env('RIOT_API_URL').'/lol/league/v4/entries/by-summoner/'.$summoner->summoner_id.'?api_key='.env('RIOT_API_KEY'));
+		} catch (GuzzleException $exception) {
+			return response()->json([
+				'message' => 'Voll der Fehler.',
+			]);
+		}
+		$leagueEntries = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+
+		foreach ($leagueEntries as $leagueEntry) {
+			$summoner->leagueEntries()->updateOrCreate(
+				[
+					'summoner_id' => $leagueEntry['summonerId'],
+					'queue_type'  => $leagueEntry['queueType']
+				], [
+				'league_id'     => $leagueEntry['leagueId'],
+				'tier'          => $leagueEntry['tier'],
+				'rank'          => $leagueEntry['rank'],
+				'league_points' => (int) $leagueEntry['leaguePoints'],
+				'wins'          => (int) $leagueEntry['wins'],
+				'losses'        => (int) $leagueEntry['losses'],
+				'hot_streak'    => (bool) $leagueEntry['hotStreak'],
+				'veteran'       => (bool) $leagueEntry['veteran'],
+				'fresh_blood'   => (bool) $leagueEntry['freshBlood'],
+				'inactive'      => (bool) $leagueEntry['inactive'],
+			]);
+		}
 
 		return response()->json([
 			'message' => 'Der Summoner wurde erfolgreich aktualisiert ',
