@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Level\LevelController;
+use App\Http\Controllers\Lol\ClashController;
 use App\Http\Controllers\Lol\LolApiController;
 use App\Http\Controllers\Lol\SummonerController;
 use App\Http\Controllers\Permission\PermissionController;
@@ -25,6 +26,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::get('/auth', [AuthController::class, 'index']);
 Route::post('/register', [AuthController::class, 'register']);
+
+Route::group(['prefix' => '/clash'], static function () {
+	Route::get('', [ClashController::class, 'index']);
+});
 
 Route::group(['middleware' => ['auth:api']], static function () {
 
