@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Level\LevelController;
 use App\Http\Controllers\Lol\ClashController;
 use App\Http\Controllers\Lol\ClashMemberPickerController;
@@ -38,6 +39,12 @@ Route::group(['middleware' => ['auth:api']], static function () {
 
 	Route::group(['prefix' => 'levels'], static function () {
 		Route::get('', [LevelController::class, 'index']);
+	});
+
+	Route::group(['prefix' => 'profile'], static function () {
+		Route::get('', [ProfileController::class, 'index']);
+		Route::put('', [ProfileController::class, 'update']);
+		Route::delete('', [ProfileController::class, 'delete']);
 	});
 
 	Route::group(['prefix' => 'users'], static function () {
