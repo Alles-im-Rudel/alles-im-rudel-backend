@@ -66,7 +66,7 @@ class UserController extends BaseController
 	 */
 	public function show(UserShowRequest $request, User $user): UserResource
 	{
-		$user->loadMissing('permissions', 'roles', 'userGroups');
+		$user->loadMissing('permissions', 'roles', 'userGroups', 'mainSummoner');
 		return new UserResource($user);
 	}
 

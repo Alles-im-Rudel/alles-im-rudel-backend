@@ -12,6 +12,7 @@ class ClashTeamRole extends Model
 	 * @var array
 	 */
 	protected $fillable = [
-		'name'
+		'name',
+		'image'
 	];
 }

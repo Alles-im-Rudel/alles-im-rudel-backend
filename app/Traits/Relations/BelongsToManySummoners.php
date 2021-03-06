@@ -17,6 +17,6 @@ trait BelongsToManySummoners
 	 */
 	public function summoners(): BelongsToMany
 	{
-		return $this->belogsToMany(Summoner::class);
+		return $this->belongsToMany(Summoner::class);
 	}
 }

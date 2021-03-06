@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Lol;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Summoner\SummonerAttachMainUserRequest;
+use App\Http\Requests\Summoner\SummonerDetachMainUserRequest;
 use App\Http\Requests\Summoner\SummonerEntriesRequest;
 use App\Http\Requests\Summoner\SummonerIndexRequest;
 use App\Http\Requests\Summoner\SummonerReloadRequest;
 use App\Http\Requests\Summoner\SummonerShowRequest;
 use App\Http\Resources\SummonerResource;
 use App\Models\Summoner;
+use App\Traits\Functions\SummonerTrait;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -19,6 +22,8 @@ use Illuminate\Support\Facades\Log;
 
 class SummonerController extends BaseController
 {
+	use SummonerTrait;
+
 	/**
 	 * UserController constructor.
 	 */
@@ -56,102 +61,66 @@ class SummonerController extends BaseController
 	/**
 	 * @param  SummonerShowRequest  $request
 	 * @return JsonResponse
-	 * @throws \JsonException
 	 */
 	public function show(SummonerShowRequest $request): JsonResponse
 	{
-		$summoner = Summoner::where('name', $request->summonerName)->first();
-		if ($summoner) {
+		$summoner = $this->getSummonerByName($request->summonerName);
+		if($summoner) {
 			$summoner->loadMissing(['mainUser', 'leagueEntries.queueType'])->loadCount('users');
+
 			return response()->json([
 				'summoner' => new SummonerResource($summoner)
 			], Response::HTTP_OK);
-
 		}
-
-		$http = new Client();
-		try {
-			$response = $http->get(env('RIOT_API_URL').'/lol/summoner/v4/summoners/by-name/'.$request->summonerName.'?api_key='.env('RIOT_API_KEY'));
-		} catch (GuzzleException $exception) {
-			return response()->json([
-				'message' => 'Voll der Fehler.',
-			]);
-		}
-		$summonerData = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-		$summoner = Summoner::create([
-			'account_id'      => $summonerData['accountId'],
-			'profile_icon_id' => (int) $summonerData['profileIconId'],
-			'revision_date'   => Carbon::parse($summonerData['revisionDate']),
-			'name'            => $summonerData['name'],
-			'summoner_id'     => $summonerData['id'],
-			'puuid'           => $summonerData['puuid'],
-			'summoner_level'  => $summonerData['summonerLevel'],
-		]);
-		$summoner->loadMissing(['mainUser', 'leagueEntries.queueType'])->loadCount('users');
-
 		return response()->json([
-			'summoner' => new SummonerResource($summoner)
-		], Response::HTTP_OK);
+			'message' => 'Leider ist ein Fehler aufgeträten bitte versuchen Sie es später erneut.',
+		], Response::HTTP_BAD_REQUEST);
 	}
 
 	/**
 	 * @param  SummonerReloadRequest  $request
 	 * @param  Summoner  $summoner
 	 * @return JsonResponse
-	 * @throws \JsonException
 	 */
 	public function reload(SummonerReloadRequest $request, Summoner $summoner): JsonResponse
 	{
-		$http = new Client();
-		try {
-			$response = $http->get(env('RIOT_API_URL').'/lol/summoner/v4/summoners/by-account/'.$summoner->account_id.'?api_key='.env('RIOT_API_KEY'));
-		} catch (GuzzleException $exception) {
+		if ($this->reloadSummoner($summoner)) {
 			return response()->json([
-				'message' => 'Voll der Fehler.',
-			]);
+				'message' => 'Der Summoner wurde erfolgreich aktualisiert.',
+			], Response::HTTP_OK);
 		}
-		$summonerData = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-		$summoner->update([
-			'account_id'      => $summonerData['accountId'],
-			'profile_icon_id' => (int) $summonerData['profileIconId'],
-			'revision_date'   => Carbon::parse($summonerData['revisionDate']),
-			'name'            => $summonerData['name'],
-			'summoner_id'     => $summonerData['id'],
-			'puuid'           => $summonerData['puuid'],
-			'summoner_level'  => $summonerData['summonerLevel'],
-		]);
-
-		$http = new Client();
-		try {
-			$response = $http->get(env('RIOT_API_URL').'/lol/league/v4/entries/by-summoner/'.$summoner->summoner_id.'?api_key='.env('RIOT_API_KEY'));
-		} catch (GuzzleException $exception) {
-			return response()->json([
-				'message' => 'Voll der Fehler.',
-			]);
-		}
-		$leagueEntries = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-
-		foreach ($leagueEntries as $leagueEntry) {
-			$summoner->leagueEntries()->updateOrCreate(
-				[
-					'summoner_id' => $leagueEntry['summonerId'],
-					'queue_type'  => $leagueEntry['queueType']
-				], [
-				'league_id'     => $leagueEntry['leagueId'],
-				'tier'          => $leagueEntry['tier'],
-				'rank'          => $leagueEntry['rank'],
-				'league_points' => (int) $leagueEntry['leaguePoints'],
-				'wins'          => (int) $leagueEntry['wins'],
-				'losses'        => (int) $leagueEntry['losses'],
-				'hot_streak'    => (bool) $leagueEntry['hotStreak'],
-				'veteran'       => (bool) $leagueEntry['veteran'],
-				'fresh_blood'   => (bool) $leagueEntry['freshBlood'],
-				'inactive'      => (bool) $leagueEntry['inactive'],
-			]);
-		}
-
 		return response()->json([
-			'message' => 'Der Summoner wurde erfolgreich aktualisiert ',
+			'message' => 'Leider ist ein Fehler aufgeträten bitte versuchen Sie es später erneut.',
+		], Response::HTTP_BAD_REQUEST);
+	}
+
+	/**
+	 * @param  SummonerDetachMainUserRequest  $request
+	 * @param  Summoner  $summoner
+	 * @return JsonResponse
+	 */
+	public function detachMainUser(SummonerDetachMainUserRequest $request, Summoner $summoner): JsonResponse
+	{
+		$summoner->update([
+			'main_user_id' => null
+		]);
+		return response()->json([
+			'message' => 'Der Summoner wurde erfolgreich von dem Benutzer getrennt.',
+		], Response::HTTP_OK);
+	}
+
+	/**
+	 * @param  SummonerAttachMainUserRequest  $request
+	 * @param  Summoner  $summoner
+	 * @return JsonResponse
+	 */
+	public function attachMainUser(SummonerAttachMainUserRequest $request, Summoner $summoner): JsonResponse
+	{
+		$summoner->update([
+			'main_user_id' => $request->userId
+		]);
+		return response()->json([
+			'message' => 'Der Summoner wurde erfolgreich mit dem Benutzer verknüpft.',
 		], Response::HTTP_OK);
 	}
 }

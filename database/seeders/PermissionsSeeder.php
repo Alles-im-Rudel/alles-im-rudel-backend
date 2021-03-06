@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Permission;
 use App\Models\User;
+use App\Models\UserGroup;
 use Illuminate\Database\Seeder;
 
 class PermissionsSeeder extends Seeder
@@ -16,20 +17,13 @@ class PermissionsSeeder extends Seeder
 	public function run(): void
 	{
 		$permissions = $this->getPermissions();
-		$permissionsNameArray = [];
-
 		foreach ($permissions as $permission) {
 			Permission::firstOrCreate([
-				'name' => $permission['name']
+				'name' => $permission
 			]);
-
-			$permissionsNameArray[] = $permission['name'];
 		}
 
-		$devUser = User::where('id', '=', User::DEVELOPER_ID)->first();
-		if ($devUser) {
-			$devUser->givePermissionTo($permissionsNameArray);
-		}
+		UserGroup::find(UserGroup::DEVELOPER_ID)->syncPermissions(Permission::all()); // todo rausnehmen wenn alles geseeded wird
 	}
 
 	/**
@@ -39,63 +33,32 @@ class PermissionsSeeder extends Seeder
 	{
 		return [
 			// Routeheadline
-			[
-				'name' => 'headline.management'
-			],
+			'headline.management',
 			// Permissions
-			[
-				'name' => 'permissions.index'
-			],
-
+			'permissions.index',
+			'permissions.user.sync',
 			// Users
-			[
-				'name' => 'users.index'
-			],
-			[
-				'name' => 'users.update'
-			],
-			[
-				'name' => 'users.delete'
-			],
-			[
-				'name' => 'permissions.index'
-			],
-			[
-				'name' => 'permissions.user.sync'
-			],
-			[
-				'name' => 'user_groups.index'
-			],
-			[
-				'name' => 'user_groups.user.sync'
-			],
-			[
-				'name' => 'lol_users.index'
-			],
-			[
-				'name' => 'lol_users.show'
-			],
-			[
-				'name' => 'lol_users.update'
-			],
-			[
-				'name' => 'lol_users.delete'
-			],
-			[
-				'name' => 'summoners.index'
-			],
-			[
-				'name' => 'summoners.show'
-			],
-			[
-				'name' => 'summoners.delete'
-			],
-			[
-				'name' => 'summoners.update'
-			],
-			[
-				'name' => 'summoners.reload'
-			]
+			'users.index',
+			'users.update',
+			'users.delete',
+			'user_groups.index',
+			'user_groups.user.sync',
+			// LOL
+			'lol_users.index',
+			'lol_users.show',
+			'lol_users.update',
+			'lol_users.delete',
+			// Summoners
+			'summoners.index',
+			'summoners.show',
+			'summoners.main',
+			'summoners.delete',
+			'summoners.update',
+			'summoners.reload',
+			//Clash
+			'clash_team.update',
+			'clash_team.create',
+			'clash_team.delete',
 		];
 	}
 }

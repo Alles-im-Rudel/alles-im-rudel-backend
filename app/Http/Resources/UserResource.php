@@ -32,6 +32,7 @@ class UserResource extends JsonResource
 			'rolesCount'       => $this->when(isset($this->roles_count), $this->roles_count),
 			'userGroupsCount'  => $this->when(isset($this->user_groups_count), $this->user_groups_count),
 			'userGroups'       => UserGroupResource::collection($this->whenLoaded('userGroups')),
+			'mainSummoner'     => new SummonerResource($this->whenLoaded('mainSummoner')),
 			'createdAt'        => $this->created_at,
 			'updatedAt'        => $this->updated_at,
 			'deletedAt'        => $this->deleted_at,

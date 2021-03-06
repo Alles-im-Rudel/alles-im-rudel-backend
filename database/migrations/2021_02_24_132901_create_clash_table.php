@@ -23,6 +23,7 @@ class CreateClashTable extends Migration
 		Schema::create('clash_team_roles', function (Blueprint $table) {
 			$table->id();
 			$table->string('name');
+			$table->text('image');
 			$table->timestamps();
 		});
 

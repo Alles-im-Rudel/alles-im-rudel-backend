@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Relations\BelongsToLevel;
 use App\Traits\Relations\BelongsToManySummoners;
 use App\Traits\Relations\BelongsToManyUserGroups;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -86,5 +87,13 @@ class User extends Authenticatable
 		$userGroupMaxLevel = $this->userGroups()->max('level_id');
 
 		return $userGroupMaxLevel > $this->level_id ? $userGroupMaxLevel : $this->level_id;
+	}
+
+	/**
+	 * @return HasOne
+	 */
+	public function mainSummoner(): HasOne
+	{
+		return $this->hasOne(Summoner::class,'main_user_id', 'id');
 	}
 }

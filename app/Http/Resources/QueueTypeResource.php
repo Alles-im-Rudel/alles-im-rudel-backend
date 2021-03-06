@@ -16,6 +16,7 @@ class QueueTypeResource extends JsonResource
 	public function toArray($request): array
 	{
 		return [
+			'id'          => $this->id,
 			'queueType'   => $this->queue_type,
 			'displayName' => $this->display_name,
 		];
