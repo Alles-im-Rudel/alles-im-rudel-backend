@@ -76,7 +76,7 @@ class UsersSeeder extends Seeder
 				'level_id'          => Level::ADMINISTRATOR,
 				'first_name'        => 'Nick',
 				'last_name'         => 'Nickels',
-				'username'          => 'AIR_NJ',
+				'username'          => 'AIR NJ',
 				'password'          => 'changeme',
 				'email'             => 'nick.nickels@allesimrudel.de',
 				'email_verified_at' => $now,

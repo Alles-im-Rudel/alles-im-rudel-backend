@@ -20,7 +20,9 @@ class UserGroup extends Model
 	public const MEMBER_ID = 4;
 
 	protected $fillable = [
-		'display_name'
+		'display_name',
+		'color',
+		'description'
 	];
 
 	/**

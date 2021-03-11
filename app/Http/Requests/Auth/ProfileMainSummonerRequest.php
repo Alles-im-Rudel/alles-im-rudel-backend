@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Auth;
 
 use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UserShowRequest extends FormRequest
+class ProfileMainSummonerRequest extends FormRequest
 {
 	use RequestHelper;
 
@@ -17,7 +17,12 @@ class UserShowRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::user()->can('users.show');
+		return Auth::check();
+	}
+
+	public function prepareForValidation(): void
+	{
+		$this->convertToInteger('mainSummonerId');
 	}
 
 	/**
@@ -27,6 +32,8 @@ class UserShowRequest extends FormRequest
 	 */
 	public function rules(): array
 	{
-		return [];
+		return [
+			'mainSummonerId' => 'nullable|integer|exists:summoners,id'
+		];
 	}
 }

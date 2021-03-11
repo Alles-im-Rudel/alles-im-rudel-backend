@@ -24,7 +24,7 @@ class SummonerResource extends JsonResource
 			'summonerId'    => $this->summoner_id,
 			'puuid'         => $this->puuid,
 			'summonerLevel' => $this->summoner_level,
-			'main_user_id'  => $this->main_user_id,
+			'mainUserId'    => $this->main_user_id,
 			'mainUser'      => new UserResource($this->whenLoaded('mainUser')),
 			'leagueEntries' => LeagueEntryResource::collection($this->whenLoaded('leagueEntries')),
 			'usersCount'    => $this->when(isset($this->users_count), $this->users_count),

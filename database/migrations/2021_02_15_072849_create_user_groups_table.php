@@ -16,6 +16,7 @@ class CreateUserGroupsTable extends Migration
 		Schema::create('user_groups', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('level_id')->default(1);
+			$table->string('color');
 			$table->string('display_name')->nullable();
 			$table->string('description')->nullable();
 			$table->softDeletes();

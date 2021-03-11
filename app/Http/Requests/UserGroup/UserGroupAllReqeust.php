@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\UserGroup;
 
-use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UserShowRequest extends FormRequest
+class UserGroupAllReqeust extends FormRequest
 {
-	use RequestHelper;
-
 	/**
 	 * Determine if the user is authorized to make this request.
 	 *
@@ -17,7 +14,7 @@ class UserShowRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::user()->can('users.show');
+		return Auth::user()->can('user_groups.index');
 	}
 
 	/**
@@ -25,8 +22,11 @@ class UserShowRequest extends FormRequest
 	 *
 	 * @return array
 	 */
-	public function rules(): array
+	public function rules()
 	{
-		return [];
+		return [
+			'withOutUserGroupIds'   => 'nullable|array',
+			'withOutUserGroupIds.*' => 'nullable|integer|exists:user_groups,id'
+		];
 	}
 }

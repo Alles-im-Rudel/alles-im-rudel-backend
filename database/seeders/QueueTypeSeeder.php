@@ -2,14 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Level;
-use App\Models\Permission;
 use App\Models\QueueType;
-use App\Models\User;
-use App\Models\UserGroup;
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class QueueTypeSeeder extends Seeder
 {

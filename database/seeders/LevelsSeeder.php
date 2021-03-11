@@ -44,6 +44,10 @@ class LevelsSeeder extends Seeder
 				'id'           => Level::MEMBER,
 				'display_name' => 'Mitglied'
 			],
+			[
+				'id'           => Level::PROSPECT,
+				'display_name' => 'Prospect'
+			],
 		];
 	}
 }

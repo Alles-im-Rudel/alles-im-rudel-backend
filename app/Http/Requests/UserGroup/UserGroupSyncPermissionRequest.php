@@ -6,7 +6,7 @@ use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UserGroupIndexRequest extends FormRequest
+class UserGroupSyncPermissionRequest extends FormRequest
 {
 	use RequestHelper;
 
@@ -17,15 +17,12 @@ class UserGroupIndexRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::user()->can('user_groups.index');
+		return Auth::user()->can('permissions.user_groups.sync');
 	}
 
 	public function prepareForValidation(): void
 	{
-		$this->convertToInteger('perPage');
-		$this->convertToInteger('page');
-		$this->convertToString('search');
-		$this->convertToString('sortBy');
+		$this->convertToInteger('userGroupId');
 	}
 
 	/**
@@ -36,10 +33,9 @@ class UserGroupIndexRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'perPage' => 'required|integer',
-			'page'    => 'required|integer|min:1',
-			'search'  => 'nullable|string',
-			'sortBy'  => 'string|nullable',
+			'userGroupId'     => 'required|exists:user_groups,id',
+			'permissionIds'   => 'nullable|array',
+			'permissionIds.*' => 'nullable|exists:permissions,id'
 		];
 	}
 }

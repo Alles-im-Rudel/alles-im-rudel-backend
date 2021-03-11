@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\User\UserAllRequest;
 use App\Http\Requests\User\UserDeleteRequest;
 use App\Http\Requests\User\UserIndexRequest;
 use App\Http\Requests\User\UserShowRequest;
@@ -54,9 +55,22 @@ class UserController extends BaseController
 		$this->orderByJson($request->sortBy);
 		$this->onlyTrashed($request->onlyTrashed);
 		$this->search("%{$request->search}%")
-			->withCount('roles', 'permissions', 'userGroups');
+			->withCount('roles', 'permissions', 'userGroups', 'thumbnail');
 
 		return UserResource::collection($this->paginate($request->perPage, $request->page));
+	}
+
+	/**
+	 * @param  UserAllRequest  $request
+	 * @return AnonymousResourceCollection
+	 */
+	public function all(UserAllRequest $request): AnonymousResourceCollection
+	{
+		$users = User::query();
+		if ($request->withOutUserIds && count($request->withOutUserIds) > 0) {
+			$users->whereNotIn('id', $request->withOutUserIds);
+		}
+		return UserResource::collection($users->get());
 	}
 
 	/**
@@ -66,7 +80,7 @@ class UserController extends BaseController
 	 */
 	public function show(UserShowRequest $request, User $user): UserResource
 	{
-		$user->loadMissing('permissions', 'roles', 'userGroups', 'mainSummoner');
+		$user->loadMissing('permissions', 'roles', 'userGroups', 'mainSummoner', 'thumbnail', 'iamge');
 		return new UserResource($user);
 	}
 

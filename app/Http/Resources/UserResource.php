@@ -33,6 +33,8 @@ class UserResource extends JsonResource
 			'userGroupsCount'  => $this->when(isset($this->user_groups_count), $this->user_groups_count),
 			'userGroups'       => UserGroupResource::collection($this->whenLoaded('userGroups')),
 			'mainSummoner'     => new SummonerResource($this->whenLoaded('mainSummoner')),
+			'image'            => new ImageResource($this->whenLoaded('image')),
+			'thumbnail'        => new ImageResource($this->whenLoaded('thumbnail')),
 			'createdAt'        => $this->created_at,
 			'updatedAt'        => $this->updated_at,
 			'deletedAt'        => $this->deleted_at,

@@ -27,6 +27,7 @@ class UserGroupsSeeder extends Seeder
 			], [
 				'level_id'    => $userGroup['level_id'],
 				'description' => $userGroup['description'],
+				'color'       => $userGroup['color'],
 			]);
 		}
 
@@ -40,22 +41,44 @@ class UserGroupsSeeder extends Seeder
 			[
 				'level_id'     => Level::DEVELOPER,
 				'display_name' => 'Developer',
+				'color'        => 'dev',
 				'description'  => 'Voll krass der Developer',
 			],
 			[
 				'level_id'     => Level::ADMINISTRATOR,
 				'display_name' => 'Admin',
+				'color'        => 'admin',
 				'description'  => 'Voll krass der Admin',
 			],
 			[
 				'level_id'     => Level::MODERATOR,
 				'display_name' => 'Moderator',
+				'color'        => 'moderator',
 				'description'  => 'Voll krass der Moderator',
 			],
 			[
 				'level_id'     => Level::MEMBER,
 				'display_name' => 'Rudel Mitglied',
+				'color'        => 'member',
 				'description'  => 'Voll krass das Rudel Mitglied',
+			],
+			[
+				'level_id'     => Level::MEMBER,
+				'display_name' => 'E-Sports',
+				'color'        => 'eSports',
+				'description'  => 'Voll krass das Rudel Esportler',
+			],
+			[
+				'level_id'     => Level::MEMBER,
+				'display_name' => 'Airsoft',
+				'color'        => 'airsoft',
+				'description'  => 'Voll krass der Airsoftspieler',
+			],
+			[
+				'level_id'     => Level::PROSPECT,
+				'display_name' => 'Prospect',
+				'color'        => 'prospect',
+				'description'  => 'Voll krass der Prospect',
 			],
 		];
 	}

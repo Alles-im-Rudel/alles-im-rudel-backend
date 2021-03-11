@@ -21,6 +21,7 @@ class UserGroupResource extends JsonResource
 			'level'            => new LevelResource($this->whenLoaded('level')),
 			'displayName'      => $this->display_name,
 			'description'      => $this->description,
+			'color'            => $this->color,
 			'permissions'      => PermissionResource::collection($this->whenLoaded('permissions')),
 			'permissionsCount' => $this->when(isset($this->permissions_count), $this->permissions_count),
 			'users'            => UserResource::collection($this->whenLoaded('users')),

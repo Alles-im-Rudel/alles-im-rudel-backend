@@ -6,6 +6,7 @@ use App\Traits\Relations\BelongsToLevel;
 use App\Traits\Relations\BelongsToManySummoners;
 use App\Traits\Relations\BelongsToManyUserGroups;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -61,8 +62,8 @@ class User extends Authenticatable
 	];
 
 	/**
-	 * @param iterable|string $permission
-	 * @param array $arguments
+	 * @param  iterable|string  $permission
+	 * @param  array  $arguments
 	 * @return bool
 	 */
 	public function can($permission, $arguments = []): bool
@@ -94,6 +95,40 @@ class User extends Authenticatable
 	 */
 	public function mainSummoner(): HasOne
 	{
-		return $this->hasOne(Summoner::class,'main_user_id', 'id');
+		return $this->hasOne(Summoner::class, 'main_user_id', 'id');
+	}
+
+	/**
+	 * @return MorphOne
+	 */
+	public function thumbnail(): MorphOne
+	{
+		return $this->morphOne(Image::class, 'imageable')
+			->select([
+				'id',
+				'imageable_id',
+				'imageable_type',
+				'thumbnail',
+				'file_name',
+				'file_size',
+				'file_mime_type'
+			]);
+	}
+
+	/**
+	 * @return MorphOne
+	 */
+	public function image(): MorphOne
+	{
+		return $this->morphOne(Image::class, 'imageable')
+			->select([
+				'id',
+				'imageable_id',
+				'imageable_type',
+				'image',
+				'file_name',
+				'file_size',
+				'file_mime_type'
+			]);
 	}
 }

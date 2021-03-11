@@ -35,6 +35,7 @@ class AuthController extends Controller
 					}
 				}
 			}
+			$user->loadMissing('thumbnail');
 			return response()->json([
 				'user'        => new UserResource($user),
 				'permissions' => PermissionResource::collection($permissions)
@@ -94,7 +95,7 @@ class AuthController extends Controller
 				}
 			}
 		}
-
+		$user->loadMissing('thumbnail');
 		return response()->json([
 			'user'        => new UserResource($user),
 			'tokens'      => $decodedTokens,
@@ -151,7 +152,7 @@ class AuthController extends Controller
 				}
 			}
 		}
-
+		$user->loadMissing('thumbnail');
 		return response()->json([
 			'user'        => new UserResource($user),
 			'tokens'      => $decodedTokens,

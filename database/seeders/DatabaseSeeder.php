@@ -19,5 +19,6 @@ class DatabaseSeeder extends Seeder
 		$this->call(UsersSeeder::class);
 		$this->call(QueueTypeSeeder::class);
 		$this->call(ClashSeeder::class);
+		$this->call(TagSeeder::class);
     }
 }

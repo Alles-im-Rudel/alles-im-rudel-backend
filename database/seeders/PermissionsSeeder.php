@@ -22,8 +22,6 @@ class PermissionsSeeder extends Seeder
 				'name' => $permission
 			]);
 		}
-
-		UserGroup::find(UserGroup::DEVELOPER_ID)->syncPermissions(Permission::all()); // todo rausnehmen wenn alles geseeded wird
 	}
 
 	/**
@@ -37,11 +35,17 @@ class PermissionsSeeder extends Seeder
 			// Permissions
 			'permissions.index',
 			'permissions.user.sync',
+			'permissions.user_groups.sync',
 			// Users
 			'users.index',
 			'users.update',
+			'users.show',
 			'users.delete',
+			// UserGroups
 			'user_groups.index',
+			'user_groups.show',
+			'user_groups.update',
+			'user_groups.delete',
 			'user_groups.user.sync',
 			// LOL
 			'lol_users.index',
@@ -56,6 +60,7 @@ class PermissionsSeeder extends Seeder
 			'summoners.update',
 			'summoners.reload',
 			//Clash
+			'clash.update',
 			'clash_team.update',
 			'clash_team.create',
 			'clash_team.delete',

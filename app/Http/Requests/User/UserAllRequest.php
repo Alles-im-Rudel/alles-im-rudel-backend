@@ -2,14 +2,11 @@
 
 namespace App\Http\Requests\User;
 
-use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UserShowRequest extends FormRequest
+class UserAllRequest extends FormRequest
 {
-	use RequestHelper;
-
 	/**
 	 * Determine if the user is authorized to make this request.
 	 *
@@ -17,7 +14,7 @@ class UserShowRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::user()->can('users.show');
+		return Auth::user()->can('users.index');
 	}
 
 	/**
@@ -25,8 +22,11 @@ class UserShowRequest extends FormRequest
 	 *
 	 * @return array
 	 */
-	public function rules(): array
+	public function rules()
 	{
-		return [];
+		return [
+			'withOutUserIds'   => 'nullable|array',
+			'withOutUserIds.*' => 'nullable|integer|exists:users,id'
+		];
 	}
 }
