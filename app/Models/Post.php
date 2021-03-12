@@ -59,11 +59,11 @@ class Post extends Model
 	}
 
 	/**
-	 * @return HasMany
+	 * @return MorphMany
 	 */
-	public function comments(): HasMany
+	public function comments(): MorphMany
 	{
-		return $this->hasMany(Comment::class);
+		return $this->morphMany(Comment::class, 'commentable');
 	}
 
 	/**

@@ -70,6 +70,10 @@ Route::group(['middleware' => ['auth:api']], static function () {
 		Route::delete('{image}', [ImageController::class, 'delete']);
 	});
 
+	Route::group(['prefix' => 'comments'], static function () {
+		Route::post('', [CommentController::class, 'store']);
+	});
+
 	Route::group(['prefix' => 'users'], static function () {
 		Route::get('', [UserController::class, 'index']);
 		Route::get('all', [UserController::class, 'all']);

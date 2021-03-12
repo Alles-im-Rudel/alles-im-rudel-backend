@@ -4,7 +4,8 @@ namespace App\Models;
 
 use App\Traits\Relations\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Comment extends Model
 {
@@ -17,7 +18,8 @@ class Comment extends Model
 	 */
 	protected $fillable = [
 		'text',
-		'post_id'
+		'commentable_type',
+		'commentable_id'
 	];
 
 	/**
@@ -26,14 +28,22 @@ class Comment extends Model
 	 * @var array
 	 */
 	protected $casts = [
-		'post_id' => 'integer'
+		'commentable_id' => 'integer'
 	];
 
 	/**
-	 * @return BelongsTo
+	 * @return MorphTo
 	 */
-	public function post(): BelongsTo
+	public function commentable(): MorphTo
 	{
-		return $this->belongsTo(Post::class);
+		return $this->morphTo();
+	}
+
+	/**
+	 * @return MorphMany
+	 */
+	public function comments(): MorphMany
+	{
+		return $this->morphMany(__CLASS__, 'commentable')->with(['comments', 'user.thumbnail']);
 	}
 }

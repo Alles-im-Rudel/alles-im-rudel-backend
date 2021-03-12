@@ -30,9 +30,9 @@ class CreatePostsTable extends Migration
 
 		Schema::create('comments', function (Blueprint $table) {
 			$table->id();
+			$table->morphs('commentable');
 			$table->text('text');
 			$table->foreignId('user_id')->references('id')->on('users');
-			$table->foreignId('post_id')->references('id')->on('posts');
 			$table->timestamps();
 		});
 
@@ -51,7 +51,7 @@ class CreatePostsTable extends Migration
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('post_tags');
+		Schema::dropIfExists('post_tag');
 		Schema::dropIfExists('comments');
 		Schema::dropIfExists('posts');
 		Schema::dropIfExists('tags');

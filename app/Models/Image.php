@@ -17,7 +17,8 @@ class Image extends Model
 		'thumbnail',
 		'file_name',
 		'file_size',
-		'file_mime_type'
+		'file_mime_type',
+		'title'
 	];
 
 	protected $casts = [
