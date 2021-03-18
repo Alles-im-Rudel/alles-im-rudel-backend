@@ -5,12 +5,15 @@ namespace App\Models;
 use App\Traits\Relations\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 
 class Post extends Model
 {
-	use BelongsToUser;
+	use BelongsToUser,
+		CascadesDeletes;
+
+	protected array $cascadeDeletes = ['comments', 'images'];
 
 	/**
 	 * The attributes that are mass assignable.
@@ -20,6 +23,10 @@ class Post extends Model
 	protected $fillable = [
 		'title',
 		'text'
+	];
+
+	protected $appends = [
+		'commentCount'
 	];
 
 	/**
@@ -72,5 +79,17 @@ class Post extends Model
 	public function tags(): BelongsToMany
 	{
 		return $this->belongsToMany(Tag::class);
+	}
+
+	public function getCommentCountAttribute(): int
+	{
+		$count = 0;
+		if (count($this->comments) > 0) {
+			$count = $this->comments->count();
+			foreach ($this->comments as $comment) {
+				$count += $comment->commentCount;
+			}
+		}
+		return $count;
 	}
 }

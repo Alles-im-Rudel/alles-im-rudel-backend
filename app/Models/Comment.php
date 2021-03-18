@@ -6,10 +6,14 @@ use App\Traits\Relations\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 
 class Comment extends Model
 {
-	use BelongsToUser;
+	use BelongsToUser,
+		CascadesDeletes;
+
+	protected array $cascadeDeletes = ['comments'];
 
 	/**
 	 * The attributes that are mass assignable.
@@ -31,6 +35,10 @@ class Comment extends Model
 		'commentable_id' => 'integer'
 	];
 
+	protected $appends = [
+		'commentCount'
+	];
+
 	/**
 	 * @return MorphTo
 	 */
@@ -45,5 +53,17 @@ class Comment extends Model
 	public function comments(): MorphMany
 	{
 		return $this->morphMany(__CLASS__, 'commentable')->with(['comments', 'user.thumbnail']);
+	}
+
+	public function getCommentCountAttribute(): int
+	{
+		$count = 0;
+		if (count($this->comments) > 0) {
+			$count = $this->comments->count();
+			foreach ($this->comments as $comment) {
+				$count += $comment->commentCount;
+			}
+		}
+		return $count;
 	}
 }

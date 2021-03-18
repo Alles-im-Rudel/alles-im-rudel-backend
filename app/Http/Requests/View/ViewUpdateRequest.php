@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Comment;
+namespace App\Http\Requests\View;
 
 use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class CommentStoreRequest extends FormRequest
+class ViewUpdateRequest extends FormRequest
 {
 	use RequestHelper;
 
@@ -17,14 +17,13 @@ class CommentStoreRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::user()->can('comments.create');
+		return Auth::user()->can('views.update');
 	}
 
 	public function prepareForValidation(): void
 	{
-		$this->convertToString('modelType');
-		$this->convertToInteger('modelId');
-		$this->convertToString('comment');
+		$this->convertToString('title');
+		$this->convertToString('body');
 	}
 
 	/**
@@ -35,9 +34,8 @@ class CommentStoreRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'comment'   => 'required|',
-			'modelId'   => 'required|integer',
-			'modelType' => 'required|commentable'
+			'title' => 'required',
+			'body'  => 'required',
 		];
 	}
 }

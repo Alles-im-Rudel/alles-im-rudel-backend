@@ -108,6 +108,7 @@ class User extends Authenticatable
 				'id',
 				'imageable_id',
 				'imageable_type',
+				'title',
 				'thumbnail',
 				'file_name',
 				'file_size',
@@ -126,6 +127,7 @@ class User extends Authenticatable
 				'imageable_id',
 				'imageable_type',
 				'image',
+				'title',
 				'file_name',
 				'file_size',
 				'file_mime_type'

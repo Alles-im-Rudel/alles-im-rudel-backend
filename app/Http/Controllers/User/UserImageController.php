@@ -22,6 +22,7 @@ class UserImageController extends Controller
 	{
 		$this->validate($request, [
 			'image' => 'required|mimes:jpg,jpeg,png,pdf|max:5120',
+			'title' => 'nullable',
 		]);
 		$originalFileName = optional($request->file('image'))->getClientOriginalName();
 		$image = ImageGenerator::resizeImageIfNeeded($request->file('image'));
@@ -31,6 +32,7 @@ class UserImageController extends Controller
 			'image'          => $image->encode('data-url'),
 			'thumbnail'      => $thumbnail->encode('data-url'),
 			'file_name'      => $originalFileName,
+			'title'          => $request->title,
 			'file_mime_type' => $image->mime(),
 			'file_size'      => $image->filesize()
 		]);

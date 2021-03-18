@@ -64,6 +64,16 @@ class PermissionsSeeder extends Seeder
 			'clash_team.update',
 			'clash_team.create',
 			'clash_team.delete',
+			// Comments
+			'comments.create',
+			'comments.delete',
+			'comments.update',
+			// Post
+			'posts.create',
+			'posts.delete',
+			'posts.update',
+			// Views
+			'views.update',
 		];
 	}
 }

@@ -17,6 +17,7 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\UserImageController;
 use App\Http\Controllers\User\UserPickerController;
 use App\Http\Controllers\UserGroup\UserGroupController;
+use App\Http\Controllers\View\ViewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,7 +54,15 @@ Route::group(['prefix' => 'commments'], static function () {
 	Route::get('by/{post}', [CommentController::class, 'byPost']);
 });
 
+Route::group(['prefix' => 'views'], static function () {
+	Route::get('{view}', [ViewController::class, 'show']);
+});
+
 Route::group(['middleware' => ['auth:api']], static function () {
+
+	Route::group(['prefix' => 'views'], static function () {
+		Route::put('{view}', [ViewController::class, 'update']);
+	});
 
 	Route::group(['prefix' => 'levels'], static function () {
 		Route::get('', [LevelController::class, 'index']);
@@ -72,6 +81,13 @@ Route::group(['middleware' => ['auth:api']], static function () {
 
 	Route::group(['prefix' => 'comments'], static function () {
 		Route::post('', [CommentController::class, 'store']);
+	});
+
+	Route::group(['prefix' => 'posts'], static function () {
+		Route::post('', [PostController::class, 'store']);
+		Route::put('{post}', [PostController::class, 'update']);
+		Route::delete('{post}', [PostController::class, 'delete']);
+		Route::post('{post}/image', [PostController::class, 'storeImage']);
 	});
 
 	Route::group(['prefix' => 'users'], static function () {
