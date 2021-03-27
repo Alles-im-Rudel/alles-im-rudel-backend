@@ -27,8 +27,7 @@ class PostResource extends JsonResource
 			'images'        => ImageResource::collection($this->whenLoaded('images')),
 			'thumbnails'    => ImageResource::collection($this->whenLoaded('thumbnails')),
 			'createdAt'     => $this->created_at,
-			'updatedAt'     => $this->updated_at,
-			'deletedAt'     => $this->deleted_at,
+			'updatedAt'     => $this->updated_at
 		];
 	}
 }

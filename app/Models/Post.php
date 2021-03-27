@@ -4,8 +4,8 @@ namespace App\Models;
 
 use App\Traits\Relations\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 
 class Post extends Model
@@ -74,11 +74,11 @@ class Post extends Model
 	}
 
 	/**
-	 * @return BelongsToMany
+	 * @return MorphToMany
 	 */
-	public function tags(): BelongsToMany
+	public function tags(): MorphToMany
 	{
-		return $this->belongsToMany(Tag::class);
+		return $this->morphToMany(Tag::class, 'tagable', 'model_tag');
 	}
 
 	public function getCommentCountAttribute(): int

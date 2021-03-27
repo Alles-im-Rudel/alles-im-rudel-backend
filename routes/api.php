@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Comment\CommentController;
@@ -58,10 +59,18 @@ Route::group(['prefix' => 'views'], static function () {
 	Route::get('{view}', [ViewController::class, 'show']);
 });
 
+Route::group(['prefix' => 'appointments'], static function () {
+	Route::get('', [AppointmentController::class, 'index']);
+});
+
 Route::group(['middleware' => ['auth:api']], static function () {
 
 	Route::group(['prefix' => 'views'], static function () {
 		Route::put('{view}', [ViewController::class, 'update']);
+	});
+
+	Route::group(['prefix' => 'appointments'], static function () {
+		Route::post('', [AppointmentController::class, 'store']);
 	});
 
 	Route::group(['prefix' => 'levels'], static function () {
