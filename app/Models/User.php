@@ -133,4 +133,17 @@ class User extends Authenticatable
 				'file_mime_type'
 			]);
 	}
+
+	/**
+	 * @param  Appointment  $appointment
+	 * @return bool
+	 */
+	public function hasLikedAppointment(Appointment $appointment): bool
+	{
+		return (bool) $appointment->likes
+			->where('likeable_id', $appointment->id)
+			->where('likeable_type', get_class($appointment))
+			->where('user_id', $this->id)
+			->count();
+	}
 }

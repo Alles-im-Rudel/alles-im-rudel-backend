@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Relations\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 
@@ -13,7 +14,7 @@ class Appointment extends Model
 	use BelongsToUser,
 		CascadesDeletes;
 
-	protected array $cascadeDeletes = ['comments', 'images'];
+	protected array $cascadeDeletes = ['likes'];
 
 	/**
 	 * The attributes that are mass assignable.
@@ -58,5 +59,13 @@ class Appointment extends Model
 	public function tags(): MorphToMany
 	{
 		return $this->morphToMany(Tag::class, 'tagable', 'model_tag');
+	}
+
+	/**
+	 * @return MorphMany
+	 */
+	public function likes(): MorphMany
+	{
+		return $this->morphMany(Like::class, 'likeable', 'likeable_type');
 	}
 }

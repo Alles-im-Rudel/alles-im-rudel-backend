@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use PhpParser\Node\Expr\Array_;
 
@@ -158,5 +159,21 @@ class BaseController extends Controller
 	public function whereIn(string $column, array $array): Builder
 	{
 		return $this->builder->whereIn($column, $array);
+	}
+
+	/**
+	 * @return Builder[]|Collection
+	 */
+	public function get()
+	{
+		return $this->builder->get();
+	}
+
+	/**
+	 * @return Builder
+	 */
+	public function getQuery(): Builder
+	{
+		return $this->builder;
 	}
 }

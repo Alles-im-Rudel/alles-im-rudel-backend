@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Appointment\AppointmentController;
+use App\Http\Controllers\Appointment\AppointmentLikeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Comment\CommentController;
@@ -19,7 +20,6 @@ use App\Http\Controllers\User\UserImageController;
 use App\Http\Controllers\User\UserPickerController;
 use App\Http\Controllers\UserGroup\UserGroupController;
 use App\Http\Controllers\View\ViewController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -71,6 +71,11 @@ Route::group(['middleware' => ['auth:api']], static function () {
 
 	Route::group(['prefix' => 'appointments'], static function () {
 		Route::post('', [AppointmentController::class, 'store']);
+		Route::get('{appointment}', [AppointmentController::class, 'show']);
+		Route::put('{appointment}', [AppointmentController::class, 'update']);
+		Route::delete('{appointment}', [AppointmentController::class, 'delete']);
+		Route::get('{appointment}/check', [AppointmentLikeController::class, 'checkLiked']);
+		Route::put('{appointment}/change', [AppointmentLikeController::class, 'change']);
 	});
 
 	Route::group(['prefix' => 'levels'], static function () {

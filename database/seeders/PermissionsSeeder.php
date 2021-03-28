@@ -77,7 +77,6 @@ class PermissionsSeeder extends Seeder
 			// Appointments
 			'appointments.create',
 			'appointments.update',
-			'appointments.like',
 			'appointments.delete',
 		];
 	}

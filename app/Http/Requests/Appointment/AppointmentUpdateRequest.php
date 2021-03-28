@@ -6,7 +6,7 @@ use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class AppointmentCreateRequest extends FormRequest
+class AppointmentUpdateRequest extends FormRequest
 {
 	use RequestHelper;
 
@@ -17,7 +17,7 @@ class AppointmentCreateRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::user()->can('appointments.create');
+		return Auth::user()->can('appointments.update');
 	}
 
 	public function prepareForValidation(): void

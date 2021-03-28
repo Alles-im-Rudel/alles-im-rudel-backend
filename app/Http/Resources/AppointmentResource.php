@@ -23,21 +23,37 @@ class AppointmentResource extends JsonResource
 			'startAt'     => $this->getTimeFormat($this->start_at),
 			'endAt'       => $this->getTimeFormat($this->end_at),
 			'isAllDay'    => $this->is_all_day,
+			'dates'       => $this->getDates($this->start_at, $this->end_at),
+			'fromTime'    => $this->getTime($this->start_at),
+			'toTime'      => $this->getTime($this->end_at),
 			'isBirthday'  => $this->is_birthday,
 			'userId'      => $this->user_id,
 			'birthdayId'  => $this->birthday_id,
 			'color'       => $this->color,
+			'likes'       => $this->when($this->likes_count !== null, $this->likes_count),
 			'user'        => new UserResource($this->whenLoaded('user')),
-			'tags'        => new TagResouce($this->whenLoaded('taga')),
+			'tags'        => TagResouce::collection($this->whenLoaded('tags')),
 			'birthdayKid' => new UserResource($this->whenLoaded('birthdayKid')),
 			'createdAt'   => $this->created_at,
 			'updatedAt'   => $this->updated_at
 		];
 	}
 
-	public function getTimeFormat($column): string
+	protected function getTimeFormat($column): string
 	{
 		$format = $this->is_all_day ? 'Y-m-d' : 'Y-m-d H:i';
 		return Carbon::parse($column)->format($format);
+	}
+
+	protected function getDates($start, $end): array
+	{
+		$start = Carbon::parse($start)->format('Y-m-d');
+		$end = Carbon::parse($end)->format('Y-m-d');
+		return [0 => $start, 1 => $end];
+	}
+
+	protected function getTime($dateTime): string
+	{
+		return Carbon::parse($dateTime)->format('h:m');
 	}
 }
