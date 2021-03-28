@@ -75,7 +75,7 @@ class AppointmentController extends BaseController
 		]);
 		$appointment->tags()->sync($request->tagIds);
 		return response()->json([
-			'message' => 'Das Event wurde Erfolgreich erstellt.'
+			'message' => 'Das Event wurde erfolgreich erstellt.'
 		], Response::HTTP_CREATED);
 	}
 
@@ -97,7 +97,7 @@ class AppointmentController extends BaseController
 			'user_id'    => Auth::id()
 		]);
 		return response()->json([
-			'message' => 'Das Event wurde Erfolgreich bearbeitet.',
+			'message' => 'Das Event wurde erfolgreich bearbeitet.',
 		], Response::HTTP_OK);
 	}
 
@@ -113,7 +113,7 @@ class AppointmentController extends BaseController
 		$appointment->delete();
 
 		return response()->json([
-			'message' => 'Das Event wurde Erfolgreich gelöscht.',
+			'message' => 'Das Event wurde erfolgreich gelöscht.',
 		], Response::HTTP_OK);
 	}
 }
