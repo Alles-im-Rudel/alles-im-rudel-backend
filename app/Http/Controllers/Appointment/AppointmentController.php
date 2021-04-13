@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Appointment;
 
 
-use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Appointment\AppointmentCreateRequest;
 use App\Http\Requests\Appointment\AppointmentDeleteRequest;
 use App\Http\Requests\Appointment\AppointmentIndexRequest;
@@ -12,40 +12,39 @@ use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
-class AppointmentController extends BaseController
+class AppointmentController extends Controller
 {
-	/**
-	 * UserController constructor.
-	 */
-	public function __construct()
-	{
-		$this->builder = Appointment::query();
-		$this->tableName = 'appointments';
-		$this->searchFields = [
-			'title'
-		];
-	}
-
 	/**
 	 * @param  AppointmentIndexRequest  $request
 	 * @return AnonymousResourceCollection
 	 */
 	public function index(AppointmentIndexRequest $request): AnonymousResourceCollection
 	{
-		$this->search("%{$request->search}%");
-
+		$appointments = Appointment::with(['birthdayKid.thumbnail', 'tags'])
+			->where('title', 'like', "%{$request->search}%")
+			->where(static function ($query) use ($request) {
+				$query->whereMonth('start_at', $request->month)
+					->whereYear('start_at', $request->year);
+			})
+			->orWhere(static function ($query) use ($request) {
+				$query->whereMonth('end_at', $request->month)
+					->whereYear('end_at', $request->year);
+			})
+			->orWhere(static function ($query) use ($request) {
+				$query->where('is_birthday', '=', true)
+					->whereMonth('start_at', '=', $request->month);
+			});
 		if ($request->tagIds && count($request->tagIds) > 0) {
-			$this->builder = $this->getQuery()->whereHas('tags', static function ($query) use ($request) {
+			$appointments = $appointments->whereHas('tags', static function ($query) use ($request) {
 				$query->whereIn('tags.id', $request->tagIds);
 			});
 		}
 
-		return AppointmentResource::collection($this->get());
+		return AppointmentResource::collection($appointments->get());
 	}
 
 	/**

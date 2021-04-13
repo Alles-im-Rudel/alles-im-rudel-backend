@@ -80,6 +80,18 @@ class UserGroupsSeeder extends Seeder
 				'color'        => 'prospect',
 				'description'  => 'Voll krass der Prospect',
 			],
+			[
+				'level_id'     => Level::GUEST,
+				'display_name' => 'Gast',
+				'color'        => 'guest',
+				'description'  => 'Voll krass der Gast',
+			],
+			[
+				'level_id'     => Level::NEW,
+				'display_name' => 'Neu',
+				'color'        => 'new',
+				'description'  => 'Voll krass der neue',
+			],
 		];
 	}
 

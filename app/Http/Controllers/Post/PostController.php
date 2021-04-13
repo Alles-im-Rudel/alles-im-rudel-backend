@@ -29,7 +29,7 @@ class PostController extends Controller
 	{
 		$posts = Post::with([
 			'user.thumbnail', 'tags', 'thumbnails'
-		])->withCount('comments')->orderByDesc('created_at');
+		])->withCount('comments', 'likes')->orderByDesc('created_at');
 		if ($request->tagIds && count($request->tagIds) > 0) {
 			$posts = $posts->whereHas('tags', static function ($query) use ($request) {
 				$query->whereIn('tags.id', $request->tagIds);
@@ -40,7 +40,7 @@ class PostController extends Controller
 				->orWhere('created_at', 'like', "%{$request->search}%");
 		}
 
-		return PostResource::collection($posts->paginate(4, $request->page));
+		return PostResource::collection($posts->paginate(4, '*', $request->page, $request->page));
 	}
 
 	/**
@@ -49,7 +49,7 @@ class PostController extends Controller
 	 */
 	public function show(Post $post): PostResource
 	{
-		$post->loadMissing(['user.thumbnail', 'tags', 'images'])->loadCount('comments');
+		$post->loadMissing(['user.thumbnail', 'tags', 'images'])->loadCount('comments', 'likes');
 
 		return new PostResource($post);
 	}

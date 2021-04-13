@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +22,8 @@ class UserResource extends JsonResource
 			'lastName'         => $this->last_name,
 			'fullName'         => $this->first_name.' '.$this->last_name,
 			'email'            => $this->email,
+			'birthday'         => $this->birthday ? Carbon::parse($this->birthday)->format('Y-m-d') : '',
+			'age'              => $this->age,
 			'username'         => $this->username,
 			'emailVerifiedAt'  => $this->email_verfied_at,
 			'isActive'         => $this->activated_at !== null,
@@ -35,6 +38,9 @@ class UserResource extends JsonResource
 			'mainSummoner'     => new SummonerResource($this->whenLoaded('mainSummoner')),
 			'image'            => new ImageResource($this->whenLoaded('image')),
 			'thumbnail'        => new ImageResource($this->whenLoaded('thumbnail')),
+			'postsCount'       => $this->when(isset($this->posts_count), $this->posts_count),
+			'commentsCount'    => $this->when(isset($this->comments_count), $this->comments_count),
+			'likedCount'       => $this->when(isset($this->liked_count), $this->liked_count),
 			'createdAt'        => $this->created_at,
 			'updatedAt'        => $this->updated_at,
 			'deletedAt'        => $this->deleted_at,

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Relations\BelongsToUser;
+use App\Traits\Relations\MorphManyLikes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -11,9 +12,10 @@ use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 class Post extends Model
 {
 	use BelongsToUser,
-		CascadesDeletes;
+		CascadesDeletes,
+		MorphManyLikes;
 
-	protected array $cascadeDeletes = ['comments', 'images'];
+	protected array $cascadeDeletes = ['comments', 'images', 'likes'];
 
 	/**
 	 * The attributes that are mass assignable.

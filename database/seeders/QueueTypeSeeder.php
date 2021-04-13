@@ -35,6 +35,10 @@ class QueueTypeSeeder extends Seeder
 			[
 				'queue_type'   => 'RANKED_TEAM_5x5',
 				'display_name' => 'Ranked Flex Team 5x5'
+			],
+			[
+				'queue_type'   => 'RANKED_FLEX_SR',
+				'display_name' => 'Ranked Flex 5v5'
 			]
 		];
 	}

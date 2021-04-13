@@ -26,6 +26,7 @@ class PostResource extends JsonResource
 			'tags'          => TagResouce::collection($this->whenLoaded('tags')),
 			'images'        => ImageResource::collection($this->whenLoaded('images')),
 			'thumbnails'    => ImageResource::collection($this->whenLoaded('thumbnails')),
+			'likes'         => $this->when($this->likes_count !== null, $this->likes_count),
 			'createdAt'     => $this->created_at,
 			'updatedAt'     => $this->updated_at
 		];

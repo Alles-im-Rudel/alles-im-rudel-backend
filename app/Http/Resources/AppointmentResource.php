@@ -8,14 +8,19 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AppointmentResource extends JsonResource
 {
+	protected $year;
+
 	/**
 	 * Transform the resource into an array.
 	 *
-	 * @param  Request  $request
+	 * @param $request
 	 * @return array
 	 */
 	public function toArray($request): array
 	{
+
+		$this->year = $request->year;
+
 		return [
 			'id'          => $this->id,
 			'title'       => $this->title,
@@ -27,6 +32,7 @@ class AppointmentResource extends JsonResource
 			'fromTime'    => $this->getTime($this->start_at),
 			'toTime'      => $this->getTime($this->end_at),
 			'isBirthday'  => $this->is_birthday,
+			'birthday'    => $this->is_birthday ? $this->start_at : null,
 			'userId'      => $this->user_id,
 			'birthdayId'  => $this->birthday_id,
 			'color'       => $this->color,
@@ -41,6 +47,10 @@ class AppointmentResource extends JsonResource
 
 	protected function getTimeFormat($column): string
 	{
+		if ($this->is_birthday) {
+			$column = $this->year.'-'.Carbon::parse($column)->format('m-d');
+		}
+
 		$format = $this->is_all_day ? 'Y-m-d' : 'Y-m-d H:i';
 		return Carbon::parse($column)->format($format);
 	}

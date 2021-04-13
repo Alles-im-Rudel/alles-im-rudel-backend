@@ -17,9 +17,10 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->foreignId('level_id')->default(1);
             $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable( );
-            $table->string('email')->unique();
-            $table->string('username')->unique();
+            $table->string('last_name')->nullable();
+			$table->string('email')->unique();
+			$table->date('birthday')->nullable();
+			$table->string('username')->unique();
             $table->dateTime('activated_at')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

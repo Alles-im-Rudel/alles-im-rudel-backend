@@ -12,6 +12,8 @@ class AppointmentIndexRequest extends FormRequest
 	public function prepareForValidation(): void
 	{
 		$this->convertToString('search');
+		$this->convertToInteger('year');
+		$this->convertToInteger('month');
 	}
 
 	/**
@@ -23,6 +25,8 @@ class AppointmentIndexRequest extends FormRequest
 	{
 		return [
 			'search'   => 'nullable|string',
+			'month'    => 'integer|integer',
+			'year'     => 'integer|integer',
 			'tagIds'   => 'nullable|array',
 			'tagIds.*' => 'integer|exists:tags,id'
 		];

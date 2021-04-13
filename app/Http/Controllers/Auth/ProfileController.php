@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\BirthdayChanged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ProfileIndexRequest;
 use App\Http\Requests\Auth\ProfileMainSummonerRequest;
@@ -12,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use function DeepCopy\deep_copy;
 
 
 class ProfileController extends Controller
@@ -24,12 +26,15 @@ class ProfileController extends Controller
 	{
 		$userId = Auth::id();
 
-		return new UserResource(User::with(['summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail'])->find($userId));
+		return new UserResource(User::with([
+			'summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail'
+		])->find($userId));
 	}
 
 	public function update(ProfileUpdateRequest $request)
 	{
 		$user = Auth::user();
+		$originalUser = deep_copy(Auth::user());
 
 		if (!$user) {
 			return response(null, Response::HTTP_UNAUTHORIZED);
@@ -39,7 +44,8 @@ class ProfileController extends Controller
 			'first_name' => $request->firstName,
 			'last_name'  => $request->lastName,
 			'username'   => $request->username,
-			'email'      => $request->email
+			'email'      => $request->email,
+			'birthday'   => $request->birthday
 		];
 
 		if ($request->password && $request->passwordRepeat) {
@@ -52,6 +58,10 @@ class ProfileController extends Controller
 		}
 
 		$user->update($userData);
+
+		if ($user->birthday !== $originalUser->birthday) {
+			event(new BirthdayChanged($user));
+		}
 
 		return response()->json([
 			'message' => 'Das Profil wurde erfolgreich bearbeitet.',

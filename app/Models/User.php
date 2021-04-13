@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\Relations\BelongsToLevel;
 use App\Traits\Relations\BelongsToManySummoners;
 use App\Traits\Relations\BelongsToManyUserGroups;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,9 +38,15 @@ class User extends Authenticatable
 		'last_name',
 		'username',
 		'email',
+		'birthday',
 		'activated_at',
+		'level_id',
 		'email_verified_at',
 		'password',
+	];
+
+	protected $appends = [
+		'age'
 	];
 
 	/**
@@ -140,10 +148,46 @@ class User extends Authenticatable
 	 */
 	public function hasLikedAppointment(Appointment $appointment): bool
 	{
-		return (bool) $appointment->likes
-			->where('likeable_id', $appointment->id)
-			->where('likeable_type', get_class($appointment))
-			->where('user_id', $this->id)
-			->count();
+		return (bool) $appointment->likes->where('user_id', $this->id)->count();
 	}
+
+
+	/**
+	 * @param  Post  $post
+	 * @return bool
+	 */
+	public function hasLikedPost(Post $post): bool
+	{
+		return (bool) $post->likes->where('user_id', $this->id)->count();
+	}
+
+	/**
+	 * @return HasMany
+	 */
+	public function posts(): HasMany
+	{
+		return $this->hasMany(Post::class);
+	}
+
+	/**
+	 * @return HasMany
+	 */
+	public function comments(): HasMany
+	{
+		return $this->hasMany(Comment::class);
+	}
+
+	/**
+	 * @return HasMany
+	 */
+	public function liked(): HasMany
+	{
+		return $this->hasMany(Like::class, 'user_id', 'id');
+	}
+
+	public function getAgeAttribute(): int
+	{
+		return Carbon::now()->diffInYears(Carbon::parse($this->birthday));
+	}
+
 }

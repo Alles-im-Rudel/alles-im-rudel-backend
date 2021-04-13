@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Events\BirthdayChanged;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\User\UserAllRequest;
 use App\Http\Requests\User\UserDeleteRequest;
@@ -14,9 +15,11 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use function DeepCopy\deep_copy;
 
 class UserController extends BaseController
 {
@@ -85,18 +88,44 @@ class UserController extends BaseController
 	}
 
 	/**
+	 * @param  Request  $request
+	 * @return UserResource|JsonResponse
+	 */
+	public function showProfile(Request $request)
+	{
+		if (User::where('username', $request->username)->exists()) {
+			$user = User::where('username', $request->username)->with([
+				'permissions',
+				'roles',
+				'userGroups',
+				'mainSummoner.leagueEntries.queueType',
+				'thumbnail',
+				'image'
+			])->withCount('posts', 'comments', 'liked')->first();
+			return new UserResource($user);
+		}
+		return response()->json([
+			'message' => 'Benutzerprofil nicht gefunden',
+		], Response::HTTP_NOT_FOUND);
+	}
+
+	/**
 	 * @param  UserUpdateRequest  $request
 	 * @param  User  $user
 	 * @return JsonResponse
 	 */
 	public function update(UserUpdateRequest $request, User $user): JsonResponse
 	{
+
+		$originalUser = deep_copy($user);
+
 		$userData = [
-			'first_name'   => $request->firstName,
-			'last_name'    => $request->lastName,
-			'username'     => $request->username,
-			'email'        => $request->email,
-			'level_id'     => $request->levelId,
+			'first_name' => $request->firstName,
+			'last_name' => $request->lastName,
+			'username' => $request->username,
+			'email' => $request->email,
+			'birthday' => $request->birthday,
+			'level_id' => $request->levelId,
 			'activated_at' => $request->isActive ? now() : null,
 		];
 
@@ -111,10 +140,14 @@ class UserController extends BaseController
 
 		$user->update($userData);
 
+		if ($user->birthday !== $originalUser->birthday) {
+			event(new BirthdayChanged($user));
+		}
+
 		$user->loadMissing('permissions', 'roles', 'userGroups');
 
 		return response()->json([
-			'message' => 'Der Benutzer wurde erfolgreich gelöscht.',
+			'message' => 'Der Benutzer wurde erfolgreich bearbeitet.',
 			'user'    => new UserResource($user)
 		], Response::HTTP_OK);
 	}

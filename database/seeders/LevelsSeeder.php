@@ -12,7 +12,7 @@ class LevelsSeeder extends Seeder
 	 *
 	 * @return void
 	 */
-	public function run()
+	public function run(): void
 	{
 		$levels = $this->getLevels();
 
@@ -47,6 +47,14 @@ class LevelsSeeder extends Seeder
 			[
 				'id'           => Level::PROSPECT,
 				'display_name' => 'Prospect'
+			],
+			[
+				'id'           => Level::GUEST,
+				'display_name' => 'Gast'
+			],
+			[
+				'id'           => Level::NEW,
+				'display_name' => 'New'
 			],
 		];
 	}

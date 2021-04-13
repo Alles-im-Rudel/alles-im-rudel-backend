@@ -14,7 +14,9 @@ use App\Http\Controllers\Lol\SummonerController;
 use App\Http\Controllers\Lol\SummonerPickerController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Post\PostController;
+use App\Http\Controllers\Post\PostLikeController;
 use App\Http\Controllers\Tag\TagController;
+use App\Http\Controllers\User\MemberController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\UserImageController;
 use App\Http\Controllers\User\UserPickerController;
@@ -51,6 +53,10 @@ Route::group(['prefix' => 'posts'], static function () {
 	Route::get('{post}', [PostController::class, 'show']);
 });
 
+Route::group(['prefix' => 'members'], static function () {
+	Route::get('', [MemberController::class, 'index']);
+});
+
 Route::group(['prefix' => 'commments'], static function () {
 	Route::get('by/{post}', [CommentController::class, 'byPost']);
 });
@@ -61,6 +67,11 @@ Route::group(['prefix' => 'views'], static function () {
 
 Route::group(['prefix' => 'appointments'], static function () {
 	Route::get('', [AppointmentController::class, 'index']);
+	Route::get('{appointment}', [AppointmentController::class, 'show']);
+});
+
+Route::group(['prefix' => 'profils'], static function () {
+	Route::get('', [UserController::class, 'showProfile']);
 });
 
 Route::group(['middleware' => ['auth:api']], static function () {
@@ -71,7 +82,6 @@ Route::group(['middleware' => ['auth:api']], static function () {
 
 	Route::group(['prefix' => 'appointments'], static function () {
 		Route::post('', [AppointmentController::class, 'store']);
-		Route::get('{appointment}', [AppointmentController::class, 'show']);
 		Route::put('{appointment}', [AppointmentController::class, 'update']);
 		Route::delete('{appointment}', [AppointmentController::class, 'delete']);
 		Route::get('{appointment}/check', [AppointmentLikeController::class, 'checkLiked']);
@@ -102,6 +112,8 @@ Route::group(['middleware' => ['auth:api']], static function () {
 		Route::put('{post}', [PostController::class, 'update']);
 		Route::delete('{post}', [PostController::class, 'delete']);
 		Route::post('{post}/image', [PostController::class, 'storeImage']);
+		Route::get('{post}/check', [PostLikeController::class, 'checkLiked']);
+		Route::put('{post}/change', [PostLikeController::class, 'change']);
 	});
 
 	Route::group(['prefix' => 'users'], static function () {
@@ -131,6 +143,8 @@ Route::group(['middleware' => ['auth:api']], static function () {
 	Route::group(['prefix' => 'summoners'], static function () {
 		Route::get('', [SummonerController::class, 'index']);
 		Route::get('show', [SummonerController::class, 'show']);
+		Route::get('active-game/{summoner}', [SummonerController::class, 'activeGame']);
+		Route::get('check-active-game/{summoner}', [SummonerController::class, 'checkActiveGame']);
 		Route::get('picker', [SummonerPickerController::class, 'index']);
 		Route::get('reload/{summoner}', [SummonerController::class, 'reload']);
 		Route::put('detach-main-user/{summoner}', [SummonerController::class, 'detachMainUser']);

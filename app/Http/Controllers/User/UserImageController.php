@@ -32,7 +32,7 @@ class UserImageController extends Controller
 			'image'          => $image->encode('data-url'),
 			'thumbnail'      => $thumbnail->encode('data-url'),
 			'file_name'      => $originalFileName,
-			'title'          => $request->title,
+			'title'          => $request->title === 'null' ? '': $request->title,
 			'file_mime_type' => $image->mime(),
 			'file_size'      => $image->filesize()
 		]);

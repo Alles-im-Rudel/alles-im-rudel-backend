@@ -7,7 +7,9 @@ use App\Http\Requests\Auth\AuthLoginRequest;
 use App\Http\Requests\Auth\AuthRegisterRequest;
 use App\Http\Resources\PermissionResource;
 use App\Http\Resources\UserResource;
+use App\Models\Level;
 use App\Models\User;
+use App\Models\UserGroup;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -15,6 +17,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -114,9 +117,26 @@ class AuthController extends Controller
 			'password'          => Hash::make($request->password),
 			'email'             => $request->email,
 			'username'          => $request->username,
+			'birthday'          => $request->birthday,
+			'first_name'        => $request->lastName,
+			'last_name'         => $request->lastName,
+			'level_id'          => Level::NEW,
 			'email_verified_at' => $now,
 			'activated_at'      => $now
 		]);
+
+		$user->userGroups->sync(UserGroup::NEW);
+
+		Http::post('https://discord.com/api/webhooks/830809761112260609/rFWAF2ufChSX2hSlGi4BNL8K2jgOksHHm9ihbHoTqzoMjzRSCqz04GVW6GLd1bVCTnPV',
+			[
+				'embeds' => [
+					[
+						'title'       => 'Neue Registrierung!',
+						'description' => 'Es hat sich "'.$user->username.'" angemeldet!',
+						'color'       => '7506394',
+					]
+				],
+			]);
 
 		$http = new Client();
 

@@ -41,6 +41,7 @@ class PermissionsSeeder extends Seeder
 			'users.update',
 			'users.show',
 			'users.delete',
+			'users.like',
 			// UserGroups
 			'user_groups.index',
 			'user_groups.show',
@@ -68,16 +69,19 @@ class PermissionsSeeder extends Seeder
 			'comments.create',
 			'comments.delete',
 			'comments.update',
+			'comments.like',
 			// Post
 			'posts.create',
 			'posts.delete',
 			'posts.update',
+			'posts.like',
 			// Views
 			'views.update',
 			// Appointments
 			'appointments.create',
 			'appointments.update',
 			'appointments.delete',
+			'appointments.like',
 		];
 	}
 }

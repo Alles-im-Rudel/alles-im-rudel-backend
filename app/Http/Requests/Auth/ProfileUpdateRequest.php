@@ -26,6 +26,7 @@ class ProfileUpdateRequest extends FormRequest
 
 		$this->convertToString('username');
 		$this->convertToString('email');
+		$this->convertToCarbonDate('birthday');
 		$this->convertToString('firstName');
 		$this->convertToString('lastName');
 		$this->convertToString('password');
@@ -41,6 +42,7 @@ class ProfileUpdateRequest extends FormRequest
 	{
 		return [
 			'email'          => 'required|email|unique:users,email,'.$this->user->id,
+			'birthday'       => 'nullable|date',
 			'username'       => 'nullable|string|unique:users,username,'.$this->user->id,
 			'firstName'      => 'required|string',
 			'lastName'       => 'required|string',

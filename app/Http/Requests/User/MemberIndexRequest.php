@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Post;
+namespace App\Http\Requests\User;
 
 use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 
-class PostIndexRequest extends FormRequest
+class MemberIndexRequest extends FormRequest
 {
 	use RequestHelper;
 
@@ -23,10 +23,8 @@ class PostIndexRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'page'     => 'required|integer',
-			'search'   => 'nullable|string',
-			'tagIds'   => 'nullable|array',
-			'tagIds.*' => 'integer|exists:tags,id'
+			'page'   => 'required|integer',
+			'search' => 'nullable|string',
 		];
 	}
 }

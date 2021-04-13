@@ -28,6 +28,7 @@ class UserUpdateRequest extends FormRequest
 		$this->convertToString('lastName');
 		$this->convertToString('username');
 		$this->convertToString('email');
+		$this->convertToCarbonDate('birthday');
 		$this->convertToBoolean('isActive');
 		$this->convertToString('password');
 		$this->convertToString('passwordRepeat');
@@ -47,6 +48,7 @@ class UserUpdateRequest extends FormRequest
 			'lastName'       => 'nullable|max:30|min:2',
 			'username'       => 'required|max:20|min:1',
 			'email'          => 'required|email|max:50|min:3',
+			'birthday'       => 'nullable|date',
 			'isActive'       => 'required|boolean',
 			'password'       => 'nullable|string',
 			'passwordRepeat' => 'nullable|string',
