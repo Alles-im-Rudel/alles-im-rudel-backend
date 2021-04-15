@@ -11,6 +11,7 @@ use App\Http\Controllers\Lol\ClashController;
 use App\Http\Controllers\Lol\ClashMemberPickerController;
 use App\Http\Controllers\Lol\LolApiController;
 use App\Http\Controllers\Lol\SummonerController;
+use App\Http\Controllers\Lol\SummonerInfoController;
 use App\Http\Controllers\Lol\SummonerPickerController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Post\PostController;
@@ -144,6 +145,9 @@ Route::group(['middleware' => ['auth:api']], static function () {
 		Route::get('', [SummonerController::class, 'index']);
 		Route::get('show', [SummonerController::class, 'show']);
 		Route::get('active-game/{summoner}', [SummonerController::class, 'activeGame']);
+		Route::get('info-champions/{summoner}', [SummonerInfoController::class, 'champions']);
+		Route::get('info-matches/{summoner}', [SummonerInfoController::class, 'matches']);
+		Route::get('info/{summoner}', [SummonerInfoController::class, 'index']);
 		Route::get('check-active-game/{summoner}', [SummonerController::class, 'checkActiveGame']);
 		Route::get('picker', [SummonerPickerController::class, 'index']);
 		Route::get('reload/{summoner}', [SummonerController::class, 'reload']);

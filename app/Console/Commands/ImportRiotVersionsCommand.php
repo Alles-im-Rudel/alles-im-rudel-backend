@@ -38,5 +38,6 @@ class ImportRiotVersionsCommand extends Command
 		Artisan::call('import:champions');
 		Artisan::call('import:summoner-icons');
 		Artisan::call('import:summoner-spells');
+		Artisan::call('import:items');
 	}
 }

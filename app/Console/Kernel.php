@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(ImportRiotVersionsCommand::class)->weeklyOn(4);
+        $schedule->command(ImportRiotVersionsCommand::class)->weeklyOn(3);
     }
 
     /**

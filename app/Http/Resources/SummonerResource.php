@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\RiotSummonerIcon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +20,7 @@ class SummonerResource extends JsonResource
 			'id'            => $this->id,
 			'accountId'     => $this->account_id,
 			'profileIconId' => $this->profile_icon_id,
+			'profileIcon'   => RiotSummonerIcon::where('name', $this->profile_icon_id)->first()->image,
 			'revisionDate'  => $this->revision_date,
 			'name'          => $this->name,
 			'summonerId'    => $this->summoner_id,
