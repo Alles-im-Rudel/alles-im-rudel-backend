@@ -57,6 +57,18 @@ class UserGroupsSeeder extends Seeder
 				'description'  => 'Voll krass der Moderator',
 			],
 			[
+				'level_id'     => Level::MODERATOR,
+				'display_name' => 'Leiter SH',
+				'color'        => 'moderator',
+				'description'  => 'Leiter Schlesweig-Holstein',
+			],
+			[
+				'level_id'     => Level::MODERATOR,
+				'display_name' => 'Leiter MV',
+				'color'        => 'moderator',
+				'description'  => 'Leiter Mecklenburg-Vorpommern',
+			],
+			[
 				'level_id'     => Level::MEMBER,
 				'display_name' => 'Rudel Mitglied',
 				'color'        => 'member',

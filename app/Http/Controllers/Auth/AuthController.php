@@ -125,7 +125,7 @@ class AuthController extends Controller
 			'activated_at'      => $now
 		]);
 
-		$user->userGroups->sync(UserGroup::NEW);
+		$user->userGroups()->sync(UserGroup::NEW);
 
 		Http::post('https://discord.com/api/webhooks/830809761112260609/rFWAF2ufChSX2hSlGi4BNL8K2jgOksHHm9ihbHoTqzoMjzRSCqz04GVW6GLd1bVCTnPV',
 			[

@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -96,6 +97,22 @@ class User extends Authenticatable
 		$userGroupMaxLevel = $this->userGroups()->max('level_id');
 
 		return $userGroupMaxLevel > $this->level_id ? $userGroupMaxLevel : $this->level_id;
+	}
+
+	/**
+	 * @param  \Illuminate\Database\Eloquent\Builder  $query
+	 * @return \Illuminate\Database\Eloquent\Builder
+	 */
+	public function scopeMember(Builder $query): Builder
+	{
+		return $query->where('level_id', '<=', Level::ADMINISTRATOR)
+			->where('level_id', '>=', Level::PROSPECT)
+			->orWHere(static function (Builder $query) {
+				$query->whereHas('userGroups', function ($query) {
+					$query->where('level_id', '<=', Level::ADMINISTRATOR)
+						->where('level_id', '>=', Level::PROSPECT);
+				});
+			});
 	}
 
 	/**

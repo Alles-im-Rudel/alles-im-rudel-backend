@@ -3,33 +3,17 @@
 namespace App\Http\Controllers\Lol;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Requests\Summoner\SummonerActiveGameRequest;
-use App\Http\Requests\Summoner\SummonerAttachMainUserRequest;
-use App\Http\Requests\Summoner\SummonerDetachMainUserRequest;
-use App\Http\Requests\Summoner\SummonerIndexRequest;
 use App\Http\Requests\Summoner\SummonerInfoIndexRequest;
-use App\Http\Requests\Summoner\SummonerReloadRequest;
-use App\Http\Requests\Summoner\SummonerShowRequest;
 use App\Http\Resources\ChampionResource;
 use App\Http\Resources\Riot\RiotSummonerSpellResource;
-use App\Http\Resources\SummonerResource;
 use App\Models\Champion;
 use App\Models\RiotItems;
 use App\Models\RiotSummonerIcon;
 use App\Models\RiotSummonerSpell;
 use App\Models\Summoner;
 use App\Traits\Functions\SummonerTrait;
-use Carbon\Carbon;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use function DeepCopy\deep_copy;
 
 class SummonerInfoController extends BaseController
 {
@@ -157,7 +141,7 @@ class SummonerInfoController extends BaseController
 				'teamId'        => $item['teamId'],
 				'championId'    => $item['championId'],
 				'champion'      => new ChampionResource(Champion::where('key',
-					$item['championId'])->first()),
+					$item['championId'])->first() ?: Champion::getDefault()),
 				'spell1'        => new RiotSummonerSpellResource(RiotSummonerSpell::where('key',
 					$item['spell1Id'])->first()),
 				'spell2'        => new RiotSummonerSpellResource(RiotSummonerSpell::where('key',
@@ -203,8 +187,8 @@ class SummonerInfoController extends BaseController
 			'deaths'                          => $item['deaths'],
 			'doubleKills'                     => $item['doubleKills'],
 			'firstBloodAssist'                => $item['firstBloodAssist'],
-			//'firstInhibitorAssist'            => $item['firstInhibitorAssist'],
-			//'firstInhibitorKill'              => $item['firstInhibitorKill'],
+			'firstInhibitorAssist'            => $item['firstInhibitorAssist'],
+			'firstInhibitorKill'              => $item['firstInhibitorKill'],
 			'firstTowerAssist'                => $item['firstTowerAssist'],
 			'firstTowerKill'                  => $item['firstTowerKill'],
 			'goldEarned'                      => $item['goldEarned'],
@@ -317,7 +301,7 @@ class SummonerInfoController extends BaseController
 				'pickTurn'   => $item['pickTurn'],
 				'championId' => $item['championId'],
 				'champion'   => new ChampionResource(Champion::where('key',
-					$item['championId'])->first()),
+					$item['championId'])->first() ?: Champion::getDefault()),
 			];
 		});
 	}
@@ -333,7 +317,7 @@ class SummonerInfoController extends BaseController
 				'championLevel'                => $item['championLevel'],
 				'championId'                   => $item['championId'],
 				'champion'                     => new ChampionResource(Champion::where('key',
-					$item['championId'])->first()),
+					$item['championId'])->first() ?: Champion::getDefault()),
 				'championPoints'               => $item['championPoints'],
 				'chestGranted'                 => $item['chestGranted'],
 				'championPointsUntilNextLevel' => $item['championPointsUntilNextLevel']

@@ -29,4 +29,8 @@ class Champion extends Model
 		'stats',
 	];
 
+	public static function getDefault()
+	{
+		return self::where('key', '-1')->first();
+	}
 }

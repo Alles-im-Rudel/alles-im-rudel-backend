@@ -29,9 +29,22 @@ class ImportChampionsCommand extends Command
 		$data = Http::get('https://ddragon.leagueoflegends.com/cdn/'.RiotVersion::getVersion().'/data/de_DE/champion.json')->json();
 
 		Champion::query()->delete();
-
-		Log::error($data);
-
+		
+		Champion::create([
+			'champion_id' => '0',
+			'version'     => RiotVersion::getVersion(),
+			'key'         => '-1',
+			'name'        => 'kein Ban',
+			'title'       => '',
+			'blurb'       => '',
+			'info'        => '',
+			'image'       => '',
+			'icon'        => '',
+			'splash_art'  => '',
+			'tags'        => '',
+			'partype'     => '',
+			'stats'       => '',
+		]);
 		foreach ($data['data'] as $item) {
 			Champion::create([
 				'champion_id' => $item['id'],

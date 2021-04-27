@@ -27,16 +27,18 @@ class AppointmentController extends Controller
 		$appointments = Appointment::with(['birthdayKid.thumbnail', 'tags'])
 			->where('title', 'like', "%{$request->search}%")
 			->where(static function ($query) use ($request) {
-				$query->whereMonth('start_at', $request->month)
-					->whereYear('start_at', $request->year);
-			})
-			->orWhere(static function ($query) use ($request) {
-				$query->whereMonth('end_at', $request->month)
-					->whereYear('end_at', $request->year);
-			})
-			->orWhere(static function ($query) use ($request) {
-				$query->where('is_birthday', '=', true)
-					->whereMonth('start_at', '=', $request->month);
+				$query->where(static function ($query) use ($request) {
+					$query->whereMonth('start_at', $request->month)
+						->whereYear('start_at', $request->year);
+				});
+				$query->orWhere(static function ($query) use ($request) {
+					$query->whereMonth('end_at', $request->month)
+						->whereYear('end_at', $request->year);
+				});
+				$query->orWhere(static function ($query) use ($request) {
+					$query->where('is_birthday', '=', true)
+						->whereMonth('start_at', '=', $request->month);
+				});
 			});
 		if ($request->tagIds && count($request->tagIds) > 0) {
 			$appointments = $appointments->whereHas('tags', static function ($query) use ($request) {
