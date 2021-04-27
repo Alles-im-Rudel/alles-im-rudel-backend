@@ -30,7 +30,9 @@ class ImportItemsCommand extends Command
 		$data = Http::get('https://ddragon.leagueoflegends.com/cdn/'.RiotVersion::getVersion().'/data/de_DE/item.json')->json();
 
 		RiotItems::query()->delete();
-
+		RiotItems::create([
+			'item_id' => 0
+		]);
 		foreach ($data['data'] as $key => $item) {
 			RiotItems::create([
 				'item_id'     => $key,

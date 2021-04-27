@@ -15,17 +15,17 @@ class CreateRiotItemsTable extends Migration
 	{
 		Schema::create('riot_items', function (Blueprint $table) {
 			$table->id();
-			$table->integer('item_id');
-			$table->string('name');
-			$table->text('description');
-			$table->text('plaintext');
+			$table->integer('item_id')->nullable();
+			$table->string('name')->nullable();
+			$table->text('description')->nullable();
+			$table->text('plaintext')->nullable();
 			$table->text('into')->nullable();
 			$table->text('from')->nullable();
-			$table->text('tags');
-			$table->text('maps');
-			$table->text('gold');
-			$table->text('stats');
-			$table->text('image');
+			$table->text('tags')->nullable();
+			$table->text('maps')->nullable();
+			$table->text('gold')->nullable();
+			$table->text('stats')->nullable();
+			$table->text('image')->nullable();
 		});
 	}
 

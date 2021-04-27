@@ -162,7 +162,7 @@ class SummonerInfoController extends BaseController
 					$item['spell1Id'])->first()),
 				'spell2'        => new RiotSummonerSpellResource(RiotSummonerSpell::where('key',
 					$item['spell2Id'])->first()),
-				'stats'         => $this->getStets($item['stats']),
+				'stats'         => $this->getStats($item['stats']),
 				'timeline'      => $item['timeline'],
 				'lane'          => $item['timeline']['lane'],
 				'summoner'      => $this->getSummoner($item, $participantIdentities)
@@ -191,9 +191,8 @@ class SummonerInfoController extends BaseController
 	 * @param $item
 	 * @return array
 	 */
-	protected function getStets($item): array
+	protected function getStats($item): array
 	{
-		Log::error(RiotItems::where('item_id', $item['item0'])->first()->image);
 		return [
 			'assists'                         => $item['assists'],
 			'champLevel'                      => $item['champLevel'],
@@ -204,8 +203,8 @@ class SummonerInfoController extends BaseController
 			'deaths'                          => $item['deaths'],
 			'doubleKills'                     => $item['doubleKills'],
 			'firstBloodAssist'                => $item['firstBloodAssist'],
-			'firstInhibitorAssist'            => $item['firstInhibitorAssist'],
-			'firstInhibitorKill'              => $item['firstInhibitorKill'],
+			//'firstInhibitorAssist'            => $item['firstInhibitorAssist'],
+			//'firstInhibitorKill'              => $item['firstInhibitorKill'],
 			'firstTowerAssist'                => $item['firstTowerAssist'],
 			'firstTowerKill'                  => $item['firstTowerKill'],
 			'goldEarned'                      => $item['goldEarned'],
