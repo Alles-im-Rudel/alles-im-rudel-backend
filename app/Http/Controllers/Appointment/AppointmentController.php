@@ -10,11 +10,14 @@ use App\Http\Requests\Appointment\AppointmentIndexRequest;
 use App\Http\Requests\Appointment\AppointmentUpdateRequest;
 use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
+use App\Models\User;
+use App\Notifications\NewAppointmentNotification;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class AppointmentController extends Controller
 {
@@ -75,6 +78,9 @@ class AppointmentController extends Controller
 			'user_id'    => Auth::id()
 		]);
 		$appointment->tags()->sync($request->tagIds);
+
+		Notification::send(User::all(), new NewAppointmentNotification($appointment));
+
 		return response()->json([
 			'message' => 'Das Event wurde erfolgreich erstellt.'
 		], Response::HTTP_CREATED);

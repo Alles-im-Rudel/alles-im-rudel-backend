@@ -60,9 +60,9 @@
 <body>
 <div class="wrapper">
     <div class="container">
-        <a href="https://allesimrudel.de">
+        <a href="{{ env('APP_FRONTEND_URL') }}">
             <div class="titleImage">
-                <img src="/assets/head.png" alt="Alles Im Rudel" id="image"/>
+                <img src="/assets/head.png" alt="Alles Im Rudel" id="image" />
             </div>
             <div class="titleText">
                 Alles im Rudel
@@ -70,24 +70,24 @@
         </a>
     </div>
     <script type="text/javascript">
-        let minRadius = 75;
-        let maxRadius = 150;
-        let currentRadius = 75;
-        let addRadius = 1;
+      let minRadius = 75;
+      let maxRadius = 150;
+      let currentRadius = 75;
+      let addRadius = 1;
 
-        function loop() {
-            currentRadius += addRadius;
-            if (currentRadius === minRadius || currentRadius === maxRadius) {
-                addRadius = -addRadius;
-            }
-            let image = document.getElementById('image');
-            if (image) {
-                image.style.filter = "drop-shadow(0px 0px " + currentRadius / 10 + "px #fff)"
-            }
-            setTimeout(loop, 1)
+      function loop() {
+        currentRadius += addRadius;
+        if (currentRadius === minRadius || currentRadius === maxRadius) {
+          addRadius = -addRadius;
         }
+        let image = document.getElementById('image');
+        if (image) {
+          image.style.filter = "drop-shadow(0px 0px " + currentRadius / 10 + "px #fff)"
+        }
+        setTimeout(loop, 1)
+      }
 
-        loop();
+      loop();
     </script>
 </div>
 </body>

@@ -105,14 +105,14 @@ class User extends Authenticatable
 	 */
 	public function scopeMember(Builder $query): Builder
 	{
-		return $query->where('level_id', '<=', Level::ADMINISTRATOR)
-			->where('level_id', '>=', Level::PROSPECT)
-			->orWHere(static function (Builder $query) {
-				$query->whereHas('userGroups', function ($query) {
-					$query->where('level_id', '<=', Level::ADMINISTRATOR)
-						->where('level_id', '>=', Level::PROSPECT);
+		return $query->where(static function (Builder $query) {
+			$query->whereBetween('level_id', [Level::PROSPECT, Level::ADMINISTRATOR])
+				->orWhere(static function (Builder $query) {
+					$query->whereHas('userGroups', function ($query) {
+						$query->whereBetween('level_id', [Level::PROSPECT, Level::ADMINISTRATOR]);
+					});
 				});
-			});
+		});
 	}
 
 	/**

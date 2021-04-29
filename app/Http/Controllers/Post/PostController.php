@@ -10,6 +10,8 @@ use App\Http\Requests\Post\PostStoreRequest;
 use App\Http\Requests\Post\PostUpdateRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Models\User;
+use App\Notifications\NewPostNotification;
 use App\Services\Images\ImageGenerator;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -17,6 +19,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\ValidationException;
 
 class PostController extends Controller
@@ -67,6 +70,8 @@ class PostController extends Controller
 		]);
 
 		$post->tags()->sync($request->tagIds);
+
+		Notification::send(User::all(), new NewPostNotification($post));
 
 		return response()->json([
 			'postId' => $post->id

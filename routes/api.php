@@ -22,6 +22,7 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\UserImageController;
 use App\Http\Controllers\User\UserPickerController;
 use App\Http\Controllers\UserGroup\UserGroupController;
+use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\View\ViewController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,8 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 Route::get('auth', [AuthController::class, 'index']);
 Route::post('register', [AuthController::class, 'register']);
+Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
+Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
 Route::group(['prefix' => 'clash'], static function () {
 	Route::get('', [ClashController::class, 'index']);
@@ -75,7 +78,7 @@ Route::group(['prefix' => 'profils'], static function () {
 	Route::get('', [UserController::class, 'showProfile']);
 });
 
-Route::group(['middleware' => ['auth:api']], static function () {
+Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 
 	Route::group(['prefix' => 'views'], static function () {
 		Route::put('{view}', [ViewController::class, 'update']);
