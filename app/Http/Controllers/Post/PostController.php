@@ -71,7 +71,7 @@ class PostController extends Controller
 
 		$post->tags()->sync($request->tagIds);
 
-		Notification::send(User::all(), new NewPostNotification($post));
+		Notification::send(User::notification()->get(), new NewPostNotification($post));
 
 		return response()->json([
 			'postId' => $post->id

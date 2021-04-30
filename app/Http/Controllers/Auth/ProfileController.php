@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use function DeepCopy\deep_copy;
 
 
@@ -33,20 +34,19 @@ class ProfileController extends Controller
 
 	public function update(ProfileUpdateRequest $request)
 	{
-		$user = Auth::user();
-		$originalUser = deep_copy(Auth::user());
+		$user = User::find(Auth::id());
+		$originalUser = deep_copy($user);
 
 		if (!$user) {
 			return response(null, Response::HTTP_UNAUTHORIZED);
 		}
 
-		$userData = [
-			'first_name' => $request->firstName,
-			'last_name'  => $request->lastName,
-			'username'   => $request->username,
-			'email'      => $request->email,
-			'birthday'   => $request->birthday
-		];
+		$user->first_name = $request->firstName;
+		$user->last_name = $request->lastName;
+		$user->username = $request->username;
+		$user->email = $request->email;
+		$user->wants_email_notification = $request->wantsEmailNotification;
+		$user->birthday = $request->birthday;
 
 		if ($request->password && $request->passwordRepeat) {
 			if ($request->password !== $request->passwordRepeat) {
@@ -54,10 +54,17 @@ class ProfileController extends Controller
 					"message" => "Die Passwörter stimmen nicht überein."
 				], Response::HTTP_UNPROCESSABLE_ENTITY);
 			}
-			$userData['password'] = Hash::make($request->password);
+			$user->password = Hash::make($request->password);
 		}
 
-		$user->update($userData);
+		$user->save();
+
+		if ($originalUser->email !== $user->email) {
+			$user->wants_email_notification = false;
+			$user->email_verified_at = null;
+			$user->save();
+			$user->sendEmailVerificationNotification();
+		}
 
 		if ($user->birthday !== $originalUser->birthday) {
 			event(new BirthdayChanged($user));

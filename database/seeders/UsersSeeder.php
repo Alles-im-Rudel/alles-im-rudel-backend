@@ -53,7 +53,7 @@ class UsersSeeder extends Seeder
 				'activated_at'      => $now,
 			],
 			[
-				'level_id'          => Level::DEVELOPER,
+				'level_id'          => Level::ADMINISTRATOR,
 				'first_name'        => 'Silas',
 				'last_name'         => 'Beckmann',
 				'username'          => 'silas098',

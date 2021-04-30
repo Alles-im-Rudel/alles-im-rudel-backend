@@ -28,6 +28,7 @@ class ProfileUpdateRequest extends FormRequest
 		$this->convertToString('email');
 		$this->convertToCarbonDate('birthday');
 		$this->convertToString('firstName');
+		$this->convertToBoolean('wantsEmailNotification');
 		$this->convertToString('lastName');
 		$this->convertToString('password');
 		$this->convertToString('passwordRepeat');
@@ -41,13 +42,14 @@ class ProfileUpdateRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'email'          => 'required|email|unique:users,email,'.$this->user->id,
-			'birthday'       => 'nullable|date',
-			'username'       => 'nullable|string|unique:users,username,'.$this->user->id,
-			'firstName'      => 'required|string',
-			'lastName'       => 'required|string',
-			'password'       => 'nullable|string',
-			'passwordRepeat' => 'nullable|string',
+			'email'                  => 'required|email|unique:users,email,'.$this->user->id,
+			'birthday'               => 'nullable|date',
+			'username'               => 'nullable|string|unique:users,username,'.$this->user->id,
+			'firstName'              => 'required|string',
+			'wantsEmailNotification' => 'required|bool',
+			'lastName'               => 'required|string',
+			'password'               => 'nullable|string',
+			'passwordRepeat'         => 'nullable|string',
 		];
 	}
 }

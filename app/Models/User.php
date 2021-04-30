@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\VerifyEmailNotification;
 use App\Traits\Relations\BelongsToLevel;
 use App\Traits\Relations\BelongsToManySummoners;
 use App\Traits\Relations\BelongsToManyUserGroups;
@@ -43,6 +44,7 @@ class User extends Authenticatable
 		'activated_at',
 		'level_id',
 		'email_verified_at',
+		'wants_email_notification',
 		'password',
 	];
 
@@ -66,8 +68,9 @@ class User extends Authenticatable
 	 * @var array
 	 */
 	protected $casts = [
-		'email_verified_at' => 'datetime',
-		'activated_at'      => 'datetime'
+		'email_verified_at'        => 'datetime',
+		'wants_email_notification' => 'bool',
+		'activated_at'             => 'datetime'
 	];
 
 	/**
@@ -113,6 +116,16 @@ class User extends Authenticatable
 					});
 				});
 		});
+	}
+
+	public function scopeNotification(Builder $query): Builder
+	{
+		return $query->where('wants_email_notification', '=', true);
+	}
+
+	public function sendEmailVerificationNotification(): void
+	{
+		$this->notify(new VerifyEmailNotification());
 	}
 
 	/**

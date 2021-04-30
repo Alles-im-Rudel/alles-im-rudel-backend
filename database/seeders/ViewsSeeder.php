@@ -41,7 +41,7 @@ class ViewsSeeder extends Seeder
 			],
 			[
 				'title' => 'Alles im Rudel Airsoft',
-				'body'  => '<p>Wir sind ein wachsendes Airsoft-Team mit dem Sitz in:</p><ul><li> Südholstein/Elmshorn </li><li>Mitte Mecklenburgs an der Müritz</li></ul><h3>Ziel:</h3><p>Wir haben uns als Ziel gesetzt einzelne Airsoft-Spieler eine einfache Möglichkeit zu bieten schnell ein <strong>Team </strong>bzw. eine <strong>Gruppe </strong>zu finden, egal ob <strong>Neuling </strong>oder <strong>alter Hase</strong>.</p><p><strong>Teamplay </strong>und <strong>Spaß </strong>stehen bei uns im Vordergrund.</p>',
+				'body'  => '<p>Wir sind ein stetig wachsendes Team, das sich aus Mitgliedern aus dem Raum <strong>Schleswig-Holstein</strong> und <strong>Mecklenburg-Vorpommern</strong> zusammensetzt, und jeweils einen Sitz in <strong>Elmshorn </strong>(SH) und in <strong>Leizen </strong>(MV) hat.</p><p>Es ist unser vorrangiges Ziel, den Airsoft-Sport für <strong>neue Spieler</strong> zugänglicher zu machen, und bereits <strong>aktiven Spielern</strong> schnell und unkompliziert ein erfahrenes Team anzubieten. Mit dem Fokus auf <strong>Teamplay</strong>, <strong>Fairness </strong>und vor allem <strong>Spaß </strong>an dem Airsoft-Sport begrüßen wir auf herzliche Weise neue Spieler bei uns im Team.</p><p><br></p><p>Folgendes können wir euch zur Verfügung stellen:</p><p>- <strong>Ausrüstung zum Leihen</strong>, um einen ersten Eindruck zu gewinnen</p><p>- Beratung beim Kauf und Tuning von Ausrüstung</p><p>- Organisation von Events, Fahrgemeinschaften, etc.</p><p><br></p><p>Folgendes solltet ihr mitbringen:</p><p>- Interesse an dem Airsoft-Sport</p>',
 			],
 			[
 				'title' => 'Alles im Rudel Gaming',

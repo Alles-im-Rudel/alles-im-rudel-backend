@@ -79,7 +79,7 @@ class AppointmentController extends Controller
 		]);
 		$appointment->tags()->sync($request->tagIds);
 
-		Notification::send(User::all(), new NewAppointmentNotification($appointment));
+		Notification::send(User::notification()->get(), new NewAppointmentNotification($appointment));
 
 		return response()->json([
 			'message' => 'Das Event wurde erfolgreich erstellt.'
