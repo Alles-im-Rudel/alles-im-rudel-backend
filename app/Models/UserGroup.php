@@ -22,7 +22,7 @@ class UserGroup extends Model
 	public const AIRSOFT = 6;
 	public const PROSPECT = 7;
 	public const GUEST = 8;
-	public const NEW = 9;
+	public const NEW = 11;
 
 	protected $fillable = [
 		'display_name',
