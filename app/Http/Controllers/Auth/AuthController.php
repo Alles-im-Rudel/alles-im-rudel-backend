@@ -121,7 +121,7 @@ class AuthController extends Controller
 			'email'             => $request->email,
 			'username'          => $request->username,
 			'birthday'          => $request->birthday,
-			'first_name'        => $request->lastName,
+			'first_name'        => $request->firstName,
 			'last_name'         => $request->lastName,
 			'level_id'          => Level::NEW,
 			'email_verified_at' => null,
