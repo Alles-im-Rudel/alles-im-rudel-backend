@@ -132,7 +132,7 @@ class AuthController extends Controller
 
 		$user->sendEmailVerificationNotification();
 
-		/*Http::post('https://discord.com/api/webhooks/830809761112260609/rFWAF2ufChSX2hSlGi4BNL8K2jgOksHHm9ihbHoTqzoMjzRSCqz04GVW6GLd1bVCTnPV',
+		Http::post('https://discord.com/api/webhooks/830809761112260609/rFWAF2ufChSX2hSlGi4BNL8K2jgOksHHm9ihbHoTqzoMjzRSCqz04GVW6GLd1bVCTnPV',
 			[
 				'embeds' => [
 					[
@@ -141,7 +141,7 @@ class AuthController extends Controller
 						'color'       => '7506394',
 					]
 				],
-			]);*/
+			]);
 
 		$http = new Client();
 
