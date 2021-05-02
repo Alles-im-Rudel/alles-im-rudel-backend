@@ -109,7 +109,7 @@ class PostController extends Controller
 		]);
 
 		return response()->json([
-			'message' => 'Upload success'
+			'message' => 'Der Post wurde erfolgreich gespeichert!'
 		]);
 	}
 

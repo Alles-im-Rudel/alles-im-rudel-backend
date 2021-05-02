@@ -32,13 +32,13 @@ class UserImageController extends Controller
 			'image'          => $image->encode('data-url'),
 			'thumbnail'      => $thumbnail->encode('data-url'),
 			'file_name'      => $originalFileName,
-			'title'          => $request->title === 'null' ? '': $request->title,
+			'title'          => $request->title === 'null' ? '' : $request->title,
 			'file_mime_type' => $image->mime(),
 			'file_size'      => $image->filesize()
 		]);
 
 		return response()->json([
-			'message' => 'Upload success'
+			'message' => 'Das Profilbild wurde erfolgreich gespeichert!'
 		]);
 	}
 }
