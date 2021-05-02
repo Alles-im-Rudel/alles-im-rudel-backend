@@ -22,7 +22,7 @@ class ClashMemberPickerController extends Controller
 		if ($request->search) {
 			$query = $this->search("%{$request->search}%", $query);
 		}
-		if($request->clashMemberIds) {
+		if ($request->clashMemberIds) {
 			$query->whereNotIn('id', $request->clashMemberIds);
 		}
 		$query->orderBy('last_name');
@@ -37,9 +37,11 @@ class ClashMemberPickerController extends Controller
 	 */
 	protected function search(string $search, Builder $query): Builder
 	{
-		return $query->where('first_name', 'like', $search)
-			->orWhere('last_name', 'like', $search)
-			->orWhere('username', 'like', $search)
-			->orWhere('email', 'like', $search);
+		return $query->where(function ($query) use ($search) {
+			$query->where('first_name', 'like', $search)
+				->orWhere('last_name', 'like', $search)
+				->orWhere('username', 'like', $search)
+				->orWhere('email', 'like', $search);
+		});
 	}
 }
