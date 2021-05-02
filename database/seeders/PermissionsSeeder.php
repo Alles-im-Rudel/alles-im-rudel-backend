@@ -82,6 +82,8 @@ class PermissionsSeeder extends Seeder
 			'appointments.update',
 			'appointments.delete',
 			'appointments.like',
+			// Dashboard
+			'dashboard.index'
 		];
 	}
 }
