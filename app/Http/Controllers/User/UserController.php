@@ -59,7 +59,7 @@ class UserController extends BaseController
 		$this->onlyTrashed($request->onlyTrashed);
 		$this->search("%{$request->search}%")
 			->withCount('roles', 'permissions', 'userGroups', 'thumbnail');
-
+		$this->getQuery()->levelScope();
 		return UserResource::collection($this->paginate($request->perPage, $request->page));
 	}
 
@@ -120,12 +120,12 @@ class UserController extends BaseController
 		$originalUser = deep_copy($user);
 
 		$userData = [
-			'first_name' => $request->firstName,
-			'last_name' => $request->lastName,
-			'username' => $request->username,
-			'email' => $request->email,
-			'birthday' => $request->birthday,
-			'level_id' => $request->levelId,
+			'first_name'   => $request->firstName,
+			'last_name'    => $request->lastName,
+			'username'     => $request->username,
+			'email'        => $request->email,
+			'birthday'     => $request->birthday,
+			'level_id'     => $request->levelId,
 			'activated_at' => $request->isActive ? now() : null,
 		];
 

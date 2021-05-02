@@ -118,6 +118,20 @@ class User extends Authenticatable
 		});
 	}
 
+	/**
+	 * @param  \Illuminate\Database\Eloquent\Builder  $query
+	 * @return \Illuminate\Database\Eloquent\Builder
+	 */
+	public function scopeLevelScope(Builder $query): Builder
+	{
+		return $query->where(static function (Builder $query) {
+			$query->where('level_id', '<=', Auth::user()->getMaxLevelId())
+				->whereDoesntHave('userGroups', function ($query) {
+					$query->where('level_id', '>', Auth::user()->getMaxLevelId());
+				});
+		});
+	}
+
 	public function scopeNotification(Builder $query): Builder
 	{
 		return $query->where('wants_email_notification', '=', true);
