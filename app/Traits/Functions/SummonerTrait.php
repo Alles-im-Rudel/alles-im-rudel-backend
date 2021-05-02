@@ -18,7 +18,7 @@ trait SummonerTrait
 	public function getSummonerByName($name)
 	{
 		$summoner = Summoner::where('name', $name)->first();
-		if ($summoner) {
+		if ($summoner && $summoner->updated > now()->subDay()) {
 			return $summoner;
 		}
 
@@ -35,24 +35,27 @@ trait SummonerTrait
 			Log::error($exception);
 			return null;
 		}
-		return Summoner::create([
-			'account_id'      => $summonerData['accountId'],
-			'profile_icon_id' => (int) $summonerData['profileIconId'],
-			'revision_date'   => Carbon::parse($summonerData['revisionDate']),
-			'name'            => $summonerData['name'],
-			'summoner_id'     => $summonerData['id'],
-			'puuid'           => $summonerData['puuid'],
-			'summoner_level'  => $summonerData['summonerLevel'],
-		]);
+		return Summoner::updateOrCreate(
+			['name' => $summonerData['name']],
+			[
+				'account_id'      => $summonerData['accountId'],
+				'profile_icon_id' => (int) $summonerData['profileIconId'],
+				'revision_date'   => Carbon::parse($summonerData['revisionDate']),
+				'name'            => $summonerData['name'],
+				'summoner_id'     => $summonerData['id'],
+				'puuid'           => $summonerData['puuid'],
+				'summoner_level'  => $summonerData['summonerLevel'],
+			]);
 	}
 
 	/**
 	 * @param  Summoner  $summoner
-
 	 * @return bool
 	 */
 	public function reloadSummoner(Summoner $summoner): bool
 	{
+
+		$summoner = $this->getSummonerByName($summoner->name);
 
 		$http = new Client();
 		try {

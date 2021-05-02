@@ -27,10 +27,19 @@ class SummonerInfoController extends BaseController
 	{
 		$summoner = $this->getSummonerByName($summoner->name);
 
-		$masteryScore = Http::get(env('RIOT_API_URL').'/lol/champion-mastery/v4/scores/by-summoner/'.$summoner->summoner_id.'?api_key='.env('RIOT_API_KEY'))->body();
-		$championsJson = Http::get(env('RIOT_API_URL').'/lol/champion-mastery/v4/champion-masteries/by-summoner/'.$summoner->summoner_id.'?api_key='.env('RIOT_API_KEY'))->json();
+		try {
+			$masteryScore = Http::get(env('RIOT_API_URL').'/lol/champion-mastery/v4/scores/by-summoner/'.$summoner->summoner_id.'?api_key='.env('RIOT_API_KEY'))->body();
+		} catch (\Exception $exception) {
+			$masteryScore = 0;
+		}
+		try {
+			$championsJson = Http::get(env('RIOT_API_URL').'/lol/champion-mastery/v4/champion-masteries/by-summoner/'.$summoner->summoner_id.'?api_key='.env('RIOT_API_KEY'))->json();
 
-		$champions = $this->getChampionsData(collect($championsJson));
+			$champions = $this->getChampionsData(collect($championsJson));
+		} catch (\Exception $exception) {
+			$champions = [];
+		}
+
 
 		return [
 			'champions'    => $champions,
@@ -41,14 +50,20 @@ class SummonerInfoController extends BaseController
 	/**
 	 * @param  \App\Models\Summoner  $summoner
 	 * @param  \App\Http\Requests\Summoner\SummonerInfoIndexRequest  $request
-	 * @return \Illuminate\Support\Collection
+	 * @return array|\Illuminate\Support\Collection
 	 */
-	public function matches(Summoner $summoner, SummonerInfoIndexRequest $request): Collection
+	public function matches(Summoner $summoner, SummonerInfoIndexRequest $request)
 	{
 		$summoner = $this->getSummonerByName($summoner->name);
 
-		$matchesJson = Http::get(env('RIOT_API_URL').'/lol/match/v4/matchlists/by-account/'.$summoner->account_id.'?endIndex='.$request->endIndex.'&beginIndex'.$request->beginIndex.'&api_key='.env('RIOT_API_KEY'))->json();
-
+		try {
+			$matchesJson = Http::get(env('RIOT_API_URL').'/lol/match/v4/matchlists/by-account/'.$summoner->account_id.'?endIndex='.$request->endIndex.'&beginIndex'.$request->beginIndex.'&api_key='.env('RIOT_API_KEY'))->json();
+		} catch (\Exception $exception) {
+			return [];
+		}
+		if (!$matchesJson['matches']) {
+			return [];
+		}
 		return $this->getMatches(collect($matchesJson['matches']));
 
 	}
