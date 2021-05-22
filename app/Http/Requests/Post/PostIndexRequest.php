@@ -13,6 +13,7 @@ class PostIndexRequest extends FormRequest
 	{
 		$this->convertToInteger('page');
 		$this->convertToString('search');
+		$this->convertToInteger('items');
 	}
 
 	/**
@@ -26,6 +27,7 @@ class PostIndexRequest extends FormRequest
 			'page'     => 'required|integer',
 			'search'   => 'nullable|string',
 			'tagIds'   => 'nullable|array',
+			'items'    => 'nullable|integer',
 			'tagIds.*' => 'integer|exists:tags,id'
 		];
 	}
