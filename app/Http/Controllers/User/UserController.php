@@ -120,13 +120,14 @@ class UserController extends BaseController
 		$originalUser = deep_copy($user);
 
 		$userData = [
-			'first_name'   => $request->firstName,
-			'last_name'    => $request->lastName,
-			'username'     => $request->username,
-			'email'        => $request->email,
-			'birthday'     => $request->birthday,
-			'level_id'     => $request->levelId,
-			'activated_at' => $request->isActive ? now() : null,
+			'first_name'               => $request->firstName,
+			'last_name'                => $request->lastName,
+			'username'                 => $request->username,
+			'email'                    => $request->email,
+			'birthday'                 => $request->birthday,
+			'level_id'                 => $request->levelId,
+			'wants_email_notification' => $request->wantsWmailNotification,
+			'activated_at'             => $request->isActive ? now() : null,
 		];
 
 		if ($request->password && $request->passwordRepeat) {
