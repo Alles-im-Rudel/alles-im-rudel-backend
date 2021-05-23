@@ -69,11 +69,6 @@ Route::group(['prefix' => 'views'], static function () {
 	Route::get('{view}', [ViewController::class, 'show']);
 });
 
-Route::group(['prefix' => 'appointments'], static function () {
-	Route::get('', [AppointmentController::class, 'index']);
-	Route::get('{appointment}', [AppointmentController::class, 'show']);
-});
-
 Route::group(['prefix' => 'profils'], static function () {
 	Route::get('', [UserController::class, 'showProfile']);
 });
@@ -85,6 +80,8 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 	});
 
 	Route::group(['prefix' => 'appointments'], static function () {
+        Route::get('', [AppointmentController::class, 'index']);
+        Route::get('{appointment}', [AppointmentController::class, 'show']);
 		Route::post('', [AppointmentController::class, 'store']);
 		Route::put('{appointment}', [AppointmentController::class, 'update']);
 		Route::delete('{appointment}', [AppointmentController::class, 'delete']);
