@@ -4,11 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Level;
 use App\Models\Permission;
-use App\Models\User;
 use App\Models\UserGroup;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class UserGroupsSeeder extends Seeder
 {
@@ -36,7 +34,6 @@ class UserGroupsSeeder extends Seeder
 
 	public function getUserGroups(): array
 	{
-		$now = Carbon::now();
 		return [
 			[
 				'level_id'     => Level::DEVELOPER,
@@ -97,13 +94,7 @@ class UserGroupsSeeder extends Seeder
 				'display_name' => 'Gast',
 				'color'        => 'guest',
 				'description'  => 'Voll krass der Gast',
-			],
-			[
-				'level_id'     => Level::NEW,
-				'display_name' => 'Neu',
-				'color'        => 'new',
-				'description'  => 'Voll krass der neue',
-			],
+			]
 		];
 	}
 

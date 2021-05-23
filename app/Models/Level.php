@@ -17,7 +17,6 @@ class Level extends Model
 	public const MEMBER = 50;
 	public const PROSPECT = 25;
 	public const GUEST = 1;
-	public const NEW = 0;
 
 	protected $fillable = [
 		'id',

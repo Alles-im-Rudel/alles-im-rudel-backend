@@ -40,7 +40,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 Route::get('auth', [AuthController::class, 'index']);
-Route::post('register', [AuthController::class, 'register']);
+// Route::post('register', [AuthController::class, 'register']);
 Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
@@ -61,7 +61,7 @@ Route::group(['prefix' => 'members'], static function () {
 	Route::get('', [MemberController::class, 'index']);
 });
 
-Route::group(['prefix' => 'commments'], static function () {
+Route::group(['prefix' => 'comments'], static function () {
 	Route::get('by/{post}', [CommentController::class, 'byPost']);
 });
 
@@ -128,7 +128,8 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::delete('image/{user}', [UserImageController::class, 'delete']);
 		Route::put('sync-permissions/{user}', [UserController::class, 'syncPermissions']);
 		Route::put('sync-user-groups/{user}', [UserController::class, 'syncUserGroups']);
-		Route::get('{user}', [UserController::class, 'show']);
+        Route::post('', [UserController::class, 'store']);
+        Route::get('{user}', [UserController::class, 'show']);
 		Route::put('{user}', [UserController::class, 'update']);
 		Route::delete('{user}', [UserController::class, 'delete']);
 	});

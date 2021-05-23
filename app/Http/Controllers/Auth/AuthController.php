@@ -13,14 +13,11 @@ use App\Models\UserGroup;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -123,12 +120,12 @@ class AuthController extends Controller
 			'birthday'          => $request->birthday,
 			'first_name'        => $request->firstName,
 			'last_name'         => $request->lastName,
-			'level_id'          => Level::NEW,
+			'level_id'          => Level::GUEST,
 			'email_verified_at' => null,
 			'activated_at'      => $now
 		]);
 
-		$user->userGroups()->sync(UserGroup::NEW);
+		$user->userGroups()->sync(UserGroup::GUEST);
 
 		$user->sendEmailVerificationNotification();
 

@@ -51,11 +51,7 @@ class LevelsSeeder extends Seeder
 			[
 				'id'           => Level::GUEST,
 				'display_name' => 'Gast'
-			],
-			[
-				'id'           => Level::NEW,
-				'display_name' => 'New'
-			],
+			]
 		];
 	}
 }

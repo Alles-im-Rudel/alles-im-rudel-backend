@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Permission;
-use App\Models\User;
-use App\Models\UserGroup;
 use Illuminate\Database\Seeder;
 
 class PermissionsSeeder extends Seeder
@@ -38,6 +36,7 @@ class PermissionsSeeder extends Seeder
 			'permissions.user_groups.sync',
 			// Users
 			'users.index',
+            'users.store',
 			'users.update',
 			'users.show',
 			'users.delete',
