@@ -30,6 +30,7 @@ class PostController extends Controller
 	 */
 	public function index(PostIndexRequest $request): AnonymousResourceCollection
 	{
+		$items = $request->items ?: 3;
 		$posts = Post::with([
 			'user.thumbnail', 'tags', 'thumbnails'
 		])->withCount('comments', 'likes')->orderByDesc('created_at');
@@ -43,7 +44,7 @@ class PostController extends Controller
 				->orWhere('created_at', 'like', "%{$request->search}%");
 		}
 
-		return PostResource::collection($posts->paginate(4, '*', $request->page, $request->page));
+		return PostResource::collection($posts->paginate($items, '*', $request->page, $request->page));
 	}
 
 	/**
