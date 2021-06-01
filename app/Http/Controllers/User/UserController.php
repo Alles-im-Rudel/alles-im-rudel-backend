@@ -155,8 +155,8 @@ class UserController extends BaseController
             'email'                    => $request->email,
             'birthday'                 => $request->birthday,
             'level_id'                 => $request->levelId,
-            'wants_email_notification' => $request->wantsEmailNotification,
             'activated_at'             => $request->isActive ? now() : null,
+            'wants_email_notification' => $user->email_verified_at && $request->wantsEmailNotification,
         ];
 
         if ($request->password && $request->passwordRepeat) {
@@ -172,6 +172,13 @@ class UserController extends BaseController
 
         if ($user->birthday !== $originalUser->birthday) {
             event(new BirthdayChanged($user));
+        }
+
+        if ($user->email !== $originalUser->email) {
+            $user->wants_email_notification = false;
+            $user->email_verified_at = null;
+            $user->save();
+            $user->sendEmailVerificationNotification();
         }
 
         $user->loadMissing('permissions', 'roles', 'userGroups');
