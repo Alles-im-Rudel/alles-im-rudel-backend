@@ -34,7 +34,7 @@ class TagSeeder extends Seeder
 				'color' => '#4D4832'
 			],
 			[
-				'name'  => 'Gaming',
+				'name'  => 'Allgemein',
 				'color' => '#B8B8B5'
 			],
 			[
