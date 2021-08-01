@@ -20,6 +20,5 @@ class DatabaseSeeder extends Seeder
 		$this->call(QueueTypeSeeder::class);
 		$this->call(ClashSeeder::class);
 		$this->call(TagSeeder::class);
-		$this->call(ViewsSeeder::class);
 	}
 }

@@ -2,46 +2,28 @@
 
 namespace Database\Seeders;
 
-
 use App\Models\Tag;
-use Illuminate\Database\Seeder;
 
-class TagSeeder extends Seeder
+class TagSeeder extends BaseSeeder
 {
-	/**
-	 * Run the database seeds.
-	 *
-	 * @return void
-	 */
-	public function run(): void
-	{
-		$tags = $this->getTags();
+    public ?string $model = Tag::class;
+    public string $firstOrCreateKey = 'name';
 
-		foreach ($tags as $tag) {
-			Tag::firstOrCreate([
-				'name' => $tag['name']
-			], [
-				'color' => $tag['color'],
-			]);
-		}
-	}
-
-	public function getTags(): array
-	{
-		return [
-			[
-				'name'  => 'Airsoft',
-				'color' => '#4D4832'
-			],
-			[
-				'name'  => 'Allgemein',
-				'color' => '#B8B8B5'
-			],
-			[
-				'name'  => 'E-Sports',
-				'color' => '#0362fc'
-			]
-		];
-	}
-
+    public function firstOrCreate(): array
+    {
+        return [
+            [
+                'name'  => 'Airsoft',
+                'color' => '#4D4832'
+            ],
+            [
+                'name'  => 'Allgemein',
+                'color' => '#B8B8B5'
+            ],
+            [
+                'name'  => 'E-Sports',
+                'color' => '#0362fc'
+            ]
+        ];
+    }
 }

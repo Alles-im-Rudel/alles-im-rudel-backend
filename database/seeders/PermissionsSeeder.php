@@ -14,8 +14,7 @@ class PermissionsSeeder extends Seeder
 	 */
 	public function run(): void
 	{
-		$permissions = $this->getPermissions();
-		foreach ($permissions as $permission) {
+		foreach ($this->getPermissions() as $permission) {
 			Permission::firstOrCreate([
 				'name' => $permission
 			]);
@@ -28,7 +27,7 @@ class PermissionsSeeder extends Seeder
 	public function getPermissions(): array
 	{
 		return [
-			// Routeheadline
+			// Route Headline
 			'headline.management',
 			// Permissions
 			'permissions.index',

@@ -3,29 +3,13 @@
 namespace Database\Seeders;
 
 use App\Models\QueueType;
-use Illuminate\Database\Seeder;
 
-class QueueTypeSeeder extends Seeder
+class QueueTypeSeeder extends BaseSeeder
 {
-	/**
-	 * Run the database seeds.
-	 *
-	 * @return void
-	 */
-	public function run(): void
-	{
-		$queueTypes = $this->getQueueTypes();
+    public ?string $model =  QueueType::class;
+    public string $firstOrCreateKey = 'queue_type';
 
-		foreach ($queueTypes as $queueType) {
-			QueueType::firstOrCreate([
-				'queue_type' => $queueType['queue_type']
-			], [
-				'display_name' => $queueType['display_name'],
-			]);
-		}
-	}
-
-	public function getQueueTypes(): array
+	public function firstOrCreate(): array
 	{
 		return [
 			[

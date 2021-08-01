@@ -5,33 +5,17 @@ namespace Database\Seeders;
 use App\Models\Level;
 use App\Models\Permission;
 use App\Models\UserGroup;
-use Carbon\Carbon;
-use Illuminate\Database\Seeder;
 
-class UserGroupsSeeder extends Seeder
+class UserGroupsSeeder extends BaseSeeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run(): void
-    {
-        foreach ($this->getUserGroups() as $userGroup) {
-            UserGroup::updateOrCreate([
-                'id' => $userGroup['id']
-            ], [
-                'level_id'     => $userGroup['level_id'],
-                'display_name' => $userGroup['display_name'],
-                'description'  => $userGroup['description'],
-                'color'        => $userGroup['color'],
-            ]);
-        }
+    public ?string $model = UserGroup::class;
 
+    public function afterwards(): void
+    {
         UserGroup::find(UserGroup::DEVELOPER_ID)->syncPermissions(Permission::all());
     }
 
-    public function getUserGroups(): array
+    public function updateOrCreate(): array
     {
         return [
             [

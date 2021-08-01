@@ -14,6 +14,8 @@ class UserGroup extends Model
         HasRoles,
         BelongsToLevel;
 
+	protected $guard_name = 'web';
+
 	/*
 	 * Admins
 	 */
