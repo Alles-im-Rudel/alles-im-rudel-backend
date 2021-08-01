@@ -23,7 +23,6 @@ use App\Http\Controllers\User\UserImageController;
 use App\Http\Controllers\User\UserPickerController;
 use App\Http\Controllers\UserGroup\UserGroupController;
 use App\Http\Controllers\VerificationController;
-use App\Http\Controllers\View\ViewController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,7 +39,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
 Route::get('auth', [AuthController::class, 'index']);
-// Route::post('register', [AuthController::class, 'register']);
+
 Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
@@ -65,23 +64,15 @@ Route::group(['prefix' => 'comments'], static function () {
 	Route::get('by/{post}', [CommentController::class, 'byPost']);
 });
 
-Route::group(['prefix' => 'views'], static function () {
-	Route::get('{view}', [ViewController::class, 'show']);
-});
-
 Route::group(['prefix' => 'profils'], static function () {
 	Route::get('', [UserController::class, 'showProfile']);
 });
 
 Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 
-	Route::group(['prefix' => 'views'], static function () {
-		Route::put('{view}', [ViewController::class, 'update']);
-	});
-
 	Route::group(['prefix' => 'appointments'], static function () {
-        Route::get('', [AppointmentController::class, 'index']);
-        Route::get('{appointment}', [AppointmentController::class, 'show']);
+		Route::get('', [AppointmentController::class, 'index']);
+		Route::get('{appointment}', [AppointmentController::class, 'show']);
 		Route::post('', [AppointmentController::class, 'store']);
 		Route::put('{appointment}', [AppointmentController::class, 'update']);
 		Route::delete('{appointment}', [AppointmentController::class, 'delete']);
@@ -125,8 +116,8 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::delete('image/{user}', [UserImageController::class, 'delete']);
 		Route::put('sync-permissions/{user}', [UserController::class, 'syncPermissions']);
 		Route::put('sync-user-groups/{user}', [UserController::class, 'syncUserGroups']);
-        Route::post('', [UserController::class, 'store']);
-        Route::get('{user}', [UserController::class, 'show']);
+		Route::post('', [UserController::class, 'store']);
+		Route::get('{user}', [UserController::class, 'show']);
 		Route::put('{user}', [UserController::class, 'update']);
 		Route::delete('{user}', [UserController::class, 'delete']);
 	});
