@@ -12,7 +12,7 @@ class ClashMember extends Model
 	use BelongsToUser,
 		BelongsToSummoner;
 
-	protected array $fillable = [
+	protected $fillable = [
 		'clash_team_role_id',
 		'clash_team_id',
 		'is_active'

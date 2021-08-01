@@ -12,7 +12,7 @@ class Like extends Model
 
 	protected $table = 'model_like';
 
-	protected array $fillable = [
+	protected $fillable = [
 		'likable_type',
 		'likable_id',
 	];

@@ -15,7 +15,7 @@ class Comment extends Model
 
 	protected $cascadeDeletes = ['comments'];
 
-	protected array $fillable = [
+	protected $fillable = [
 		'text',
 		'commentable_type',
 		'commentable_id'

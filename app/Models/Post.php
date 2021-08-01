@@ -17,7 +17,7 @@ class Post extends Model
 
 	protected $cascadeDeletes = ['comments', 'images', 'likes'];
 
-	protected array $fillable = [
+	protected $fillable = [
 		'title',
 		'text'
 	];
