@@ -30,7 +30,7 @@ class UsersSeeder extends BaseSeeder
                 'last_name'         => 'Dev',
                 'username'          => 'dev',
                 'password'          => $changeMe,
-                'email'             => 'allesimrudel@gamil.com',
+                'email'             => 'allesimrudel@gmail.com',
                 'email_verified_at' => $now,
                 'activated_at'      => $now,
             ],
