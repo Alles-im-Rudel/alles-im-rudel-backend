@@ -15,7 +15,7 @@ class Appointment extends Model
 		CascadesDeletes,
 		MorphManyLikes;
 
-	protected mixed $cascadeDeletes = ['likes'];
+	protected $cascadeDeletes = ['likes'];
 
 	protected array $fillable = [
 		'title',

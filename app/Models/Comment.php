@@ -13,7 +13,7 @@ class Comment extends Model
 	use BelongsToUser,
 		CascadesDeletes;
 
-	protected mixed $cascadeDeletes = ['comments'];
+	protected $cascadeDeletes = ['comments'];
 
 	protected array $fillable = [
 		'text',

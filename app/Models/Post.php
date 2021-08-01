@@ -15,7 +15,7 @@ class Post extends Model
 		CascadesDeletes,
 		MorphManyLikes;
 
-	protected mixed $cascadeDeletes = ['comments', 'images', 'likes'];
+	protected $cascadeDeletes = ['comments', 'images', 'likes'];
 
 	protected array $fillable = [
 		'title',

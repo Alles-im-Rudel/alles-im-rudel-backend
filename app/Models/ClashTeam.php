@@ -11,7 +11,7 @@ class ClashTeam extends Model
 {
 	use CascadesDeletes;
 
-	protected mixed $cascadeDeletes = ['clashMembers'];
+	protected $cascadeDeletes = ['clashMembers'];
 
 	protected $fillable = [
 		'name',
