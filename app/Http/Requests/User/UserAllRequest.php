@@ -22,8 +22,8 @@ class UserAllRequest extends FormRequest
 	 *
 	 * @return array
 	 */
-	public function rules()
-	{
+	public function rules(): array
+    {
 		return [
 			'withOutUserIds'   => 'nullable|array',
 			'withOutUserIds.*' => 'nullable|integer|exists:users,id'

@@ -33,7 +33,7 @@ class LolApiSummonerRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'summonerName' => 'required'
+			'summonerName' => 'required|string'
 		];
 	}
 }

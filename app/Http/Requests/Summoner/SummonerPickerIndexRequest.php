@@ -22,7 +22,8 @@ class SummonerPickerIndexRequest extends FormRequest
 
 	public function prepareForValidation(): void
 	{
-		$this->convertToBoolean('freeMain');
+        $this->convertToString('search');
+        $this->convertToBoolean('freeMain');
 	}
 
 	/**

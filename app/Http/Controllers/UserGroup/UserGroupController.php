@@ -4,7 +4,7 @@ namespace App\Http\Controllers\UserGroup;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\User\UserShowRequest;
-use App\Http\Requests\UserGroup\UserGroupAllReqeust;
+use App\Http\Requests\UserGroup\UserGroupAllRequest;
 use App\Http\Requests\UserGroup\UserGroupDeleteRequest;
 use App\Http\Requests\UserGroup\UserGroupIndexRequest;
 use App\Http\Requests\UserGroup\UserGroupSyncPermissionRequest;
@@ -51,10 +51,10 @@ class UserGroupController extends BaseController
 	}
 
 	/**
-	 * @param  UserGroupAllReqeust  $request
+	 * @param  UserGroupAllRequest  $request
 	 * @return AnonymousResourceCollection
 	 */
-	public function all(UserGroupAllReqeust $request): AnonymousResourceCollection
+	public function all(UserGroupAllRequest $request): AnonymousResourceCollection
 	{
 		$userGroups = UserGroup::query();
 		if ($request->withOutUserGroupIds && count($request->withOutUserGroupIds) > 0) {

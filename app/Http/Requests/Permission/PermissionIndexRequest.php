@@ -12,8 +12,8 @@ class PermissionIndexRequest extends FormRequest
 	 *
 	 * @return bool
 	 */
-	public function authorize()
-	{
+	public function authorize(): bool
+    {
 		return Auth::user()->can('permissions.index');
 	}
 
@@ -22,8 +22,8 @@ class PermissionIndexRequest extends FormRequest
 	 *
 	 * @return array
 	 */
-	public function rules()
-	{
+	public function rules(): array
+    {
 		return [
 			'withOutPermissionIds'   => 'nullable|array',
 			'withOutPermissionIds.*' => 'nullable|integer|exists:permissions,id'

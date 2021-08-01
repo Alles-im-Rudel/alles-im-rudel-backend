@@ -2,14 +2,10 @@
 
 namespace App\Http\Requests\Clash;
 
-use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class ClashIndexRequest extends FormRequest
 {
-	use RequestHelper;
-
 	/**
 	 * Determine if the user is authorized to make this request.
 	 *

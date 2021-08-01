@@ -2,14 +2,11 @@
 
 namespace App\Http\Requests\User;
 
-use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
 class UserShowRequest extends FormRequest
 {
-	use RequestHelper;
-
 	/**
 	 * Determine if the user is authorized to make this request.
 	 *

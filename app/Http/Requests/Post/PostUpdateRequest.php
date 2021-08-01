@@ -34,8 +34,8 @@ class PostUpdateRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'title'    => 'required',
-			'text'     => 'required',
+			'title'    => 'required|string',
+			'text'     => 'required|string',
 			'tagIds'   => 'nullable|array',
 			'tagIds.*' => 'integer|exists:tags,id'
 		];

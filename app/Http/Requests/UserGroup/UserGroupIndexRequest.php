@@ -39,7 +39,7 @@ class UserGroupIndexRequest extends FormRequest
 			'perPage' => 'required|integer',
 			'page'    => 'required|integer|min:1',
 			'search'  => 'nullable|string',
-			'sortBy'  => 'string|nullable',
+			'sortBy'  => 'nullable|string',
 		];
 	}
 }

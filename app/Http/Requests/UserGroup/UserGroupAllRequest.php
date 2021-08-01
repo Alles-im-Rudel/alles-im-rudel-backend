@@ -5,7 +5,7 @@ namespace App\Http\Requests\UserGroup;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class UserGroupAllReqeust extends FormRequest
+class UserGroupAllRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -22,8 +22,8 @@ class UserGroupAllReqeust extends FormRequest
 	 *
 	 * @return array
 	 */
-	public function rules()
-	{
+	public function rules(): array
+    {
 		return [
 			'withOutUserGroupIds'   => 'nullable|array',
 			'withOutUserGroupIds.*' => 'nullable|integer|exists:user_groups,id'

@@ -2,14 +2,11 @@
 
 namespace App\Http\Requests\Appointment;
 
-use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
 class AppointmentDeleteRequest extends FormRequest
 {
-	use RequestHelper;
-
 	/**
 	 * Determine if the user is authorized to make this request.
 	 *
