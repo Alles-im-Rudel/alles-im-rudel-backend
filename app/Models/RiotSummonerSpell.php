@@ -8,11 +8,6 @@ class RiotSummonerSpell extends Model
 {
 	public $timestamps = false;
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
 	protected $fillable = [
 		'key',
 		'spell_id',

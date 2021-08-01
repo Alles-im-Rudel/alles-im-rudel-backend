@@ -12,13 +12,13 @@ class UserGroup extends Model
 {
 	use SoftDeletes, HasRoles, BelongsToLevel;
 
-	protected $guard_name = 'web';
+	protected string $guard_name = 'web';
 
 	public const DEVELOPER_ID = 1;
 	public const ADMIN = 2;
 	public const MODERATOR = 3;
 	public const MEMBER = 4;
-	public const E_SPOERTS = 5;
+	public const E_SPORTS = 5;
 	public const AIRSOFT = 6;
 	public const PROSPECT = 7;
 	public const GUEST = 8;

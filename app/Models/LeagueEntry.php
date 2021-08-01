@@ -7,11 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LeagueEntry extends Model
 {
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
 	protected $fillable = [
 		'league_id',
 		'summoner_id',
@@ -27,11 +22,6 @@ class LeagueEntry extends Model
 		'inactive',
 	];
 
-	/**
-	 * The attributes that should be cast to native types.
-	 *
-	 * @var array
-	 */
 	protected $casts = [
 		'league_points' => 'integer',
 		'wins'          => 'integer',

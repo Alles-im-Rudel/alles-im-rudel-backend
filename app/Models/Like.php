@@ -12,21 +12,11 @@ class Like extends Model
 
 	protected $table = 'model_like';
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = [
+	protected array $fillable = [
 		'likable_type',
 		'likable_id',
 	];
 
-	/**
-	 * The attributes that should be cast to native types.
-	 *
-	 * @var array
-	 */
 	protected $casts = [
 		'likable_type' => 'integer',
 		'likable_id'   => 'integer',

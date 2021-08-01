@@ -15,14 +15,9 @@ class Appointment extends Model
 		CascadesDeletes,
 		MorphManyLikes;
 
-	protected array $cascadeDeletes = ['likes'];
+	protected mixed $cascadeDeletes = ['likes'];
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = [
+	protected array $fillable = [
 		'title',
 		'text',
 		'start_at',
@@ -33,11 +28,6 @@ class Appointment extends Model
 		'birthday_id',
 	];
 
-	/**
-	 * The attributes that should be cast to native types.
-	 *
-	 * @var array
-	 */
 	protected $casts = [
 		'end_at'      => 'datetime',
 		'start_at'    => 'datetime',

@@ -8,16 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tag extends Model
 {
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
 	protected $fillable = [
 		'name',
 		'color'
 	];
-
 
 	/**
 	 * @return BelongsToMany

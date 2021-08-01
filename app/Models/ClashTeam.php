@@ -11,13 +11,8 @@ class ClashTeam extends Model
 {
 	use CascadesDeletes;
 
-	protected array $cascadeDeletes = ['clashMembers'];
+	protected mixed $cascadeDeletes = ['clashMembers'];
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
 	protected $fillable = [
 		'name',
 		'leader_id'

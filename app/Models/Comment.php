@@ -13,24 +13,14 @@ class Comment extends Model
 	use BelongsToUser,
 		CascadesDeletes;
 
-	protected array $cascadeDeletes = ['comments'];
+	protected mixed $cascadeDeletes = ['comments'];
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = [
+	protected array $fillable = [
 		'text',
 		'commentable_type',
 		'commentable_id'
 	];
 
-	/**
-	 * The attributes that should be cast to native types.
-	 *
-	 * @var array
-	 */
 	protected $casts = [
 		'commentable_id' => 'integer'
 	];

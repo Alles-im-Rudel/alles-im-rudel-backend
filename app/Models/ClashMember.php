@@ -12,22 +12,12 @@ class ClashMember extends Model
 	use BelongsToUser,
 		BelongsToSummoner;
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = [
+	protected array $fillable = [
 		'clash_team_role_id',
 		'clash_team_id',
 		'is_active'
 	];
 
-	/**
-	 * The attributes that should be cast to native types.
-	 *
-	 * @var array
-	 */
 	protected $casts = [
 		'clash_team_role_id' => 'integer',
 		'clash_team_id'      => 'integer',

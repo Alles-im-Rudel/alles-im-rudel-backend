@@ -9,11 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Summoner extends Model
 {
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
 	protected $fillable = [
 		'account_id',
 		'profile_icon_id',
@@ -25,11 +20,6 @@ class Summoner extends Model
 		'main_user_id',
 	];
 
-	/**
-	 * The attributes that should be cast to native types.
-	 *
-	 * @var array
-	 */
 	protected $casts = [
 		'main_user_id'    => 'integer',
 		'profile_icon_id' => 'integer',
