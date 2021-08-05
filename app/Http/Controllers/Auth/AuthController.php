@@ -4,20 +4,15 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\AuthLoginRequest;
-use App\Http\Requests\Auth\AuthRegisterRequest;
 use App\Http\Resources\PermissionResource;
 use App\Http\Resources\UserResource;
-use App\Models\Level;
 use App\Models\User;
-use App\Models\UserGroup;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -88,82 +83,6 @@ class AuthController extends Controller
 			], Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 		$user = User::where('email', '=', $request->email)->where('activated_at', '<>', null)->first();
-
-		$permissions = collect($user->getAllPermissions());
-
-		foreach ($user->userGroups as $userGroup) {
-			foreach ($userGroup->getAllPermissions() as $permission) {
-				if (!$permissions->contains('id', $permission->id)) {
-					$permissions = $permissions->merge([$permission]);
-				}
-			}
-		}
-		$user->loadMissing('thumbnail');
-		return response()->json([
-			'user'        => new UserResource($user),
-			'tokens'      => $decodedTokens,
-			'permissions' => PermissionResource::collection($permissions)
-		]);
-	}
-
-	/**
-	 * @param  AuthRegisterRequest  $request
-	 * @return JsonResponse
-	 */
-	public function register(AuthRegisterRequest $request): JsonResponse
-	{
-		$now = now();
-		$user = User::create([
-			'password'          => Hash::make($request->password),
-			'email'             => $request->email,
-			'username'          => $request->username,
-			'birthday'          => $request->birthday,
-			'first_name'        => $request->firstName,
-			'last_name'         => $request->lastName,
-			'level_id'          => Level::GUEST,
-			'email_verified_at' => null,
-			'activated_at'      => $now
-		]);
-
-		$user->userGroups()->sync(UserGroup::GUEST);
-
-		$user->sendEmailVerificationNotification();
-
-		Http::post('https://discord.com/api/webhooks/830809761112260609/rFWAF2ufChSX2hSlGi4BNL8K2jgOksHHm9ihbHoTqzoMjzRSCqz04GVW6GLd1bVCTnPV',
-			[
-				'embeds' => [
-					[
-						'title'       => 'Neue Registrierung!',
-						'description' => 'Es hat sich "'.$user->username.'" angemeldet!',
-						'color'       => '7506394',
-					]
-				],
-			]);
-
-		$http = new Client();
-
-		try {
-			$tokens = $http->post(env('OAUTH2_AUTH_URL'), [
-				'form_params' => [
-					'grant_type'    => 'password',
-					'client_id'     => (string) env('PASSPORT_CLIENT_ID'),
-					'client_secret' => (string) env('PASSPORT_CLIENT_SECRET'),
-					'username'      => $request->email,
-					'password'      => $request->password
-				],
-			]);
-		} catch (GuzzleException $exception) {
-			return response()->json([
-				"message" => __('auth.failed')
-			], Response::HTTP_UNAUTHORIZED);
-		}
-		try {
-			$decodedTokens = json_decode($tokens->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-		} catch (Exception $exception) {
-			return response()->json([
-				"message" => __('auth.failed')
-			], Response::HTTP_INTERNAL_SERVER_ERROR);
-		}
 
 		$permissions = collect($user->getAllPermissions());
 
