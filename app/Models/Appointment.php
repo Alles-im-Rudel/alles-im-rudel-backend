@@ -17,7 +17,7 @@ class Appointment extends Model
 
 	protected $cascadeDeletes = ['likes'];
 
-	protected $fillable = [
+	protected array $fillable = [
 		'title',
 		'text',
 		'start_at',

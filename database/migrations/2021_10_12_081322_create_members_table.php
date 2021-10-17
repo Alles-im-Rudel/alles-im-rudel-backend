@@ -13,18 +13,28 @@ class CreateMembersTable extends Migration
 	 */
 	public function up(): void
 	{
-		Schema::create('members', function (Blueprint $table) {
+		Schema::create('member_ships', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('user_id');
+			$table->foreignId('country_id');
+			$table->string('phone');
+			$table->string('street');
+			$table->string('postcode');
+			$table->string('city');
+			$table->string('iban');
 			$table->dateTime('activated_at');
-			// Felder die wir brauchen fürs anmelden Bankdaten etc
-			$table->float('price');
-			$table->boolean('is_allowed_mail');
-			$table->boolean('is_allowed_phone');
 			$table->timestamps();
 
 			$table->foreign('user_id')->references('id')->on('users');
+			$table->foreign('country_id')->references('id')->on('countries');
 		});
+
+		Schema::create('countries', function (Blueprint $table) {
+			$table->id();
+			$table->string('name');
+			$table->string('iso_code');
+		});
+
 
 		Schema::create('branches', function (Blueprint $table) {
 			$table->id();
@@ -34,14 +44,29 @@ class CreateMembersTable extends Migration
 			$table->timestamps();
 		});
 
-		Schema::create('branche_member', function (Blueprint $table) {
+		Schema::create('branche_member_ship', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('branch_id');
 			$table->foreignId('member_id');
 			$table->timestamps();
 
 			$table->foreign('branch_id')->references('id')->on('branches');
-			$table->foreign('member_id')->references('id')->on('members');
+			$table->foreign('member_ships')->references('id')->on('members');
+		});
+
+		Schema::create('contact_types', function (Blueprint $table) {
+			$table->id();
+			$table->string('name');
+		});
+
+		Schema::create('contact_type_user', function (Blueprint $table) {
+			$table->id();
+			$table->foreignId('contact_type_id');
+			$table->foreignId('user_id');
+			$table->timestamps();
+
+			$table->foreign('contact_type_id')->references('id')->on('contact_types');
+			$table->foreign('user_id')->references('id')->on('users');
 		});
 	}
 
@@ -52,8 +77,11 @@ class CreateMembersTable extends Migration
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('branche_member');
+		Schema::dropIfExists('contact_type_user');
+		Schema::dropIfExists('contact_types');
+		Schema::dropIfExists('branche_member_ship');
 		Schema::dropIfExists('branches');
-		Schema::dropIfExists('members');
+		Schema::dropIfExists('countries');
+		Schema::dropIfExists('member_ships');
 	}
 }

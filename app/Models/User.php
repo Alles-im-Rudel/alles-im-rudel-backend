@@ -84,7 +84,7 @@ class User extends Authenticatable
 				}
 			}
 		}
-		return $permissionCollection->where('name', $permission)->first() ? true : false;
+		return (bool) $permissionCollection->where('name', $permission)->first();
 	}
 
 	/**
@@ -222,6 +222,14 @@ class User extends Authenticatable
 	public function liked(): HasMany
 	{
 		return $this->hasMany(Like::class, 'user_id', 'id');
+	}
+
+	/**
+	 * @return HasOne
+	 */
+	public function memberShip(): HasOne
+	{
+		return $this->hasOne(MemberShip::class);
 	}
 
 	public function getAgeAttribute(): int
