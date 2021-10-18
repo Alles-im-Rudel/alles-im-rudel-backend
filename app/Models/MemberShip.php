@@ -11,7 +11,7 @@ class MemberShip extends Model
 {
 	use BelongsToUser;
 
-	protected array $fillable = [
+	protected $fillable = [
 		'user_id',
 		'country_id',
 		'phone',

@@ -13,6 +13,7 @@ use App\Http\Controllers\Lol\LolApiController;
 use App\Http\Controllers\Lol\SummonerController;
 use App\Http\Controllers\Lol\SummonerInfoController;
 use App\Http\Controllers\Lol\SummonerPickerController;
+use App\Http\Controllers\MemberShip\BranchController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Post\PostLikeController;
@@ -58,6 +59,10 @@ Route::group(['prefix' => 'posts'], static function () {
 
 Route::group(['prefix' => 'members'], static function () {
 	Route::get('', [MemberController::class, 'index']);
+});
+
+Route::group(['prefix' => 'branches'], static function () {
+	Route::get('', [BranchController::class, 'index']);
 });
 
 Route::group(['prefix' => 'comments'], static function () {

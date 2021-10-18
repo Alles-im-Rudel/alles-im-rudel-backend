@@ -13,10 +13,17 @@ class CreateMembersTable extends Migration
 	 */
 	public function up(): void
 	{
+		Schema::create('countries', function (Blueprint $table) {
+			$table->id();
+			$table->string('name');
+			$table->string('iso_code');
+		});
+
 		Schema::create('member_ships', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('user_id');
 			$table->foreignId('country_id');
+			$table->string('salutaion');
 			$table->string('phone');
 			$table->string('street');
 			$table->string('postcode');
@@ -29,16 +36,10 @@ class CreateMembersTable extends Migration
 			$table->foreign('country_id')->references('id')->on('countries');
 		});
 
-		Schema::create('countries', function (Blueprint $table) {
-			$table->id();
-			$table->string('name');
-			$table->string('iso_code');
-		});
-
-
 		Schema::create('branches', function (Blueprint $table) {
 			$table->id();
 			$table->string('name');
+			$table->string('description');
 			$table->float('price');
 			$table->dateTime('activated_at');
 			$table->timestamps();
@@ -47,11 +48,11 @@ class CreateMembersTable extends Migration
 		Schema::create('branche_member_ship', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('branch_id');
-			$table->foreignId('member_id');
+			$table->foreignId('member_ship_id');
 			$table->timestamps();
 
 			$table->foreign('branch_id')->references('id')->on('branches');
-			$table->foreign('member_ships')->references('id')->on('members');
+			$table->foreign('member_ship_id')->references('id')->on('member_ships');
 		});
 
 		Schema::create('contact_types', function (Blueprint $table) {
@@ -81,7 +82,7 @@ class CreateMembersTable extends Migration
 		Schema::dropIfExists('contact_types');
 		Schema::dropIfExists('branche_member_ship');
 		Schema::dropIfExists('branches');
-		Schema::dropIfExists('countries');
 		Schema::dropIfExists('member_ships');
+		Schema::dropIfExists('countries');
 	}
 }

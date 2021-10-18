@@ -29,9 +29,9 @@ class Branch extends Model
 	/**
 	 * @return BelongsToMany
 	 */
-	public function users(): BelongsToMany
+	public function members(): BelongsToMany
 	{
-		return $this->belongsToMany(User::class);
+		return $this->belongsToMany(MemberShip::class);
 	}
 
 	public function getIsActiveAttribute(): bool

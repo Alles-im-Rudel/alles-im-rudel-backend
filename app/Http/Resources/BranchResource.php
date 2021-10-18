@@ -15,12 +15,13 @@ class BranchResource extends JsonResource
 	public function toArray($request): array
 	{
 		return [
-			'id'          => $this->id,
-			'name'        => $this->name,
-			'price'       => $this->price,
-			'activatedAt' => $this->activated_at,
-			'isActive'    => $this->is_active,
-			'users'       => UserResource::collection($this->whenLoaded('users')),
+			'id'            => $this->id,
+			'name'          => $this->name,
+			'price'         => $this->price,
+			'activatedAt'   => $this->activated_at,
+			'isActive'      => $this->is_active,
+			'membersCounts' => $this->members_counts,
+			'members'       => MemberShipResource::collection($this->whenLoaded('members')),
 		];
 	}
 }
