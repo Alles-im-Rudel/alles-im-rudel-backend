@@ -67,8 +67,12 @@ class DiscordInstagramPostNotification extends Notification
             ->embed(function (DiscordEmbed $embed) {
                 $embed->image($this->instagramImageUrl)
                     ->description($this->instagramPost->description)
-                    ->title($this->instagramProfile->display_name ?? $this->instagramProfile->name)
-                    ->footer('https://instagram.com/' . $this->instagramProfile->name);
+                    ->author(
+                        $this->instagramProfile->display_name ?? $this->instagramProfile->name,
+                        'https://instagram.com/' . $this->instagramProfile->name
+                    )
+                    ->color('ce0071')
+                    ->footer('Instagram', 'https://instagram.com/static/images/ico/favicon.ico/36b3ee2d91ed.ico');
             });
     }
 }
