@@ -58,7 +58,6 @@ Route::group(['prefix' => 'posts'], static function () {
 });
 
 Route::group(['prefix' => 'members'], static function () {
-	Route::get('', [MemberController::class, 'index']);
 	Route::post('register', [MemberController::class, 'register']);
 });
 
@@ -73,9 +72,14 @@ Route::group(['prefix' => 'comments'], static function () {
 Route::group(['prefix' => 'profils'], static function () {
 	Route::get('', [UserController::class, 'showProfile']);
 	Route::get('/check-username/{username}', [UserController::class, 'checkUsername']);
+	Route::get('/check-email/{email}', [UserController::class, 'checkEmail']);
 });
 
 Route::group(['middleware' => ['auth:api', 'verified']], static function () {
+
+	Route::group(['prefix' => 'members'], static function () {
+		Route::get('', [MemberController::class, 'index']);
+	});
 
 	Route::group(['prefix' => 'appointments'], static function () {
 		Route::get('', [AppointmentController::class, 'index']);

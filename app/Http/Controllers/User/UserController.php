@@ -250,4 +250,20 @@ class UserController extends BaseController
 			true,
 		], Response::HTTP_OK);
 	}
+
+	/**
+	 * @param $email
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function checkEmail($email): JsonResponse
+	{
+		if (User::where("email", $email)->exists()) {
+			return response()->json([
+				false,
+			], Response::HTTP_OK);
+		}
+		return response()->json([
+			true,
+		], Response::HTTP_OK);
+	}
 }

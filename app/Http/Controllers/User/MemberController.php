@@ -12,11 +12,9 @@ use App\Models\Country;
 use App\Models\Level;
 use App\Models\MemberShip;
 use App\Models\User;
-use App\Notifications\NewAppointmentNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Notification;
 
 class MemberController extends Controller
 {
@@ -26,17 +24,7 @@ class MemberController extends Controller
 	 */
 	public function index(MemberIndexRequest $request): AnonymousResourceCollection
 	{
-		$users = User::member()
-			->with('thumbnail', 'userGroups')
-			->orderByDesc('level_id');
-		if ($request->search) {
-			$users->where(static function ($query) use ($request) {
-				$query->where('username', 'like', "%{$request->search}%")
-					->orWhere('first_name', 'like', "%{$request->search}%")
-					->orWhere('last_name', 'like', "%{$request->search}%")
-					->orWhere('email', 'like', "%{$request->search}%");
-			});
-		}
+		$users = User::with( 'memberShip', 'memberShip.branches');
 
 		return UserResource::collection($users->paginate(9, '*', $request->page, $request->page));
 	}
@@ -55,7 +43,7 @@ class MemberController extends Controller
 			'birthday'                 => $request->birthday,
 			'wants_email_notification' => $request->wantsEmailNotification,
 			'password'                 => $request->password,
-			'level_id'                 => Level::PROSPECT,
+			'level_id'                 => Level::GUEST,
 		]);
 
 		$memberShip = MemberShip::create([
@@ -70,10 +58,11 @@ class MemberController extends Controller
 		]);
 		$memberShip->branches()->sync([Branch::AIR, ...$request->branches]);
 
+		$user->sendEmailVerificationNotification();
 		//Notification::send(User::notification()->get(), new NewAppointmentNotification());
 
 		return response()->json([
-			"message" => "Dein Eintrag wurde erfolgreich eingetragen. Wir werden ihn schnellstmöglich bearbeiten.",
+			"message" => "Deine Anfrage wurde erfolgreich erstellt. Bitte bestätige deine Email!! Wir werden deine Anfrage schnellstmöglich bearbeiten.",
 		], Response::HTTP_OK);
 	}
 }
