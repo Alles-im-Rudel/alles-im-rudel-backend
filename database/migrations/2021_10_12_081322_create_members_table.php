@@ -23,13 +23,13 @@ class CreateMembersTable extends Migration
 			$table->id();
 			$table->foreignId('user_id');
 			$table->foreignId('country_id');
-			$table->string('salutaion');
+			$table->string('salutation');
 			$table->string('phone');
 			$table->string('street');
 			$table->string('postcode');
 			$table->string('city');
 			$table->string('iban');
-			$table->dateTime('activated_at');
+			$table->dateTime('activated_at')->nullable();
 			$table->timestamps();
 
 			$table->foreign('user_id')->references('id')->on('users');
@@ -42,10 +42,11 @@ class CreateMembersTable extends Migration
 			$table->string('description');
 			$table->float('price');
 			$table->dateTime('activated_at');
+			$table->boolean('is_selectable');
 			$table->timestamps();
 		});
 
-		Schema::create('branche_member_ship', function (Blueprint $table) {
+		Schema::create('branch_member_ship', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('branch_id');
 			$table->foreignId('member_ship_id');
@@ -80,7 +81,7 @@ class CreateMembersTable extends Migration
 	{
 		Schema::dropIfExists('contact_type_user');
 		Schema::dropIfExists('contact_types');
-		Schema::dropIfExists('branche_member_ship');
+		Schema::dropIfExists('branch_member_ship');
 		Schema::dropIfExists('branches');
 		Schema::dropIfExists('member_ships');
 		Schema::dropIfExists('countries');

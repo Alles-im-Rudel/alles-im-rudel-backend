@@ -11,15 +11,21 @@ use Spatie\Permission\Traits\HasRoles;
 class Branch extends Model
 {
 
+	public const AIR = 1;
+	public const AIRSOFT = 1;
+	public const ESPORTS = 1;
+
 	protected $fillable = [
 		'name',
 		'price',
-		'activated_at'
+		'activated_at',
+		'is_selectable'
 	];
 
 	protected $casts = [
-		'price'        => 'float',
-		'activated_at' => 'datetime'
+		'price'         => 'float',
+		'activated_at'  => 'datetime',
+		'is_selectable' => 'boolean',
 	];
 
 	protected $appends = [

@@ -17,6 +17,7 @@ class MemberShip extends Model
 		'phone',
 		'street',
 		'postcode',
+		'salutation',
 		'city',
 		'iban',
 		'activated_at',
