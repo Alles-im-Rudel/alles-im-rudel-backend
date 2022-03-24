@@ -6,10 +6,14 @@ use App\Traits\Relations\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 
 class MemberShip extends Model
 {
-	use BelongsToUser;
+	use BelongsToUser,
+		CascadesDeletes;
+
+	protected $cascadeDeletes = ['branches' ];
 
 	protected $fillable = [
 		'user_id',

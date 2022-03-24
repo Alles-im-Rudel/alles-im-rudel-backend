@@ -79,6 +79,9 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 
 	Route::group(['prefix' => 'members'], static function () {
 		Route::get('', [MemberController::class, 'index']);
+		Route::get('{user}', [MemberController::class, 'show']);
+		Route::put('accept/{user}', [MemberController::class, 'accept']);
+		Route::put('reject/{user}', [MemberController::class, 'reject']);
 	});
 
 	Route::group(['prefix' => 'appointments'], static function () {

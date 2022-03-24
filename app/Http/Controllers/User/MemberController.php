@@ -4,8 +4,8 @@ namespace App\Http\Controllers\User;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\MemberIndexRequest;
-use App\Http\Requests\User\MemberRegisterRequest;
+use App\Http\Requests\Member\MemberIndexRequest;
+use App\Http\Requests\Member\MemberRegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Branch;
 use App\Models\Country;
@@ -15,6 +15,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class MemberController extends Controller
 {
@@ -24,13 +25,67 @@ class MemberController extends Controller
 	 */
 	public function index(MemberIndexRequest $request): AnonymousResourceCollection
 	{
-		$users = User::with( 'memberShip', 'memberShip.branches');
+		$users = User::with([
+			'memberShip', 'memberShip.branches'
+		])->whereHas('memberShip', function ($query) {
+			return $query->whereNull('activated_at');
+		});
 
 		return UserResource::collection($users->paginate(9, '*', $request->page, $request->page));
 	}
 
+
 	/**
-	 * @param  \App\Http\Requests\User\MemberRegisterRequest  $request
+	 * @param  \App\Models\User  $user
+	 * @return \App\Http\Resources\UserResource
+	 */
+	public function show(User $user): UserResource
+	{
+		$user->loadMissing('memberShip', 'memberShip.branches', 'memberShip.country');
+
+		return new UserResource($user);
+	}
+
+
+	/**
+	 * @param  \App\Models\User  $user
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function accept(User $user): JsonResponse
+	{
+		if (!Auth::user()->can('members.mamage')) {
+			return response()->json(["msg" => "Keine Berechtigung"], 403);
+		}
+		$user->activated_at = now();
+		$user->save();
+
+		$user->memberShip->activated_at = now();
+		$user->memberShip->save();
+
+		return response()->json([
+			"message" => "Die Anmeldung wurde erfolgreich bestätigt",
+		], Response::HTTP_OK);
+	}
+
+	/**
+	 * @param  \App\Models\User  $user
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function reject(User $user): JsonResponse
+	{
+		if (!Auth::user()->can('members.mamage')) {
+			return response()->json(["msg" => "Keine Berechtigung"], 403);
+		}
+
+		$user->forceDelete();
+
+		return response()->json([
+			"message" => "Die Anmeldung wurde erfolgreich abgelehnt",
+		], Response::HTTP_OK);
+	}
+
+	/**
+	 * @param  \App\Http\Requests\Member\MemberRegisterRequest  $request
 	 * @return \Illuminate\Http\JsonResponse
 	 */
 	public function register(MemberRegisterRequest $request): JsonResponse
