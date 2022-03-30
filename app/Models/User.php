@@ -16,6 +16,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\Builder;
+use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -26,9 +27,12 @@ class User extends Authenticatable
 		HasRoles,
 		BelongsToLevel,
 		BelongsToManyUserGroups,
+		CascadesDeletes,
 		BelongsToManySummoners;
 
 	public const DEVELOPER_ID = 1;
+
+	protected $cascadeDeletes = ['memberShip' ];
 
 	protected $fillable = [
 		'first_name',
@@ -84,7 +88,7 @@ class User extends Authenticatable
 				}
 			}
 		}
-		return $permissionCollection->where('name', $permission)->first() ? true : false;
+		return (bool) $permissionCollection->where('name', $permission)->first();
 	}
 
 	/**
@@ -222,6 +226,14 @@ class User extends Authenticatable
 	public function liked(): HasMany
 	{
 		return $this->hasMany(Like::class, 'user_id', 'id');
+	}
+
+	/**
+	 * @return HasOne
+	 */
+	public function memberShip(): HasOne
+	{
+		return $this->hasOne(MemberShip::class);
 	}
 
 	public function getAgeAttribute(): int

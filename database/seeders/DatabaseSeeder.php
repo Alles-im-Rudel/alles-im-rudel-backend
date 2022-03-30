@@ -21,5 +21,7 @@ class DatabaseSeeder extends Seeder
 		$this->call(ClashSeeder::class);
 		$this->call(TagSeeder::class);
         $this->call(InstagramProfileSeeder::class);
+		$this->call(CountrySeeder::class);
+		$this->call(BranchSeeder::class);
 	}
 }

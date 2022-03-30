@@ -30,6 +30,7 @@ class UserResource extends JsonResource
 			'isActive'               => $this->activated_at !== null,
 			'activatedAt'            => $this->activated_at,
 			'levelId'                => $this->getMaxLevelId(),
+			'memberShip'             => new MemberShipResource($this->whenLoaded('memberShip')),
 			'permissions'            => PermissionResource::collection($this->whenLoaded('permissions')),
 			'permissionsCount'       => $this->when(isset($this->permissions_count), $this->permissions_count),
 			'roles'                  => RoleResource::collection($this->whenLoaded('roles')),
