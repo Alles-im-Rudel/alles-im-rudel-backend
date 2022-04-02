@@ -5,7 +5,6 @@ use App\Http\Controllers\Appointment\AppointmentLikeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Comment\CommentController;
-use App\Http\Controllers\Image\ImageController;
 use App\Http\Controllers\Level\LevelController;
 use App\Http\Controllers\Lol\ClashController;
 use App\Http\Controllers\Lol\ClashMemberPickerController;
@@ -15,6 +14,7 @@ use App\Http\Controllers\Lol\SummonerInfoController;
 use App\Http\Controllers\Lol\SummonerPickerController;
 use App\Http\Controllers\MemberShip\BranchController;
 use App\Http\Controllers\Permission\PermissionController;
+use App\Http\Controllers\Post\PostCommentController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Post\PostLikeController;
 use App\Http\Controllers\Tag\TagController;
@@ -26,56 +26,63 @@ use App\Http\Controllers\UserGroup\UserGroupController;
 use App\Http\Controllers\VerificationController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+/**
+ * Unauthenticated routes
+ */
 
+// Auth
+Route::get('auth', [AuthController::class, 'index']);
 Route::post('login', [AuthController::class, 'login']);
 Route::post('logout', [AuthController::class, 'logout']);
-Route::get('auth', [AuthController::class, 'index']);
 
 Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify');
 Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
-Route::group(['prefix' => 'clash'], static function () {
-	Route::get('', [ClashController::class, 'index']);
-});
-
-Route::group(['prefix' => 'tags'], static function () {
-	Route::get('all', [TagController::class, 'all']);
-});
-
-Route::group(['prefix' => 'posts'], static function () {
-	Route::get('', [PostController::class, 'index']);
-	Route::get('{post}', [PostController::class, 'show']);
-});
+Route::get('tags', [TagController::class, 'index']);
+Route::get('clash', [ClashController::class, 'index']);
+Route::get('branches', [BranchController::class, 'index']);
 
 Route::group(['prefix' => 'members'], static function () {
 	Route::post('register', [MemberController::class, 'register']);
 });
 
-Route::group(['prefix' => 'branches'], static function () {
-	Route::get('', [BranchController::class, 'index']);
-});
-
-Route::group(['prefix' => 'comments'], static function () {
-	Route::get('by/{post}', [CommentController::class, 'byPost']);
-});
-
-Route::group(['prefix' => 'profils'], static function () {
+// Profile
+Route::group(['prefix' => 'profile'], static function () {
 	Route::get('', [UserController::class, 'showProfile']);
 	Route::get('/check-username/{username}', [UserController::class, 'checkUsername']);
 	Route::get('/check-email/{email}', [UserController::class, 'checkEmail']);
 });
 
+// Posts
+Route::group(['prefix' => 'posts'], static function () {
+    Route::get('', [PostController::class, 'index']);
+    Route::get('{post}', [PostController::class, 'show']);
+
+    Route::get('{post}/comments', [PostCommentController::class, 'comments']);
+});
+
+/**
+ * Authenticated routes
+ */
+
 Route::group(['middleware' => ['auth:api', 'verified']], static function () {
+
+    // Comments
+    Route::group(['prefix' => 'comments'], static function () {
+        Route::post('', [CommentController::class, 'store']);
+    });
+
+    // Posts
+    Route::group(['prefix' => 'posts'], static function () {
+        Route::post('', [PostController::class, 'store']);
+        Route::post('{post}', [PostController::class, 'update']); // file uploads do not work with PUT
+        Route::delete('{post}', [PostController::class, 'delete']);
+
+        // Likes
+        Route::get('{post}/like', [PostLikeController::class, 'check']);
+        Route::put('{post}/like', [PostLikeController::class, 'change']);
+    });
+
 
 	Route::group(['prefix' => 'members'], static function () {
 		Route::get('', [MemberController::class, 'index']);
@@ -103,23 +110,6 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::put('', [ProfileController::class, 'update']);
 		Route::put('main-summoner', [ProfileController::class, 'mainSummoner']);
 		Route::delete('', [ProfileController::class, 'delete']);
-	});
-
-	Route::group(['prefix' => 'images'], static function () {
-		Route::delete('{image}', [ImageController::class, 'delete']);
-	});
-
-	Route::group(['prefix' => 'comments'], static function () {
-		Route::post('', [CommentController::class, 'store']);
-	});
-
-	Route::group(['prefix' => 'posts'], static function () {
-		Route::post('', [PostController::class, 'store']);
-		Route::put('{post}', [PostController::class, 'update']);
-		Route::delete('{post}', [PostController::class, 'delete']);
-		Route::post('{post}/image', [PostController::class, 'storeImage']);
-		Route::get('{post}/check', [PostLikeController::class, 'checkLiked']);
-		Route::put('{post}/change', [PostLikeController::class, 'change']);
 	});
 
 	Route::group(['prefix' => 'users'], static function () {

@@ -5,33 +5,32 @@ namespace App\Models;
 use App\Traits\Relations\BelongsToUser;
 use App\Traits\Relations\MorphManyLikes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 
 class Post extends Model
 {
 	use BelongsToUser,
-		CascadesDeletes,
-		MorphManyLikes;
+        MorphManyLikes,
+        CascadesDeletes;
 
-	protected $cascadeDeletes = ['comments', 'images', 'likes'];
+	protected $cascadeDeletes = ['comments', 'image', 'thumbnail'];
 
 	protected $fillable = [
 		'title',
-		'text'
-	];
-
-	protected $appends = [
-		'commentCount'
+		'text',
+        'tag_id',
 	];
 
 	/**
-	 * @return MorphMany
+	 * @return MorphOne
 	 */
-	public function thumbnails(): MorphMany
+	public function thumbnail(): MorphOne
 	{
-		return $this->morphMany(Image::class, 'imageable')
+		return $this->morphOne(Image::class, 'imageable')
 			->select([
 				'id',
 				'imageable_id',
@@ -39,23 +38,21 @@ class Post extends Model
 				'thumbnail',
 				'file_name',
 				'file_size',
-				'title',
 				'file_mime_type'
 			]);
 	}
 
 	/**
-	 * @return MorphMany
+	 * @return MorphOne
 	 */
-	public function images(): MorphMany
+	public function image(): MorphOne
 	{
-		return $this->morphMany(Image::class, 'imageable')
+		return $this->morphOne(Image::class, 'imageable')
 			->select([
 				'id',
 				'imageable_id',
 				'imageable_type',
 				'image',
-				'title',
 				'file_name',
 				'file_size',
 				'file_mime_type'
@@ -71,22 +68,10 @@ class Post extends Model
 	}
 
 	/**
-	 * @return MorphToMany
+	 * @return BelongsTo
 	 */
-	public function tags(): MorphToMany
+	public function tag(): BelongsTo
 	{
-		return $this->morphToMany(Tag::class, 'tagable', 'model_tag');
-	}
-
-	public function getCommentCountAttribute(): int
-	{
-		$count = 0;
-		if (count($this->comments) > 0) {
-			$count = $this->comments->count();
-			foreach ($this->comments as $comment) {
-				$count += $comment->commentCount;
-			}
-		}
-		return $count;
+		return $this->belongsTo(Tag::class);
 	}
 }

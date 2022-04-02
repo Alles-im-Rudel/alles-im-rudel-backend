@@ -14,13 +14,9 @@ use App\Models\User;
 use App\Notifications\NewPostNotification;
 use App\Services\Images\ImageGenerator;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
-use Illuminate\Validation\ValidationException;
 
 class PostController extends Controller
 {
@@ -30,21 +26,25 @@ class PostController extends Controller
 	 */
 	public function index(PostIndexRequest $request): AnonymousResourceCollection
 	{
-		$items = $request->items ?: 3;
 		$posts = Post::with([
-			'user.thumbnail', 'tags', 'thumbnails'
-		])->withCount('comments', 'likes')->orderByDesc('created_at');
+			'user.thumbnail',
+            'tag',
+            'thumbnail'
+		])
+            ->withCount('likes')
+            ->orderByDesc('created_at');
+
 		if ($request->tagIds && count($request->tagIds) > 0) {
-			$posts = $posts->whereHas('tags', static function ($query) use ($request) {
-				$query->whereIn('tags.id', $request->tagIds);
-			});
-		}
-		if ($request->search) {
-			$posts->where('title', 'like', "%{$request->search}%")
-				->orWhere('created_at', 'like', "%{$request->search}%");
+			$posts = $posts->whereIn('tag_id', $request->tagIds);
 		}
 
-		return PostResource::collection($posts->paginate($items, '*', $request->page, $request->page));
+		if ($request->search) {
+			$posts->where('title', 'like', "%{$request->search}%");
+		}
+
+		return PostResource::collection(
+            $posts->paginate($request->perPage, '*', $request->page, $request->page)
+        );
 	}
 
 	/**
@@ -53,102 +53,87 @@ class PostController extends Controller
 	 */
 	public function show(Post $post): PostResource
 	{
-		$post->loadMissing(['user.thumbnail', 'tags', 'images'])->loadCount('comments', 'likes');
+		$post->loadMissing([
+            'user.thumbnail',
+            'tag',
+            'image'
+        ])->loadCount('likes');
 
 		return new PostResource($post);
 	}
 
 	/**
 	 * @param  PostStoreRequest  $request
-	 * @return JsonResponse
+	 * @return PostResource
 	 */
-	public function store(PostStoreRequest $request): JsonResponse
+	public function store(PostStoreRequest $request): PostResource
 	{
 		$post = Post::create([
 			'title'   => $request->title,
 			'text'    => $request->text,
-			'user_id' => Auth::id()
+            'tag_id'  => $request->tagId,
+            'user_id' => Auth::id(),
 		]);
 
-		$post->tags()->sync($request->tagIds);
+        $originalFileName = $request->file('image')->getClientOriginalName();
+        $image = ImageGenerator::resizeImageIfNeeded($request->file('image'));
+        $thumbnail = ImageGenerator::createThumbnail($request->file('image'));
+
+        $post->image()->create([
+            'image'          => $image->encode('data-url'),
+            'thumbnail'      => $thumbnail->encode('data-url'),
+            'file_name'      => $originalFileName,
+            'file_mime_type' => $image->mime(),
+            'file_size'      => $image->filesize()
+        ]);
 
 		Notification::send(User::notification()->get(), new NewPostNotification($post));
 
-		return response()->json([
-			'postId' => $post->id
-		], Response::HTTP_CREATED);
-	}
-
-	/**
-	 * @param  Post  $post
-	 * @param  Request  $request
-	 * @return JsonResponse
-	 * @throws ValidationException
-	 */
-	public function storeImage(Post $post, Request $request): JsonResponse
-	{
-		if (!Auth::user()->can('posts.create')) {
-			return response()->json([
-				'message' => 'Keine Berechtigung'
-			], Response::HTTP_UNAUTHORIZED);
-		}
-
-		$this->validate($request, [
-			'file'  => 'required|mimes:jpg,jpeg,png,pdf|max:5120',
-			'title' => 'nullable',
-		]);
-		$originalFileName = optional($request->file('file'))->getClientOriginalName();
-		$image = ImageGenerator::resizeImageIfNeeded($request->file('file'));
-		$thumbnail = ImageGenerator::createThumbnail($request->file('file'));
-		$post->images()->create([
-			'image'          => $image->encode('data-url'),
-			'thumbnail'      => $thumbnail->encode('data-url'),
-			'file_name'      => $originalFileName,
-			'title'          => $request->title,
-			'file_mime_type' => $image->mime(),
-			'file_size'      => $image->filesize()
-		]);
-
-		return response()->json([
-			'message' => 'Der Post wurde erfolgreich gespeichert!'
-		]);
+		return new PostResource($post);
 	}
 
 	/**
 	 * @param  Post  $post
 	 * @param  PostUpdateRequest  $request
-	 * @return JsonResponse
+	 * @return PostResource
 	 */
-	public function update(Post $post, PostUpdateRequest $request): JsonResponse
+	public function update(Post $post, PostUpdateRequest $request): PostResource
 	{
 		$post->update([
 			'title' => $request->title,
-			'text'  => $request->text
+			'text'  => $request->text,
+            'tag_id'  => $request->tagId,
 		]);
 
-		$post->tags()->sync($request->tagIds);
+        if ($request->file('image')) {
+            $originalFileName = $request->file('image')->getClientOriginalName();
+            $image = ImageGenerator::resizeImageIfNeeded($request->file('image'));
+            $thumbnail = ImageGenerator::createThumbnail($request->file('image'));
 
-		$post->loadMissing(['user.thumbnail', 'tags', 'images'])->loadCount('comments');
+            $post->image()->update([
+                'image'          => $image->encode('data-url'),
+                'thumbnail'      => $thumbnail->encode('data-url'),
+                'file_name'      => $originalFileName,
+                'file_mime_type' => $image->mime(),
+                'file_size'      => $image->filesize()
+            ]);
+        }
 
-		return response()->json([
-			'post'    => new PostResource($post),
-			'message' => 'Der Post wurde erfolgreich bearbeitet'
-		], Response::HTTP_OK);
+		$post->loadMissing(['user.thumbnail', 'tag', 'image'])->loadCount('comments');
+
+		return new PostResource($post);
 	}
 
 	/**
 	 * @param  Post  $post
 	 * @param  PostDeleteRequest  $request
-	 * @return JsonResponse
+	 * @return PostResource
 	 * @throws Exception
 	 */
-	public function delete(Post $post, PostDeleteRequest $request): JsonResponse
+	public function delete(Post $post, PostDeleteRequest $request): PostResource
 	{
-		$post->tags()->detach();
 		$post->delete();
 
-		return response()->json([
-			'message' => 'Der Post wurde erfolgreich gelöscht'
-		]);
+		return new PostResource($post);
 	}
 }
