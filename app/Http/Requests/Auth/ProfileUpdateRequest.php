@@ -22,7 +22,6 @@ class ProfileUpdateRequest extends FormRequest
 
 	public function prepareForValidation(): void
 	{
-		$this->convertToString('username');
 		$this->convertToString('email');
 		$this->convertToCarbonDate('birthday');
 		$this->convertToString('firstName');
@@ -43,7 +42,6 @@ class ProfileUpdateRequest extends FormRequest
 		return [
 			'email'                  => 'required|email|unique:users,email,'.$id,
 			'birthday'               => 'nullable|date',
-			'username'               => 'nullable|string|unique:users,username,'.$id,
 			'firstName'              => 'required|string',
 			'wantsEmailNotification' => 'required|bool',
 			'lastName'               => 'required|string',

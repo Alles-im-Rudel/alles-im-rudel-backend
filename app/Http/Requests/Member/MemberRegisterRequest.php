@@ -21,7 +21,6 @@ class MemberRegisterRequest extends FormRequest
 		$this->convertToString('city');
 		$this->convertToString('country');
 		$this->convertToString('iban');
-		$this->convertToString('username');
 		$this->convertToString('email');
 		$this->convertToString('password');
 		$this->convertToString('passwordRepeat');
@@ -48,7 +47,6 @@ class MemberRegisterRequest extends FormRequest
 			'city'                      => 'required|string',
 			'country'                   => 'required|string',
 			'iban'                      => 'required|string',
-			'username'                  => 'required|string|unique:users',
 			'email'                     => 'required|email|max:50|min:3|unique:users',
 			'password'                  => 'string|required_with:passwordRepeat|same:passwordRepeat',
 			'passwordRepeat'            => 'required|string',

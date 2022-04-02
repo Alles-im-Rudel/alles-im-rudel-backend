@@ -22,7 +22,6 @@ class RegisterRequest extends FormRequest
 	public function prepareForValidation(): void
 	{
 		$this->convertToString('email');
-		$this->convertToString('username');
 		$this->convertToCarbonDate('birthday');
 		$this->convertToString('firstName');
 		$this->convertToString('lastName');
@@ -47,7 +46,6 @@ class RegisterRequest extends FormRequest
 			'email'          => 'required|unique:users|email|max:255',
 			'password'       => 'required|string|max:255',
 			'passwordRepeat' => 'required|string|same:password|max:255',
-			'username'       => 'required|unique:users|string|max:255',
 			'birthday'       => 'required|date',
 			'firstName'      => 'required|string|max:255',
 			'lastName'       => 'required|string|max:255',

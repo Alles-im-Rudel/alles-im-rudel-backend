@@ -32,12 +32,11 @@ class User extends Authenticatable
 
 	public const DEVELOPER_ID = 1;
 
-	protected $cascadeDeletes = ['memberShip' ];
+	protected $cascadeDeletes = ['memberShip'];
 
 	protected $fillable = [
 		'first_name',
 		'last_name',
-		'username',
 		'email',
 		'birthday',
 		'activated_at',

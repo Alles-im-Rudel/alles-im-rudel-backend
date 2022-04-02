@@ -39,7 +39,6 @@ class UserPickerController extends Controller
 	{
 		return $query->where('first_name', 'like', $search)
 			->orWhere('last_name', 'like', $search)
-			->orWhere('username', 'like', $search)
 			->orWhere('email', 'like', $search);
 	}
 }

@@ -48,8 +48,6 @@ Route::group(['prefix' => 'members'], static function () {
 
 // Profile
 Route::group(['prefix' => 'profile'], static function () {
-	Route::get('', [UserController::class, 'showProfile']);
-	Route::get('/check-username/{username}', [UserController::class, 'checkUsername']);
 	Route::get('/check-email/{email}', [UserController::class, 'checkEmail']);
 });
 
