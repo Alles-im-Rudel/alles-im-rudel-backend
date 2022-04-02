@@ -36,7 +36,6 @@ class UserController extends BaseController
 			'first_name',
 			'last_name',
 			'email',
-			'username',
 			'salutation',
 			'activated_at',
 			'updated_at',
@@ -45,7 +44,6 @@ class UserController extends BaseController
 			'email',
 			'first_name',
 			'last_name',
-			'username'
 		];
 	}
 
@@ -89,28 +87,6 @@ class UserController extends BaseController
 	}
 
 	/**
-	 * @param  Request  $request
-	 * @return UserResource|JsonResponse
-	 */
-	public function showProfile(Request $request)
-	{
-		if (User::where('username', $request->username)->exists()) {
-			$user = User::where('username', $request->username)->with([
-				'permissions',
-				'roles',
-				'userGroups',
-				'mainSummoner.leagueEntries.queueType',
-				'thumbnail',
-				'image'
-			])->withCount('posts', 'comments', 'liked')->first();
-			return new UserResource($user);
-		}
-		return response()->json([
-			'message' => 'Benutzerprofil nicht gefunden',
-		], Response::HTTP_NOT_FOUND);
-	}
-
-	/**
 	 * @param  UserStoreRequest  $request
 	 * @return JsonResponse
 	 */
@@ -120,7 +96,6 @@ class UserController extends BaseController
 			User::create([
 				'first_name'               => $request->firstName,
 				'last_name'                => $request->lastName,
-				'username'                 => $request->username,
 				'email'                    => $request->email,
 				'birthday'                 => $request->birthday,
 				'level_id'                 => $request->levelId,
@@ -151,7 +126,6 @@ class UserController extends BaseController
 		$userData = [
 			'first_name'               => $request->firstName,
 			'last_name'                => $request->lastName,
-			'username'                 => $request->username,
 			'email'                    => $request->email,
 			'birthday'                 => $request->birthday,
 			'level_id'                 => $request->levelId,
@@ -232,22 +206,6 @@ class UserController extends BaseController
 
 		return response()->json([
 			'message' => 'Der Benutzer wurde erfolgreich gelöscht.',
-		], Response::HTTP_OK);
-	}
-
-	/**
-	 * @param $username
-	 * @return \Illuminate\Http\JsonResponse
-	 */
-	public function checkUsername($username): JsonResponse
-	{
-		if (User::where("username", $username)->exists()) {
-			return response()->json([
-				false,
-			], Response::HTTP_OK);
-		}
-		return response()->json([
-			true,
 		], Response::HTTP_OK);
 	}
 

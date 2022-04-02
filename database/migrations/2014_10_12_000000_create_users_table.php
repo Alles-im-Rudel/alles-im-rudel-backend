@@ -20,7 +20,6 @@ class CreateUsersTable extends Migration
 			$table->string('last_name')->nullable();
 			$table->string('email')->unique();
 			$table->date('birthday')->nullable();
-			$table->string('username')->unique();
 			$table->dateTime('activated_at')->nullable();
 			$table->boolean('wants_email_notification')->default(false);
 			$table->timestamp('email_verified_at')->nullable();

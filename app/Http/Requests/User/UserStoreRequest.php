@@ -25,7 +25,6 @@ class UserStoreRequest extends FormRequest
         $this->convertToInteger('levelId');
         $this->convertToString('firstName');
         $this->convertToString('lastName');
-        $this->convertToString('username');
         $this->convertToString('email');
         $this->convertToCarbonDate('birthday');
         $this->convertToBoolean('wantsEmailNotification');
@@ -44,7 +43,6 @@ class UserStoreRequest extends FormRequest
             'levelId'                => 'required|integer|exists:levels,id',
             'firstName'              => 'nullable|max:30|min:2',
             'lastName'               => 'nullable|max:30|min:2',
-            'username'               => 'required|max:20|min:1',
             'email'                  => 'required|email|max:50|min:3',
             'wantsEmailNotification' => 'required|bool',
             'birthday'               => 'nullable|date',

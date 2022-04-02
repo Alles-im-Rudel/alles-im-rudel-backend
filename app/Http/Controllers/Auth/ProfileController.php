@@ -43,7 +43,6 @@ class ProfileController extends Controller
 
 		$user->first_name = $request->firstName;
 		$user->last_name = $request->lastName;
-		$user->username = $request->username;
 		$user->email = $request->email;
 		$user->wants_email_notification = $request->wantsEmailNotification;
 		$user->birthday = $request->birthday;

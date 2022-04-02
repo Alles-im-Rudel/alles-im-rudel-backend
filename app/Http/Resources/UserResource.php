@@ -24,7 +24,6 @@ class UserResource extends JsonResource
 			'email'                  => $this->email,
 			'birthday'               => $this->birthday ? Carbon::parse($this->birthday)->format('Y-m-d') : '',
 			'age'                    => $this->age,
-			'username'               => $this->username,
 			'emailVerifiedAt'        => $this->email_verified_at,
 			'wantsEmailNotification' => $this->wants_email_notification,
 			'isActive'               => $this->activated_at !== null,
