@@ -29,7 +29,10 @@ class ProfileController extends Controller
 		$userId = Auth::id();
 
 		return new UserResource(User::with([
-			'summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail', 'memberShip', 'memberShip.branches'
+			'summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail', 'memberShip',
+			'memberShip.branches' => function ($query) {
+				$query->whereNull('branch_member_ship.wanted_to_leave_at');
+			},
 		])->find($userId));
 	}
 
@@ -78,7 +81,11 @@ class ProfileController extends Controller
 	 */
 	public function updateBranches(ProfileUpdateBranchesRequest $request): JsonResponse
 	{
-		$user = User::where("id", Auth::id())->with('memberShip', 'memberShip.branches')->first();
+		$user = User::where("id", Auth::id())->with([
+			'memberShip', 'memberShip.branches' => function ($query) {
+				$query->whereNull('branch_member_ship.wanted_to_leave_at');
+			},
+		])->first();
 		/*todo filtern wanted_to_leave_at oder so weil bug ist da ...*/
 		/*$originalUser = deep_copy($user);*/
 		$newBranches = $request->branchIds;
@@ -110,8 +117,14 @@ class ProfileController extends Controller
 				->whereIn('branch_id', $toRemove)
 				->update(['wanted_to_leave_at' => now()]);
 		}
+
 		$user->fresh();
-		$user->loadMissing(['summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail', 'memberShip', 'memberShip.branches']);
+		$user->load([
+			'summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail', 'memberShip',
+			'memberShip.branches' => function ($query) {
+				$query->whereNull('branch_member_ship.wanted_to_leave_at');
+			},
+		]);
 
 		return response()->json([
 			'message' => 'Die Sparten wurden erfolgreich bearbeitet.',
