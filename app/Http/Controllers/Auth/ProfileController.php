@@ -86,8 +86,7 @@ class ProfileController extends Controller
 				$query->whereNull('branch_member_ship.wanted_to_leave_at');
 			},
 		])->first();
-		/*todo filtern wanted_to_leave_at oder so weil bug ist da ...*/
-		/*$originalUser = deep_copy($user);*/
+
 		$newBranches = $request->branchIds;
 		$originalBranches = collect(collect($user->memberShip->branches)->map(function ($item) {
 			return $item->id;
@@ -130,11 +129,6 @@ class ProfileController extends Controller
 			'message' => 'Die Sparten wurden erfolgreich bearbeitet.',
 			'data'    => new UserResource($user),
 		], Response::HTTP_OK);
-
-		/*return response()->json([
-			'message' => 'Das Profil wurde erfolgreich bearbeitet.',
-			'data' => new UserResource($user),
-		], Response::HTTP_OK);*/
 	}
 
 	public function mainSummoner(ProfileMainSummonerRequest $request)
