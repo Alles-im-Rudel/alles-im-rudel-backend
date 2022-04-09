@@ -18,6 +18,7 @@ use App\Http\Controllers\Post\PostCommentController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Post\PostLikeController;
 use App\Http\Controllers\Tag\TagController;
+use App\Http\Controllers\User\BranchMemberController;
 use App\Http\Controllers\User\MemberController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\UserImageController;
@@ -89,6 +90,13 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::put('reject/{user}', [MemberController::class, 'reject']);
 	});
 
+	Route::group(['prefix' => 'branch-members'], static function () {
+		Route::get('', [BranchMemberController::class, 'index']);
+		Route::get('{user}', [BranchMemberController::class, 'show']);
+		Route::put('accept/{user}', [BranchMemberController::class, 'accept']);
+		Route::put('reject/{user}', [BranchMemberController::class, 'reject']);
+	});
+
 	Route::group(['prefix' => 'appointments'], static function () {
 		Route::get('', [AppointmentController::class, 'index']);
 		Route::get('{appointment}', [AppointmentController::class, 'show']);
@@ -106,6 +114,7 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 	Route::group(['prefix' => 'profile'], static function () {
 		Route::get('', [ProfileController::class, 'index']);
 		Route::put('', [ProfileController::class, 'update']);
+		Route::put('branches', [ProfileController::class, 'updateBranches']);
 		Route::put('main-summoner', [ProfileController::class, 'mainSummoner']);
 		Route::delete('', [ProfileController::class, 'delete']);
 	});

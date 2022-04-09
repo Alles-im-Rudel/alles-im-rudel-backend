@@ -23,10 +23,7 @@ class ProfileUpdateRequest extends FormRequest
 	public function prepareForValidation(): void
 	{
 		$this->convertToString('email');
-		$this->convertToCarbonDate('birthday');
-		$this->convertToString('firstName');
-		$this->convertToBoolean('wantsEmailNotification');
-		$this->convertToString('lastName');
+		$this->convertToCarbonDate('phone');
 		$this->convertToString('password');
 		$this->convertToString('passwordRepeat');
 	}
@@ -41,10 +38,7 @@ class ProfileUpdateRequest extends FormRequest
 	    $id = Auth::id();
 		return [
 			'email'                  => 'required|email|unique:users,email,'.$id,
-			'birthday'               => 'nullable|date',
-			'firstName'              => 'required|string',
-			'wantsEmailNotification' => 'required|bool',
-			'lastName'               => 'required|string',
+			'phone'              	 => 'required|string',
 			'password'               => 'nullable|string',
 			'passwordRepeat'         => 'nullable|string',
 		];

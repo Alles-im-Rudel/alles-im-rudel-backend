@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Events\BirthdayChanged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ProfileIndexRequest;
 use App\Http\Requests\Auth\ProfileMainSummonerRequest;
+use App\Http\Requests\Auth\ProfileUpdateBranchesRequest;
 use App\Http\Requests\Auth\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Summoner;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use function DeepCopy\deep_copy;
 
 
@@ -28,7 +29,7 @@ class ProfileController extends Controller
 		$userId = Auth::id();
 
 		return new UserResource(User::with([
-			'summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail'
+			'summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail', 'memberShip', 'memberShip.branches'
 		])->find($userId));
 	}
 
@@ -41,11 +42,7 @@ class ProfileController extends Controller
 			return response(null, Response::HTTP_UNAUTHORIZED);
 		}
 
-		$user->first_name = $request->firstName;
-		$user->last_name = $request->lastName;
 		$user->email = $request->email;
-		$user->wants_email_notification = $request->wantsEmailNotification;
-		$user->birthday = $request->birthday;
 
 		if ($request->password && $request->passwordRepeat) {
 			if ($request->password !== $request->passwordRepeat) {
@@ -58,6 +55,11 @@ class ProfileController extends Controller
 
 		$user->save();
 
+		if ($request->phone) {
+			$user->memberShip->phone = $request->phone;
+			$user->memberShip->save();
+		}
+
 		if ($originalUser->email !== $user->email) {
 			$user->wants_email_notification = false;
 			$user->email_verified_at = null;
@@ -65,13 +67,61 @@ class ProfileController extends Controller
 			$user->sendEmailVerificationNotification();
 		}
 
-		if ($user->birthday !== $originalUser->birthday) {
-			event(new BirthdayChanged($user));
-		}
-
 		return response()->json([
 			'message' => 'Das Profil wurde erfolgreich bearbeitet.',
 		], Response::HTTP_OK);
+	}
+
+	/**
+	 * @param  \App\Http\Requests\Auth\ProfileUpdateBranchesRequest  $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function updateBranches(ProfileUpdateBranchesRequest $request): JsonResponse
+	{
+		$user = User::where("id", Auth::id())->with('memberShip', 'memberShip.branches')->first();
+		/*todo filtern wanted_to_leave_at oder so weil bug ist da ...*/
+		/*$originalUser = deep_copy($user);*/
+		$newBranches = $request->branchIds;
+		$originalBranches = collect(collect($user->memberShip->branches)->map(function ($item) {
+			return $item->id;
+		}));
+
+		$toRemove = $originalBranches->diff($newBranches);
+		$toAdd = collect($newBranches)->diff($originalBranches);
+
+		if (
+			DB::table('branch_member_ship')
+				->where('member_ship_id', $user->memberShip->id)
+				->whereNull('deleted_at')
+				->whereNotNull('wanted_to_leave_at')
+				->whereIn('branch_id', $toAdd)->exists()
+		) {
+			DB::table('branch_member_ship')
+				->where('member_ship_id', $user->memberShip->id)
+				->whereNull('deleted_at')
+				->whereNotNull('wanted_to_leave_at')
+				->whereIn('branch_id', $toAdd)->update(['wanted_to_leave_at' => null]);
+		} else {
+			$user->memberShip->branches()->attach($toAdd);
+		}
+		if (count($toRemove) > 0) {
+			DB::table('branch_member_ship')
+				->where('member_ship_id', $user->memberShip->id)
+				->whereIn('branch_id', $toRemove)
+				->update(['wanted_to_leave_at' => now()]);
+		}
+		$user->fresh();
+		$user->loadMissing(['summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail', 'memberShip', 'memberShip.branches']);
+
+		return response()->json([
+			'message' => 'Die Sparten wurden erfolgreich bearbeitet.',
+			'data'    => new UserResource($user),
+		], Response::HTTP_OK);
+
+		/*return response()->json([
+			'message' => 'Das Profil wurde erfolgreich bearbeitet.',
+			'data' => new UserResource($user),
+		], Response::HTTP_OK);*/
 	}
 
 	public function mainSummoner(ProfileMainSummonerRequest $request)

@@ -13,7 +13,7 @@ class MemberShip extends Model
 	use BelongsToUser,
 		CascadesDeletes;
 
-	protected $cascadeDeletes = ['branches' ];
+	protected $cascadeDeletes = ['branches'];
 
 	protected $fillable = [
 		'user_id',
@@ -32,8 +32,13 @@ class MemberShip extends Model
 	];
 
 	protected $casts = [
-		'country_id'   => 'integer',
-		'activated_at' => 'datetime',
+		'country_id'                        => 'integer',
+		'activated_at'                      => 'datetime',
+		'branches.pivot.created_at'         => 'datetime',
+		'branches.pivot.updated_at'         => 'datetime',
+		'branches.pivot.deleted_at'         => 'datetime',
+		'branches.pivot.exported_at'        => 'datetime',
+		'branches.pivot.wanted_to_leave_at' => 'datetime',
 	];
 
 	/**
@@ -41,7 +46,28 @@ class MemberShip extends Model
 	 */
 	public function branches(): BelongsToMany
 	{
-		return $this->belongsToMany(Branch::class);
+		return $this->belongsToMany(Branch::class)
+			->whereNull('deleted_at')
+			->withTimestamps()
+			->withPivot(['id'])
+			->withPivot(['activated_at'])
+			->withPivot(['wanted_to_leave_at'])
+			->withPivot(['exported_at'])
+			->withPivot(['deleted_at']);
+	}
+
+	/**
+	 * @return BelongsToMany
+	 */
+	public function branchesWithTrashed(): BelongsToMany
+	{
+		return $this->belongsToMany(Branch::class)
+			->withTimestamps()
+			->withPivot(['id'])
+			->withPivot(['activated_at'])
+			->withPivot(['wanted_to_leave_at'])
+			->withPivot(['exported_at'])
+			->withPivot(['deleted_at']);
 	}
 
 	/**

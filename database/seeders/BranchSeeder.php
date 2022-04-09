@@ -22,14 +22,14 @@ class BranchSeeder extends BaseSeeder
 			[
 				'name'         => 'Airsoft',
 				'description'  => 'Ganz viel Airsoft',
-				'price'        => '2.00',
+				'price'        => '3.00',
 				'is_selectable' => true,
 				'activated_at' => now(),
 			],
 			[
 				'name'         => 'E-Sports',
 				'description'  => 'Ganz viel E-Sports und Gaming',
-				'price'        => '1.00',
+				'price'        => '0',
 				'is_selectable' => true,
 				'activated_at' => now(),
 			]

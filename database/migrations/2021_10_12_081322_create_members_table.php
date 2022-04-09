@@ -50,6 +50,11 @@ class CreateMembersTable extends Migration
 			$table->id();
 			$table->foreignId('branch_id');
 			$table->foreignId('member_ship_id');
+			$table->dateTime('activated_at')->nullable();
+			$table->dateTime('wanted_to_leave_at')->nullable();
+			$table->dateTime('exported_at')->nullable();
+			$table->softDeletes();
+			$table->timestamps();
 
 			$table->foreign('branch_id')->references('id')->on('branches');
 			$table->foreign('member_ship_id')->references('id')->on('member_ships');
