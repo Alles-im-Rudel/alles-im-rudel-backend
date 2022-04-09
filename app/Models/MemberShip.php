@@ -6,6 +6,7 @@ use App\Traits\Relations\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 
 class MemberShip extends Model
@@ -24,6 +25,7 @@ class MemberShip extends Model
 		'salutation',
 		'city',
 		'iban',
+		'bic',
 		'activated_at',
 	];
 
@@ -68,6 +70,24 @@ class MemberShip extends Model
 			->withPivot(['wanted_to_leave_at'])
 			->withPivot(['exported_at'])
 			->withPivot(['deleted_at']);
+	}
+
+	/**
+	 * @return MorphOne
+	 */
+	public function signature(): MorphOne
+	{
+		return $this->morphOne(Image::class, 'imageable')
+			->select([
+				'id',
+				'imageable_id',
+				'imageable_type',
+				'image',
+				'title',
+				'file_name',
+				'file_size',
+				'file_mime_type'
+			]);
 	}
 
 	/**

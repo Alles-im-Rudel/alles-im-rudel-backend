@@ -21,12 +21,14 @@ class MemberRegisterRequest extends FormRequest
 		$this->convertToString('city');
 		$this->convertToString('country');
 		$this->convertToString('iban');
+		$this->convertToString('bic');
 		$this->convertToString('email');
 		$this->convertToString('password');
 		$this->convertToString('passwordRepeat');
 		$this->convertToBoolean('hasAcceptedDataProtection');
 		$this->convertToBoolean('hasAcceptedMonthlyDebits');
 		$this->convertToBoolean('wantsEmailNotification');
+		$this->addKeyIfNotExist('branches');
 	}
 
 	/**
@@ -47,6 +49,8 @@ class MemberRegisterRequest extends FormRequest
 			'city'                      => 'required|string',
 			'country'                   => 'required|string',
 			'iban'                      => 'required|string',
+			'bic'                       => 'required|string',
+			'signature'                 => 'required|mimes:jpg,jpeg,png',
 			'email'                     => 'required|email|max:50|min:3|unique:users',
 			'password'                  => 'string|required_with:passwordRepeat|same:passwordRepeat',
 			'passwordRepeat'            => 'required|string',

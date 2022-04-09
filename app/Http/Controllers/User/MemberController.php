@@ -12,10 +12,13 @@ use App\Models\Country;
 use App\Models\Level;
 use App\Models\MemberShip;
 use App\Models\User;
+use App\Services\Images\ImageGenerator;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class MemberController extends Controller
 {
@@ -87,6 +90,7 @@ class MemberController extends Controller
 	/**
 	 * @param  \App\Http\Requests\Member\MemberRegisterRequest  $request
 	 * @return \Illuminate\Http\JsonResponse
+	 * @throws \JsonException
 	 */
 	public function register(MemberRegisterRequest $request): JsonResponse
 	{
@@ -109,8 +113,38 @@ class MemberController extends Controller
 			'postcode'   => $request->postcode,
 			'city'       => $request->city,
 			'iban'       => $request->iban,
+			'bic'        => $request->bic,
 		]);
-		$memberShip->branches()->sync([Branch::AIR, ...$request->branches]);
+		$branches = json_decode($request->branches, true, 512, JSON_THROW_ON_ERROR);
+
+		$memberShip->branches()->sync([Branch::AIR, ...$branches]);
+
+		$originalFileName = $request->file('signature')->getClientOriginalName();
+		$image = ImageGenerator::resizeImageIfNeeded($request->file('signature'));
+
+		$memberShip->signature()->create([
+			'image'          => $image->encode('data-url'),
+			'thumbnail'      => $image->encode('data-url'),
+			'file_name'      => $originalFileName,
+			'file_mime_type' => $image->mime(),
+			'file_size'      => $image->filesize()
+		]);
+
+		$data = [
+			'fullName'  => $user->first_name.' '.$user->last_name,
+			'street'    => $memberShip->street,
+			'postcode'  => $memberShip->postcode,
+			'city'      => $memberShip->city,
+			'country'   => $request->country,
+			'iban'      => $memberShip->iban,
+			'bic'       => $memberShip->bic,
+			'signature' => $image->encode('data-url')
+		];
+
+		$pdf = PDF::loadView('pdf/sepaPDF', $data);
+
+		Storage::put('public/pdf/'.$user->first_name.'_'.$user->last_name.now()->format('Y-m-d').'.pdf',
+			$pdf->output());
 
 		$user->sendEmailVerificationNotification();
 		//Notification::send(User::notification()->get(), new NewAppointmentNotification());

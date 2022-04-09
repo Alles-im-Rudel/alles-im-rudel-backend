@@ -29,6 +29,7 @@ class CreateMembersTable extends Migration
 			$table->string('postcode');
 			$table->string('city');
 			$table->string('iban');
+			$table->string('bic');
 			$table->dateTime('activated_at')->nullable();
 			$table->timestamps();
 
