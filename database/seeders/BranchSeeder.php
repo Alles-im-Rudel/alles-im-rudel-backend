@@ -21,7 +21,7 @@ class BranchSeeder extends BaseSeeder
 			],
 			[
 				'name'         => 'Airsoft',
-				'description'  => 'Ganz viel Airsoft',
+				'description'  => 'Airsoft ist ein Geländespiel, in dem mit Softairwaffen ausgerüstete Teams gegeneinander antreten',
 				'price'        => '3.00',
 				'is_selectable' => true,
 				'activated_at' => now(),

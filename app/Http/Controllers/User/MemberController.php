@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Member\MemberIndexRequest;
 use App\Http\Requests\Member\MemberRegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Mail\MemberShipAcceptMail;
+use App\Mail\MemberShipRejectMail;
 use App\Models\Branch;
 use App\Models\Country;
 use App\Models\Level;
@@ -20,6 +22,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class MemberController extends Controller
@@ -71,6 +74,8 @@ class MemberController extends Controller
 			->where('member_ship_id', $user->memberShip->id)
 			->update(['activated_at' => now()]);
 
+		Mail::to($user->email)->send(new MemberShipAcceptMail($user));
+
 		return response()->json([
 			"message" => "Die Anmeldung wurde erfolgreich bestätigt",
 		], Response::HTTP_OK);
@@ -85,6 +90,8 @@ class MemberController extends Controller
 		if (!Auth::user()->can('members.mamage')) {
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
+
+		Mail::to($user->email)->send(new MemberShipRejectMail($user));
 
 		$user->forceDelete();
 
