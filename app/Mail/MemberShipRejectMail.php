@@ -25,9 +25,9 @@ class MemberShipRejectMail extends Mailable
 	/**
 	 * Build the message.
 	 *
-	 * @return \App\Mail\MemberShipAcceptMail
+	 * @return \App\Mail\MemberShipRejectMail
 	 */
-	public function build(): MemberShipAcceptMail
+	public function build(): MemberShipRejectMail
 	{
 
 		return $this->subject('Verseins Beitritablehnung')
