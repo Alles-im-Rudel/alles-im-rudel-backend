@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\HtmlString;
 
 class VerifyEmailNotification extends VerifyEmail
 {
@@ -21,19 +22,19 @@ class VerifyEmailNotification extends VerifyEmail
 	 * Get the mail representation of the notification.
 	 *
 	 * @param  mixed  $notifiable
-	 * @return \Illuminate\Notifications\Messages\MailMessage
+	 * @return MailMessage
 	 */
 	public function toMail($notifiable): MailMessage
 	{
 		$verificationUrl = $this->verificationUrl($notifiable);
 
 		return (new MailMessage)
-			->subject('Email Verifizieren')
-			->greeting('Hallo '.$notifiable->first_name.' '.$notifiable->last_name.',')
-			->line('bitte bestätige deine Email durch Klick auf den folgenden Button.')
-			->action('Email Verifizieren', url($verificationUrl))
-			->line('Gruß')
-			->salutation(' Alles Im Rudel');
+			->subject('E-Mail verifizieren')
+			->greeting('Hallo '.$notifiable->first_name.',')
+			->line(new HtmlString('vielen Dank für dein Interesse an einem Beitritt zu Alles im Rudel e.V.<br><br>Dein Mitgliedsaufnahmeantrag ist bei uns eingegangen und wird nun von uns bearbeitet. Sobald dieser durch uns bearbeitet wurde, benachrichtigen wir dich automatisch per E-Mail.<br><br>Bitte bestätige noch deine E-Mail durch Klick auf den folgenden Button.'))
+			->action('E-Mail verifizieren', url($verificationUrl))
+			->line('Viele Grüße')
+			->salutation(new HtmlString('<b>Timm, Silas & Nick</b><br>Vorstand von Alles im Rudel e.V.'));
 	}
 
 	/**
