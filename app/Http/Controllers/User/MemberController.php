@@ -18,6 +18,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MemberController extends Controller
@@ -64,6 +65,10 @@ class MemberController extends Controller
 
 		$user->memberShip->activated_at = now();
 		$user->memberShip->save();
+
+		DB::table('branch_member_ship')
+			->where('member_ship_id', $user->memberShip->id)
+			->update(['activated_at' => now()]);
 
 		return response()->json([
 			"message" => "Die Anmeldung wurde erfolgreich bestätigt",
@@ -131,14 +136,16 @@ class MemberController extends Controller
 		]);
 
 		$data = [
-			'fullName'  => $user->first_name.' '.$user->last_name,
-			'street'    => $memberShip->street,
-			'postcode'  => $memberShip->postcode,
-			'city'      => $memberShip->city,
-			'country'   => $request->country,
-			'iban'      => $memberShip->iban,
-			'bic'       => $memberShip->bic,
-			'signature' => $image->encode('data-url')
+			'fullName'                     => $user->first_name.' '.$user->last_name,
+			'street'                       => $memberShip->street,
+			'postcode'                     => $memberShip->postcode,
+			'city'                         => $memberShip->city,
+			'country'                      => $request->country,
+			'iban'                         => $memberShip->iban,
+			'bic'                          => $memberShip->bic,
+			'signature'                    => $image->encode('data-url'),
+			'mandateReference'             => 'AIR '.$memberShip->id,
+			'creditorIdentificationNumber' => env('CREDITOR_IDENTIFICATION_NUMBER')
 		];
 
 		$pdf = PDF::loadView('pdf/sepaPDF', $data);

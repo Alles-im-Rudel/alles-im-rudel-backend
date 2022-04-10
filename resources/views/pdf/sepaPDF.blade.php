@@ -11,9 +11,9 @@
     25335 Elmshorn <br>
     Deutschland
 </p>
-<p>Gläubiger-Id:</p><br>
+<p>Gläubiger-Id: {{ $creditorIdentificationNumber }}</p><br>
 
-<p>Mandatsrefernz:</p>
+<p>Mandatsrefernz: {{ $mandateReference }}</p>
 <h1>SEPA-Lastschrift-Mandat</h1>
 <p>Ich ermächtige Alles im Rudel e.V., Zahlungen von meinem Konto mittels Lastschrift einzuziehen. <br>
     Zugliech weise ich mein Kreditinsitut an, die von Alles im Rudel e.V. auf mein Konto gezogenen Lastschriften

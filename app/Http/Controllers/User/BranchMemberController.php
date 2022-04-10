@@ -29,11 +29,13 @@ class BranchMemberController extends Controller
 	public function index(BranchMemberIndexRequest $request): AnonymousResourceCollection
 	{
 		$users = User::with([
-			'memberShip', 'memberShip.country', 'memberShip.branches' => function ($query) {
+			'memberShip',
+			'memberShip.country',
+			'memberShip.branches' => function ($query) {
 				return $query->whereNull('branch_member_ship.activated_at');
 			},
 		])->whereHas('memberShip', function ($query) {
-			$query->whereHas('branches', function ($query) {
+			$query->whereNotNull('activated_at')->whereHas('branches', function ($query) {
 				return $query->whereNull('branch_member_ship.activated_at');
 			});
 		});
