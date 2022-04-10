@@ -23,6 +23,7 @@ class CreateMembersTable extends Migration
 			$table->id();
 			$table->foreignId('user_id');
 			$table->foreignId('country_id');
+			$table->foreignId('account_country_id');
 			$table->string('salutation');
 			$table->string('phone');
 			$table->string('street');
@@ -30,6 +31,12 @@ class CreateMembersTable extends Migration
 			$table->string('city');
 			$table->string('iban');
 			$table->string('bic');
+			$table->string('account_first_name');
+			$table->string('account_last_name');
+			$table->string('account_street');
+			$table->string('account_postcode');
+			$table->string('account_city');
+			$table->string('account_signature_city');
 			$table->dateTime('activated_at')->nullable();
 			$table->timestamps();
 

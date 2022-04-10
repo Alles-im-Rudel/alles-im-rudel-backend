@@ -26,7 +26,7 @@
 {{ $postcode }} {{ $city }} <br>
 {{ $country }} <br><br>
 {{$iban}} {{ $bic }} <br><br>
-{{ now()->format('d.m.Y') }} {{ $city }} <br>
+{{ now()->format('d.m.Y') }} {{ $accountSignatureCity }} <br>
 <img src="{{ $signature }}" height="200px" alt="Unterschrift" />
 </body>
 </html>

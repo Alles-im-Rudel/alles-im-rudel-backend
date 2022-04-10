@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 
+use App\Events\BirthdayChanged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Member\MemberIndexRequest;
 use App\Http\Requests\Member\MemberRegisterRequest;
@@ -76,6 +77,8 @@ class MemberController extends Controller
 
 		Mail::to($user->email)->send(new MemberShipAcceptMail($user));
 
+		event(new BirthdayChanged($user));
+
 		return response()->json([
 			"message" => "Die Anmeldung wurde erfolgreich bestätigt",
 		], Response::HTTP_OK);
@@ -118,16 +121,24 @@ class MemberController extends Controller
 		]);
 
 		$memberShip = MemberShip::create([
-			'user_id'    => $user->id,
-			'country_id' => Country::where("name", $request->country)->first()->id,
-			'salutation' => $request->salutation,
-			'phone'      => $request->phone,
-			'street'     => $request->street,
-			'postcode'   => $request->postcode,
-			'city'       => $request->city,
-			'iban'       => $request->iban,
-			'bic'        => $request->bic,
+			'user_id'                => $user->id,
+			'country_id'             => Country::where("name", $request->country)->first()->id,
+			'salutation'             => $request->salutation,
+			'phone'                  => $request->phone,
+			'street'                 => $request->street,
+			'postcode'               => $request->postcode,
+			'city'                   => $request->city,
+			'iban'                   => $request->iban,
+			'bic'                    => $request->bic,
+			'account_first_name'     => $request->accountFirstName,
+			'account_last_name'      => $request->accountLastName,
+			'account_street'         => $request->accountStreet,
+			'account_postcode'       => $request->accountPostcode,
+			'account_city'           => $request->accountCity,
+			'account_country_id'     => Country::where("name", $request->accountCountry)->first()->id,
+			'account_signature_city' => $request->accountSignatureCity,
 		]);
+
 		$branches = json_decode($request->branches, true, 512, JSON_THROW_ON_ERROR);
 
 		$memberShip->branches()->sync([Branch::AIR, ...$branches]);
@@ -144,13 +155,14 @@ class MemberController extends Controller
 		]);
 
 		$data = [
-			'fullName'                     => $user->first_name.' '.$user->last_name,
-			'street'                       => $memberShip->street,
-			'postcode'                     => $memberShip->postcode,
-			'city'                         => $memberShip->city,
-			'country'                      => $request->country,
+			'fullName'                     => $user->account_first_name.' '.$user->account_last_name,
+			'street'                       => $memberShip->account_street,
+			'postcode'                     => $memberShip->account_postcode,
+			'city'                         => $memberShip->account_city,
+			'country'                      => $request->accountCountry,
 			'iban'                         => $memberShip->iban,
 			'bic'                          => $memberShip->bic,
+			'accountSignatureCity'         => $memberShip->account_signature_city,
 			'signature'                    => $image->encode('data-url'),
 			'mandateReference'             => 'AIR '.$memberShip->id,
 			'creditorIdentificationNumber' => env('CREDITOR_IDENTIFICATION_NUMBER')
@@ -162,7 +174,6 @@ class MemberController extends Controller
 			$pdf->output());
 
 		$user->sendEmailVerificationNotification();
-		//Notification::send(User::notification()->get(), new NewAppointmentNotification());
 
 		return response()->json([
 			"message" => "Deine Anfrage wurde erfolgreich erstellt. Bitte bestätige deine Email!! Wir werden deine Anfrage schnellstmöglich bearbeiten.",

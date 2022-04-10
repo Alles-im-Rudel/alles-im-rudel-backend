@@ -13,6 +13,7 @@ use App\Http\Controllers\Lol\SummonerController;
 use App\Http\Controllers\Lol\SummonerInfoController;
 use App\Http\Controllers\Lol\SummonerPickerController;
 use App\Http\Controllers\MemberShip\BranchController;
+use App\Http\Controllers\MemberShip\MandatController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Post\PostCommentController;
 use App\Http\Controllers\Post\PostController;
@@ -42,6 +43,8 @@ Route::get('email/resend', [VerificationController::class, 'resend'])->name('ver
 Route::get('tags', [TagController::class, 'index']);
 Route::get('clash', [ClashController::class, 'index']);
 Route::get('branches', [BranchController::class, 'index']);
+
+Route::get('get-mandate-refernce-id', [MandatController::class, 'index']);
 
 Route::group(['prefix' => 'members'], static function () {
 	Route::post('register', [MemberController::class, 'register']);

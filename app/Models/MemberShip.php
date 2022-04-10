@@ -19,6 +19,7 @@ class MemberShip extends Model
 	protected $fillable = [
 		'user_id',
 		'country_id',
+		'account_country_id',
 		'phone',
 		'street',
 		'postcode',
@@ -27,6 +28,12 @@ class MemberShip extends Model
 		'iban',
 		'bic',
 		'activated_at',
+		'account_first_name',
+		'account_last_name',
+		'account_street',
+		'account_postcode',
+		'account_city',
+		'account_signature_city',
 	];
 
 	protected $appends = [
@@ -104,6 +111,14 @@ class MemberShip extends Model
 	public function country(): BelongsTo
 	{
 		return $this->belongsTo(Country::class);
+	}
+
+	/**
+	 * @return BelongsTo
+	 */
+	public function accountCountry(): BelongsTo
+	{
+		return $this->belongsTo(Country::class, 'account_country_id', 'id');
 	}
 
 	public function getIsActiveAttribute(): bool

@@ -22,7 +22,13 @@ class MemberRegisterRequest extends FormRequest
 		$this->convertToString('country');
 		$this->convertToString('iban');
 		$this->convertToString('bic');
-		$this->convertToString('email');
+		$this->convertToString('accountFirstName');
+		$this->convertToString('accountLastName');
+		$this->convertToString('accountStreet');
+		$this->convertToString('accountPostcode');
+		$this->convertToString('accountCity');
+		$this->convertToString('accountSignatureCity');
+		$this->convertToString('accountCountry');
 		$this->convertToString('password');
 		$this->convertToString('passwordRepeat');
 		$this->convertToBoolean('hasAcceptedDataProtection');
@@ -50,6 +56,13 @@ class MemberRegisterRequest extends FormRequest
 			'country'                   => 'required|string',
 			'iban'                      => 'required|string',
 			'bic'                       => 'required|string',
+			'accountFirstName'          => 'required|string',
+			'accountLastName'           => 'required|string',
+			'accountStreet'             => 'required|string',
+			'accountPostcode'           => 'required|string',
+			'accountCity'               => 'required|string',
+			'accountCountry'            => 'required|string',
+			'accountSignatureCity'      => 'required|string',
 			'signature'                 => 'required|mimes:jpg,jpeg,png',
 			'email'                     => 'required|email|max:50|min:3|unique:users',
 			'password'                  => 'string|required_with:passwordRepeat|same:passwordRepeat',
