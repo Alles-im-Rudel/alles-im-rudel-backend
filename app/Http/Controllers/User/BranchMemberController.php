@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Member\BranchMemberIndexRequest;
 use App\Http\Requests\Member\MemberRegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Mail\BranchMemberShipAcceptMail;
+use App\Mail\BranchMemberShipRejectMail;
 use App\Models\Branch;
 use App\Models\Country;
 use App\Models\Level;
@@ -18,6 +20,7 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class BranchMemberController extends Controller
 {
@@ -71,6 +74,8 @@ class BranchMemberController extends Controller
 			->where('id', $request->pivotId)
 			->update(['activated_at' => now()]);
 
+		Mail::to($user->email)->send(new BranchMemberShipAcceptMail($user));
+
 		return response()->json([
 			"message" => "Der Spartenbeitrit wurde erfolgreich bestätigt",
 		], Response::HTTP_OK);
@@ -90,6 +95,8 @@ class BranchMemberController extends Controller
 		DB::table('branch_member_ship')
 			->where('id', $request->pivotId)
 			->update(['deleted_at' => now()]);
+
+		Mail::to($user->email)->send(new BranchMemberShipRejectMail($user));
 
 		return response()->json([
 			"message" => "Der Spartenbeitrit wurde erfolgreich abgelehnt",
