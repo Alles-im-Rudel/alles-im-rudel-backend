@@ -18,6 +18,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -105,7 +106,7 @@ class MemberController extends Controller
 			'email'                    => $request->email,
 			'birthday'                 => $request->birthday,
 			'wants_email_notification' => $request->wantsEmailNotification,
-			'password'                 => $request->password,
+			'password'                 => Hash::make($request->password),
 			'level_id'                 => Level::GUEST,
 		]);
 

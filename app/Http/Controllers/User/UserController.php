@@ -16,15 +16,15 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use function DeepCopy\deep_copy;
 
 class UserController extends BaseController
 {
-
 	/**
 	 * UserController constructor.
 	 */
@@ -46,7 +46,6 @@ class UserController extends BaseController
 			'last_name',
 		];
 	}
-
 
 	/**
 	 * @param  UserIndexRequest  $request
@@ -215,13 +214,18 @@ class UserController extends BaseController
 	 */
 	public function checkEmail($email): JsonResponse
 	{
-		if (User::where("email", $email)->exists()) {
-			return response()->json([
-				false,
-			], Response::HTTP_OK);
-		}
-		return response()->json([
-			true,
-		], Response::HTTP_OK);
+        $validator = Validator::make(['email' => $email], [
+            'email' => 'required|email|unique:users,email'
+        ]);
+
+        try {
+            $isValid = $validator->validate();
+        } catch (ValidationException $exception) {
+            $isValid = false;
+        }
+
+        return response()->json([
+            'isValid' => $isValid
+        ], Response::HTTP_OK);
 	}
 }
