@@ -119,7 +119,8 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::put('', [ProfileController::class, 'update']);
 		Route::put('branches', [ProfileController::class, 'updateBranches']);
 		Route::put('main-summoner', [ProfileController::class, 'mainSummoner']);
-		Route::delete('', [ProfileController::class, 'delete']);
+        Route::post('image', [ProfileController::class, 'updateImage']);
+        Route::delete('', [ProfileController::class, 'delete']);
 	});
 
 	Route::group(['prefix' => 'users'], static function () {
