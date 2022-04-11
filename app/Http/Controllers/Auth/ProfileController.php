@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\ProfileMainSummonerRequest;
 use App\Http\Requests\Auth\ProfileUpdateBranchesRequest;
 use App\Http\Requests\Auth\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\BranchUserMemberShip;
 use App\Models\Summoner;
 use App\Models\User;
 use App\Services\Images\ImageGenerator;
@@ -31,10 +32,15 @@ class ProfileController extends Controller
 		$userId = Auth::id();
 
 		return new UserResource(User::with([
-			'summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail', 'memberShip',
-			'memberShip.branches' => function ($query) {
-				$query->whereNull('branch_member_ship.wanted_to_leave_at');
+			'summoners',
+			'userGroups',
+			'mainSummoner',
+			'image',
+			'thumbnail',
+			'branchUserMemberShips' => function ($query) {
+				$query->whereNull('wants_to_leave_at');
 			},
+			'branchUserMemberShips.branch'
 		])->find($userId));
 	}
 
@@ -51,6 +57,8 @@ class ProfileController extends Controller
 		$user->first_name = $request->firstName;
 		$user->last_name = $request->lastName;
 		$user->email = $request->email;
+		$user->salutation = $request->salutation;
+		$user->phone = $request->phone;
 
 		if ($request->password && $request->passwordRepeat) {
 			if ($request->password !== $request->passwordRepeat) {
@@ -62,10 +70,6 @@ class ProfileController extends Controller
 		}
 
 		$user->save();
-
-		$user->memberShip->salutation = $request->salutation;
-		$user->memberShip->phone = $request->phone;
-		$user->memberShip->save();
 
 		if ($originalUser->email !== $user->email) {
 			$user->wants_email_notification = false;
@@ -86,49 +90,60 @@ class ProfileController extends Controller
 	public function updateBranches(ProfileUpdateBranchesRequest $request): JsonResponse
 	{
 		$user = User::where("id", Auth::id())->with([
-			'memberShip', 'memberShip.branches' => function ($query) {
-				$query->whereNull('branch_member_ship.wanted_to_leave_at');
+			'branchUserMemberShips' => function ($query) {
+				$query->whereNull('wants_to_leave_at');
 			},
+			'branchUserMemberShips.branch'
 		])->first();
 
 		$newBranches = $request->branchIds;
-		$originalBranches = collect(collect($user->memberShip->branches)->map(function ($item) {
-			return $item->id;
+
+		$originalBranches = collect(collect($user->branchUserMemberShips)->map(function ($item) {
+			return $item->branch->id;
 		}));
 
 		$toRemove = $originalBranches->diff($newBranches);
 		$toAdd = collect($newBranches)->diff($originalBranches);
 
 		if (
-			DB::table('branch_member_ship')
-				->where('member_ship_id', $user->memberShip->id)
+			DB::table('branch_user_member_ships')
+				->where('user_id', $user->id)
 				->whereNull('deleted_at')
-				->whereNotNull('wanted_to_leave_at')
+				->whereNotNull('wants_to_leave_at')
 				->whereIn('branch_id', $toAdd)->exists()
 		) {
-			DB::table('branch_member_ship')
-				->where('member_ship_id', $user->memberShip->id)
+			DB::table('branch_user_member_ships')
+				->where('user_id', $user->id)
 				->whereNull('deleted_at')
-				->whereNotNull('wanted_to_leave_at')
+				->whereNotNull('wants_to_leave_at')
 				->whereIn('branch_id', $toAdd)->update([
-					'wanted_to_leave_at' => null, 'exported_at' => null, 'updated_at' => now()
+					'wants_to_leave_at' => null, 'exported_at' => null, 'updated_at' => now()
 				]);
 		} else {
-			$user->memberShip->branches()->attach($toAdd);
+			foreach ($toAdd as $id) {
+				BranchUserMemberShip::create([
+					'user_id'   => $user->id,
+					'branch_id' => $id
+				]);
+			}
 		}
 		if (count($toRemove) > 0) {
-			DB::table('branch_member_ship')
-				->where('member_ship_id', $user->memberShip->id)
+			DB::table('branch_user_member_ships')
+				->where('user_id', $user->id)
 				->whereIn('branch_id', $toRemove)
-				->update(['wanted_to_leave_at' => now(), 'exported_at' => null, 'updated_at' => now()]);
+				->update(['wants_to_leave_at' => now(), 'exported_at' => null, 'updated_at' => now()]);
 		}
 
 		$user->fresh();
-		$user->load([
-			'summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail', 'memberShip',
-			'memberShip.branches' => function ($query) {
-				$query->whereNull('branch_member_ship.wanted_to_leave_at');
+		$user->load(['summoners',
+			'userGroups',
+			'mainSummoner',
+			'image',
+			'thumbnail',
+			'branchUserMemberShips' => function ($query) {
+				$query->whereNull('wants_to_leave_at');
 			},
+			'branchUserMemberShips.branch'
 		]);
 
 		return response()->json([
