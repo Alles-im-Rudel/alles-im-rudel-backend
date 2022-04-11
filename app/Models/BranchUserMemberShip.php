@@ -36,7 +36,7 @@ class BranchUserMemberShip extends Model
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
 	 */
-	public function branche(): BelongsTo
+	public function branch(): BelongsTo
 	{
 		return $this->belongsTo(Branch::class);
 	}

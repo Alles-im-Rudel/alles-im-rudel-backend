@@ -7,6 +7,7 @@ use App\Traits\Relations\BelongsToLevel;
 use App\Traits\Relations\BelongsToManySummoners;
 use App\Traits\Relations\BelongsToManyUserGroups;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -45,6 +46,7 @@ class User extends Authenticatable
 		'city',
 		'birthday',
 		'country_id',
+		'bank_account_id',
 		'activated_at',
 		'level_id',
 		'email_verified_at',
@@ -233,6 +235,22 @@ class User extends Authenticatable
 	public function liked(): HasMany
 	{
 		return $this->hasMany(Like::class, 'user_id', 'id');
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function country(): BelongsTo
+	{
+		return $this->belongsTo(Country::class);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function bankAccount(): BelongsTo
+	{
+		return $this->belongsTo(BankAccount::class);
 	}
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\MemberShip;
+namespace App\Http\Controllers\Branch;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BranchResource;

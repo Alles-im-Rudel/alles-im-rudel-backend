@@ -5,9 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 
 class BankAccount extends Model
 {
+	use CascadesDeletes;
+
+	protected $cascadeDeletes = ['signature'];
+
 	protected $fillable = [
 		'country_id',
 		'iban',

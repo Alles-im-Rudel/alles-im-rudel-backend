@@ -5,7 +5,6 @@ namespace App\Http\Controllers\MemberShipApplication;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MemberShipApplication\MemberShipApplicationRequest;
 use App\Models\BankAccount;
-use App\Models\Branch;
 use App\Models\BranchUserMemberShip;
 use App\Models\Country;
 use App\Models\Level;
@@ -64,7 +63,7 @@ class MemberShipApplicationController extends Controller
 			'birthday'                 => $request->birthday,
 			'wants_email_notification' => $request->wantsEmailNotification,
 			'country_id'               => Country::where("name", $request->country)->first()->id,
-			'back_account_id'          => $bankAccount->id,
+			'bank_account_id'          => $bankAccount->id,
 			'password'                 => Hash::make($request->password),
 			'level_id'                 => Level::GUEST,
 		]);

@@ -12,7 +12,8 @@ use App\Http\Controllers\Lol\LolApiController;
 use App\Http\Controllers\Lol\SummonerController;
 use App\Http\Controllers\Lol\SummonerInfoController;
 use App\Http\Controllers\Lol\SummonerPickerController;
-use App\Http\Controllers\MemberShip\BranchController;
+use App\Http\Controllers\Branch\BranchController;
+use App\Http\Controllers\MemberShipApplication\ManageMemberShipApplicationController;
 use App\Http\Controllers\MemberShipApplication\MandatController;
 use App\Http\Controllers\MemberShipApplication\MemberShipApplicationController;
 use App\Http\Controllers\Permission\PermissionController;
@@ -21,7 +22,6 @@ use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Post\PostLikeController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\User\BranchMemberController;
-use App\Http\Controllers\User\MemberController;
 use App\Http\Controllers\User\SEPAController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\UserImageController;
@@ -87,12 +87,10 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
         Route::put('{post}/like', [PostLikeController::class, 'change']);
     });
 
-
-	Route::group(['prefix' => 'members'], static function () {
-		Route::get('', [MemberController::class, 'index']);
-		Route::get('{user}', [MemberController::class, 'show']);
-		Route::put('accept/{user}', [MemberController::class, 'accept']);
-		Route::put('reject/{user}', [MemberController::class, 'reject']);
+	Route::group(['prefix' => 'manage-member-ship-applications'], static function () {
+		Route::get('', [ManageMemberShipApplicationController::class, 'index']);
+		Route::put('accept/{user}', [ManageMemberShipApplicationController::class, 'accept']);
+		Route::put('reject/{user}', [ManageMemberShipApplicationController::class, 'reject']);
 	});
 
 	Route::group(['prefix' => 'sepa-members'], static function () {
