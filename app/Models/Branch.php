@@ -2,22 +2,20 @@
 
 namespace App\Models;
 
-use App\Traits\Relations\BelongsToLevel;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Branch extends Model
 {
 
 	public const AIR = 1;
-	public const AIRSOFT = 1;
-	public const ESPORTS = 1;
+	public const AIRSOFT = 2;
+	public const ESPORTS = 3;
 
 	protected $fillable = [
 		'name',
 		'price',
+		'description',
 		'activated_at',
 		'is_selectable'
 	];
@@ -33,11 +31,11 @@ class Branch extends Model
 	];
 
 	/**
-	 * @return BelongsToMany
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
-	public function members(): BelongsToMany
+	public function branchUserMemberShips(): HasMany
 	{
-		return $this->belongsToMany(MemberShip::class);
+		return $this->hasMany(BranchUserMemberShip::class);
 	}
 
 	public function getIsActiveAttribute(): bool

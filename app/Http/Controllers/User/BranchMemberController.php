@@ -72,7 +72,7 @@ class BranchMemberController extends Controller
 
 		DB::table('branch_member_ship')
 			->where('id', $request->pivotId)
-			->update(['activated_at' => now()]);
+			->update(['activated_at' => now(), 'updated_at' => now()]);
 
 		Mail::to($user->email)->send(new BranchMemberShipAcceptMail($user));
 
@@ -94,7 +94,7 @@ class BranchMemberController extends Controller
 
 		DB::table('branch_member_ship')
 			->where('id', $request->pivotId)
-			->update(['deleted_at' => now()]);
+			->update(['deleted_at' => now(), 'updated_at' => now()]);
 
 		Mail::to($user->email)->send(new BranchMemberShipRejectMail($user));
 

@@ -32,13 +32,19 @@ class User extends Authenticatable
 
 	public const DEVELOPER_ID = 1;
 
-	protected $cascadeDeletes = ['memberShip'];
+	protected $cascadeDeletes = ['branchUserMemberShips'];
 
 	protected $fillable = [
+		'salutation',
 		'first_name',
 		'last_name',
 		'email',
+		'phone',
+		'street',
+		'postcode',
+		'city',
 		'birthday',
+		'country_id',
 		'activated_at',
 		'level_id',
 		'email_verified_at',
@@ -47,7 +53,9 @@ class User extends Authenticatable
 	];
 
 	protected $appends = [
-		'age'
+		'age',
+		'is_active',
+		'full_name'
 	];
 
 	/**
@@ -228,11 +236,11 @@ class User extends Authenticatable
 	}
 
 	/**
-	 * @return HasOne
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
-	public function memberShip(): HasOne
+	public function branchUserMemberShips(): HasMany
 	{
-		return $this->hasOne(MemberShip::class);
+		return $this->hasMany(BranchUserMemberShip::class);
 	}
 
 	public function getAgeAttribute(): int
@@ -240,4 +248,13 @@ class User extends Authenticatable
 		return Carbon::now()->diffInYears(Carbon::parse($this->birthday));
 	}
 
+	public function getIsActiveAttribute(): bool
+	{
+		return (bool) $this->activated_at;
+	}
+
+	public function getFullNameAttribute(): string
+	{
+		return $this->first_name.' '.$this->last_name;
+	}
 }

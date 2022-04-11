@@ -26,40 +26,19 @@ class UsersSeeder extends BaseSeeder
 		return [
 			[
 				'level_id'          => Level::DEVELOPER,
-				'first_name'        => 'Dev',
-				'last_name'         => 'Dev',
+				'first_name'        => 'Alles',
+				'last_name'         => 'im Rudel',
 				'password'          => $changeMe,
 				'email'             => 'allesimrudel@gmail.com',
+				'salutation'        => 'Boss',
+				'phone'             => '+49 176 55234699',
+				'street'            => 'Norderstraße 23',
+				'postcode'          => '25335',
+				'city'              => 'Elmshorn',
+				'country_id'        => 1,
 				'email_verified_at' => $now,
 				'activated_at'      => $now,
-			],
-			[
-				'level_id'          => Level::ADMINISTRATOR,
-				'first_name'        => 'Silas',
-				'last_name'         => 'Beckmann',
-				'password'          => $changeMe,
-				'email'             => 'silas.beckmann@t-online.de',
-				'email_verified_at' => $now,
-				'activated_at'      => $now,
-			],
-			[
-				'level_id'          => Level::ADMINISTRATOR,
-				'first_name'        => 'Timm',
-				'last_name'         => 'Vollborn',
-				'password'          => $changeMe,
-				'email'             => 'timm.vollborn@allesimrudel.de',
-				'email_verified_at' => $now,
-				'activated_at'      => $now,
-			],
-			[
-				'level_id'          => Level::ADMINISTRATOR,
-				'first_name'        => 'Nick',
-				'last_name'         => 'Nickels',
-				'password'          => $changeMe,
-				'email'             => 'nick.nickels@allesimrudel.de',
-				'email_verified_at' => $now,
-				'activated_at'      => $now,
-			],
+			]
 		];
 	}
 }

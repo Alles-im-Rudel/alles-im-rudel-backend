@@ -14,6 +14,6 @@ class BranchController extends Controller
 	 */
 	public function index(): AnonymousResourceCollection
 	{
-		return BranchResource::collection(Branch::withCount('members')->get());
+		return BranchResource::collection(Branch::withCount('branchUserMemberShips')->get());
 	}
 }

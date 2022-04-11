@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Member;
+namespace App\Http\Requests\MemberShipApplication;
 
 use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 
-class MemberRegisterRequest extends FormRequest
+class MemberShipApplicationRequest extends FormRequest
 {
 	use RequestHelper;
 

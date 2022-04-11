@@ -13,7 +13,8 @@ use App\Http\Controllers\Lol\SummonerController;
 use App\Http\Controllers\Lol\SummonerInfoController;
 use App\Http\Controllers\Lol\SummonerPickerController;
 use App\Http\Controllers\MemberShip\BranchController;
-use App\Http\Controllers\MemberShip\MandatController;
+use App\Http\Controllers\MemberShipApplication\MandatController;
+use App\Http\Controllers\MemberShipApplication\MemberShipApplicationController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Post\PostCommentController;
 use App\Http\Controllers\Post\PostController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Post\PostLikeController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\User\BranchMemberController;
 use App\Http\Controllers\User\MemberController;
+use App\Http\Controllers\User\SEPAController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\UserImageController;
 use App\Http\Controllers\User\UserPickerController;
@@ -46,8 +48,8 @@ Route::get('branches', [BranchController::class, 'index']);
 
 Route::get('get-mandate-refernce-id', [MandatController::class, 'index']);
 
-Route::group(['prefix' => 'members'], static function () {
-	Route::post('register', [MemberController::class, 'register']);
+Route::group(['prefix' => 'member-ship-application'], static function () {
+	Route::post('', [MemberShipApplicationController::class, 'index']);
 });
 
 // Profile
@@ -91,6 +93,10 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::get('{user}', [MemberController::class, 'show']);
 		Route::put('accept/{user}', [MemberController::class, 'accept']);
 		Route::put('reject/{user}', [MemberController::class, 'reject']);
+	});
+
+	Route::group(['prefix' => 'sepa-members'], static function () {
+		Route::get('', [SEPAController::class, 'index']);
 	});
 
 	Route::group(['prefix' => 'branch-members'], static function () {
