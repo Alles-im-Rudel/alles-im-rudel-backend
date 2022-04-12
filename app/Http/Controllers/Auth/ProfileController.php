@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\ProfileMainSummonerRequest;
 use App\Http\Requests\Auth\ProfileUpdateBranchesRequest;
 use App\Http\Requests\Auth\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Branch;
 use App\Models\BranchUserMemberShip;
 use App\Models\Summoner;
 use App\Models\User;
@@ -37,9 +38,7 @@ class ProfileController extends Controller
 			'mainSummoner',
 			'image',
 			'thumbnail',
-			'branchUserMemberShips' => function ($query) {
-				$query->whereNull('wants_to_leave_at');
-			},
+			'branchUserMemberShips',
 			'branchUserMemberShips.branch'
 		])->find($userId));
 	}
@@ -84,71 +83,56 @@ class ProfileController extends Controller
 	}
 
 	/**
-	 * @param  \App\Http\Requests\Auth\ProfileUpdateBranchesRequest  $request
+	 * @param  \App\Models\BranchUserMemberShip  $branchUserMemberShip
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function updateBranches(ProfileUpdateBranchesRequest $request): JsonResponse
+	public function leaveBranch(BranchUserMemberShip $branchUserMemberShip): JsonResponse
 	{
-		$user = User::where("id", Auth::id())->with([
-			'branchUserMemberShips' => function ($query) {
-				$query->whereNull('wants_to_leave_at');
-			},
-			'branchUserMemberShips.branch'
-		])->first();
+		$branchUserMemberShip->wants_to_leave_at = now();
+		$branchUserMemberShip->save();
 
-		$newBranches = $request->branchIds;
+		return response()->json([
+			'message' => 'Der Spartenaustrittsantrag ist erfolgreich eingegangen.',
+		], Response::HTTP_OK);
+	}
 
-		$originalBranches = collect(collect($user->branchUserMemberShips)->map(function ($item) {
-			return $item->branch->id;
-		}));
+	/**
+	 * @param  \App\Models\Branch  $branch
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function joinBranch(Branch $branch): JsonResponse
+	{
+		/** @var User $user */
+		$user = Auth::user();
 
-		$toRemove = $originalBranches->diff($newBranches);
-		$toAdd = collect($newBranches)->diff($originalBranches);
-
-		if (
-			DB::table('branch_user_member_ships')
-				->where('user_id', $user->id)
-				->whereNull('deleted_at')
-				->whereNotNull('wants_to_leave_at')
-				->whereIn('branch_id', $toAdd)->exists()
-		) {
-			DB::table('branch_user_member_ships')
-				->where('user_id', $user->id)
-				->whereNull('deleted_at')
-				->whereNotNull('wants_to_leave_at')
-				->whereIn('branch_id', $toAdd)->update([
-					'wants_to_leave_at' => null, 'exported_at' => null, 'updated_at' => now()
-				]);
-		} else {
-			foreach ($toAdd as $id) {
-				BranchUserMemberShip::create([
-					'user_id'   => $user->id,
-					'branch_id' => $id
-				]);
-			}
-		}
-		if (count($toRemove) > 0) {
-			DB::table('branch_user_member_ships')
-				->where('user_id', $user->id)
-				->whereIn('branch_id', $toRemove)
-				->update(['wants_to_leave_at' => now(), 'exported_at' => null, 'updated_at' => now()]);
-		}
-
-		$user->fresh();
-		$user->load(['summoners',
-			'userGroups',
-			'mainSummoner',
-			'image',
-			'thumbnail',
-			'branchUserMemberShips' => function ($query) {
-				$query->whereNull('wants_to_leave_at');
-			},
-			'branchUserMemberShips.branch'
+		BranchUserMemberShip::create([
+			'user_id'   => $user->id,
+			'branch_id' => $branch->id
 		]);
 
 		return response()->json([
-			'message' => 'Die Sparten wurden erfolgreich bearbeitet.',
-			'data'    => new UserResource($user),
+			'message' => 'Der Spartenbeitritsantrag ist erfolgreich eingegangen.',
+		], Response::HTTP_OK);
+	}
+
+	/**
+	 * @param  \App\Models\BranchUserMemberShip  $branchUserMemberShip
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function cancelBranch(BranchUserMemberShip $branchUserMemberShip): JsonResponse
+	{
+		if ($branchUserMemberShip->wants_to_leave) {
+			$branchUserMemberShip->wants_to_leave_at = null;
+			$branchUserMemberShip->save();
+
+			return response()->json([
+				'message' => 'Der Spartenaustrittsantrag ist erfolgreich zurückgezogen.',
+			], Response::HTTP_OK);
+		}
+
+		$branchUserMemberShip->delete();
+		return response()->json([
+			'message' => 'Der Spartenbeitrirsantrag ist erfolgreich zurückgezogen wurden.',
 		], Response::HTTP_OK);
 	}
 

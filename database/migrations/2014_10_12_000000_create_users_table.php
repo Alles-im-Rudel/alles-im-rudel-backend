@@ -19,14 +19,14 @@ class CreateUsersTable extends Migration
 			$table->foreignId('country_id');
 			$table->foreignId('bank_account_id')->nullable();
 			$table->string('salutation');
-			$table->string('first_name')->nullable();
-			$table->string('last_name')->nullable();
+			$table->string('first_name');
+			$table->string('last_name');
 			$table->string('email')->unique();
 			$table->string('phone');
 			$table->string('street');
 			$table->string('postcode');
 			$table->string('city');
-			$table->date('birthday')->nullable();
+			$table->date('birthday');
 			$table->dateTime('activated_at')->nullable();
 			$table->boolean('wants_email_notification')->default(false);
 			$table->timestamp('email_verified_at')->nullable();

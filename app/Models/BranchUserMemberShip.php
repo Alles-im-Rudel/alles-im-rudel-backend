@@ -23,7 +23,8 @@ class BranchUserMemberShip extends Model
 	protected $appends = [
 		'is_active',
 		'wants_to_leave',
-		'is_exported'
+		'is_exported',
+		'state'
 	];
 
 	protected $casts = [
@@ -54,5 +55,18 @@ class BranchUserMemberShip extends Model
 	public function getIsExportedAttribute(): bool
 	{
 		return (bool) $this->exported_at;
+	}
+
+	public function getStateAttribute()
+	{
+		if ($this->is_active && $this->wants_to_leave) {
+			return 'wantsToLeave';
+		}
+
+		if (!$this->is_active && !$this->wants_to_leave) {
+			return 'wantsToJoin';
+		}
+
+		return 'isMember';
 	}
 }

@@ -59,10 +59,10 @@ Route::group(['prefix' => 'profile'], static function () {
 
 // Posts
 Route::group(['prefix' => 'posts'], static function () {
-    Route::get('', [PostController::class, 'index']);
-    Route::get('{post}', [PostController::class, 'show']);
+	Route::get('', [PostController::class, 'index']);
+	Route::get('{post}', [PostController::class, 'show']);
 
-    Route::get('{post}/comments', [PostCommentController::class, 'comments']);
+	Route::get('{post}/comments', [PostCommentController::class, 'comments']);
 });
 
 /**
@@ -71,21 +71,21 @@ Route::group(['prefix' => 'posts'], static function () {
 
 Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 
-    // Comments
-    Route::group(['prefix' => 'comments'], static function () {
-        Route::post('', [CommentController::class, 'store']);
-    });
+	// Comments
+	Route::group(['prefix' => 'comments'], static function () {
+		Route::post('', [CommentController::class, 'store']);
+	});
 
-    // Posts
-    Route::group(['prefix' => 'posts'], static function () {
-        Route::post('', [PostController::class, 'store']);
-        Route::post('{post}', [PostController::class, 'update']); // file uploads do not work with PUT
-        Route::delete('{post}', [PostController::class, 'delete']);
+	// Posts
+	Route::group(['prefix' => 'posts'], static function () {
+		Route::post('', [PostController::class, 'store']);
+		Route::post('{post}', [PostController::class, 'update']); // file uploads do not work with PUT
+		Route::delete('{post}', [PostController::class, 'delete']);
 
-        // Likes
-        Route::get('{post}/like', [PostLikeController::class, 'check']);
-        Route::put('{post}/like', [PostLikeController::class, 'change']);
-    });
+		// Likes
+		Route::get('{post}/like', [PostLikeController::class, 'check']);
+		Route::put('{post}/like', [PostLikeController::class, 'change']);
+	});
 
 	Route::group(['prefix' => 'manage-member-ship-applications'], static function () {
 		Route::get('', [ManageMemberShipApplicationController::class, 'index']);
@@ -121,10 +121,12 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 	Route::group(['prefix' => 'profile'], static function () {
 		Route::get('', [ProfileController::class, 'index']);
 		Route::put('', [ProfileController::class, 'update']);
-		Route::put('branches', [ProfileController::class, 'updateBranches']);
+		Route::put('leave-branch/{branchUserMemberShip}', [ProfileController::class, 'leaveBranch']);
+		Route::put('join-branch/{branch}', [ProfileController::class, 'joinBranch']);
+		Route::put('cancel-branch/{branchUserMemberShip}', [ProfileController::class, 'cancelBranch']);
 		Route::put('main-summoner', [ProfileController::class, 'mainSummoner']);
-        Route::post('image', [ProfileController::class, 'updateImage']);
-        Route::delete('', [ProfileController::class, 'delete']);
+		Route::post('image', [ProfileController::class, 'updateImage']);
+		Route::delete('', [ProfileController::class, 'delete']);
 	});
 
 	Route::group(['prefix' => 'users'], static function () {

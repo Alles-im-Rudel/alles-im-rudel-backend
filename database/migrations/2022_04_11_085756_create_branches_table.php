@@ -6,31 +6,34 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateBranchesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up(): void
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up(): void
 	{
-        Schema::create('branches', function (Blueprint $table) {
+		Schema::create('branches', function (Blueprint $table) {
 			$table->id();
 			$table->string('name');
 			$table->string('description');
 			$table->float('price');
+			$table->foreignId('user_id');
 			$table->dateTime('activated_at');
 			$table->boolean('is_selectable');
 			$table->timestamps();
-        });
-    }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down(): void
+			$table->foreign('user_id')->references('id')->on('users');
+		});
+	}
+
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down(): void
 	{
-        Schema::dropIfExists('branches');
-    }
+		Schema::dropIfExists('branches');
+	}
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Branch extends Model
@@ -17,7 +18,8 @@ class Branch extends Model
 		'price',
 		'description',
 		'activated_at',
-		'is_selectable'
+		'is_selectable',
+		'user_id',
 	];
 
 	protected $casts = [
@@ -41,5 +43,13 @@ class Branch extends Model
 	public function getIsActiveAttribute(): bool
 	{
 		return (bool) $this->activated_at;
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function leader(): BelongsTo
+	{
+		return $this->belongsTo(User::class);
 	}
 }
