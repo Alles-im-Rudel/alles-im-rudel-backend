@@ -33,7 +33,9 @@ class BranchMemberController extends Controller
 			},
 			'branchUserMemberShips.branch'
 		])->whereHas('branchUserMemberShips', function ($query) {
-			$query->whereNull('activated_at');
+			$query->whereExists(function ($query) {
+				$query->where('branch_id', 1)->whereNotNull('activated_at');
+			})->whereNull('activated_at');
 		});
 
 		return UserResource::collection($users->paginate(9, '*', $request->page, $request->page));
@@ -74,6 +76,8 @@ class BranchMemberController extends Controller
 
 		$user = User::query()->find($branchUserMemberShip->user_id);
 
+		$branchUserMemberShip->exported_at = null;
+		$branchUserMemberShip->save();
 		$branchUserMemberShip->delete();
 
 		/*todo Email ist noch falsch und mit Notification ersetzen*/

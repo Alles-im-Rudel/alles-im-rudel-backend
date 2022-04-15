@@ -25,6 +25,7 @@ class BranchUserMemberShipResource extends JsonResource
 			'wantsToLeaveAt' => $this->wants_to_leave_at,
 			'exportedAt'     => $this->exported_at,
 			'state'          => $this->state,
+			'sepaDate'       => $this->sepa_date,
 			'userId'         => $this->user_id,
 			'branchId'       => $this->branch_id,
 			'branch'         => new BranchResource($this->whenLoaded('branch')),

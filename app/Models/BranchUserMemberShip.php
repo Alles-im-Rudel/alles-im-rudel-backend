@@ -6,6 +6,7 @@ use App\Traits\Relations\BelongsToUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 
 class BranchUserMemberShip extends Model
 {
@@ -24,6 +25,7 @@ class BranchUserMemberShip extends Model
 		'is_active',
 		'wants_to_leave',
 		'is_exported',
+		'sepa_date',
 		'state'
 	];
 
@@ -55,6 +57,14 @@ class BranchUserMemberShip extends Model
 	public function getIsExportedAttribute(): bool
 	{
 		return (bool) $this->exported_at;
+	}
+
+	public function getSepaDateAttribute()
+	{
+		if($this->wantsToLeave) {
+			return Carbon::parse($this->activated_at)->addMonth()->endOfMonth();
+		}
+		return Carbon::parse($this->activated_at)->addMonth()->startOfMonth();
 	}
 
 	public function getStateAttribute()

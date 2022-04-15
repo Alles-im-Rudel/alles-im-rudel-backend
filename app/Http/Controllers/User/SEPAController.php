@@ -5,10 +5,11 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Member\SEPAIndexRequest;
 use App\Http\Resources\UserResource;
+use App\Models\BranchUserMemberShip;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class SEPAController extends Controller
 {
@@ -18,68 +19,68 @@ class SEPAController extends Controller
 	 */
 	public function index(SEPAIndexRequest $request): JsonResponse
 	{
-		$newMembers = User::with([
-			'memberShip', 'memberShip.branchesWithTrashed' => function ($query) {
-				return $query->whereNull('branch_member_ship.exported_at');
-			}
-		])->whereHas('memberShip', function ($query) {
-			return $query->whereNotNull('activated_at')
-				->whereHas('branchesWithTrashed', function ($query) {
-					return $query->whereNull('branch_member_ship.exported_at');
-				});
+		if (!Auth::user()->can('members.mamage')) {
+			return response()->json(["msg" => "Keine Berechtigung"], 403);
+		}
+
+
+		$sepaChanges = User::with([
+			'bankAccount',
+			'branchUserMemberShips' => function ($query) {
+				$query->withTrashed()->whereNull('exported_at')->whereNotNull('activated_at');
+			},
+			'branchUserMemberShips.branch'
+		])->whereHas('branchUserMemberShips', function ($query) {
+			$query->withTrashed()->whereNull('exported_at')->whereNotNull('activated_at');
 		})->get()->map(function ($item) {
 			return [
-				'name'        => $item->first_name.' '.$item->last_name,
-				'iban'        => $item->memberShip->iban,
-				'mandate'     => 'AIR '.$item->memberShip->id,
-				'mandateDate' => $item->memberShip->created_at,
-				'value'       => $this->getValue($item->memberShip->branchesWithTrashed),
-				'sepaDate'    => $this->getSepaDate($item->memberShip),
-				'pivotId'     => $item->memberShip->branches,
-				'state'       => $this->getState($item->memberShip),
+				'user'        => new UserResource($item),
+				'mandate'     => 'AIR '.$item->id,
+				'mandateDate' => $item->bankAccount->created_at,
+				'value'       => $this->getValue($item->id),
 			];
 		});
 
 		return response()->json([
-			"members" => $newMembers,
+			"sepaChanges" => $sepaChanges,
 		], Response::HTTP_OK);
 	}
 
-	protected function getValue($branches): int
+	/**
+	 * @param  \App\Models\BranchUserMemberShip  $branchUserMemberShip
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function exported(BranchUserMemberShip $branchUserMemberShip): JsonResponse
+	{
+		if (!Auth::user()->can('members.mamage')) {
+			return response()->json(["msg" => "Keine Berechtigung"], 403);
+		}
+
+
+		$branchUserMemberShip->exported_at = now();
+
+		if ($branchUserMemberShip->wants_to_leave) {
+			$branchUserMemberShip->deleted_at = now();
+		}
+
+		$branchUserMemberShip->save();
+
+		return response()->json([
+			"message" => "Eintrage bearbeitet",
+		], Response::HTTP_OK);
+	}
+
+	protected function getValue($userId): int
 	{
 		$value = 0;
-		foreach ($branches as $branch) {
-			if ($branch->pivot->deleted_at === null) {
-				$value += $branch->price;
-			}
+		$branchUserMemberShips = BranchUserMemberShip::query()
+			->where('user_id', $userId)
+			->whereNotNull('activated_at')
+			->whereNull('wants_to_leave_at')
+			->get();
+		foreach ($branchUserMemberShips as $branchUserMemberShip) {
+			$value += $branchUserMemberShip->branch->price;
 		}
 		return $value;
-	}
-
-	protected function getSepaDate($memberShip): Carbon
-	{
-		$date = Carbon::parse($memberShip->activated_at)->addMonth()->startOfMonth();
-
-		foreach ($memberShip->branchesWithTrashed as $branch) {
-			$newDate = Carbon::parse($branch->pivot->updated_at)->addMonth()->startOfMonth();
-			if ($date < $newDate) {
-				$date = $newDate;
-			}
-		}
-		return $date;
-	}
-
-	protected function getState($memberShip)
-	{
-		$test = false;
-		foreach ($memberShip->branches as $branch) {
-			if ($branch->pivot->exported_at) {
-				$test = true;
-			}
-			if ($branch->pivot->deleted_at) {
-				$test = true;
-			}
-		}
-		return $test;
 	}
 }

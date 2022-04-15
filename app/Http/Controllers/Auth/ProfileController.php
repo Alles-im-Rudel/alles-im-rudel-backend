@@ -89,6 +89,7 @@ class ProfileController extends Controller
 	public function leaveBranch(BranchUserMemberShip $branchUserMemberShip): JsonResponse
 	{
 		$branchUserMemberShip->wants_to_leave_at = now();
+		$branchUserMemberShip->exported_at = null;
 		$branchUserMemberShip->save();
 
 		return response()->json([

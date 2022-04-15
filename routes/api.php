@@ -93,8 +93,9 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::put('reject/{user}', [ManageMemberShipApplicationController::class, 'reject']);
 	});
 
-	Route::group(['prefix' => 'sepa-members'], static function () {
+	Route::group(['prefix' => 'sepa-data'], static function () {
 		Route::get('', [SEPAController::class, 'index']);
+		Route::put('exported/{branchUserMemberShip}', [SEPAController::class, 'exported']);
 	});
 
 	Route::group(['prefix' => 'manage-branch-applications'], static function () {
