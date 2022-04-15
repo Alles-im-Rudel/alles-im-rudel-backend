@@ -23,7 +23,6 @@ class SEPAController extends Controller
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 
-
 		$sepaChanges = User::with([
 			'bankAccount',
 			'branchUserMemberShips' => function ($query) {

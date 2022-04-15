@@ -59,15 +59,15 @@ class BranchUserMemberShip extends Model
 		return (bool) $this->exported_at;
 	}
 
-	public function getSepaDateAttribute()
+	public function getSepaDateAttribute(): Carbon
 	{
-		if($this->wantsToLeave) {
-			return Carbon::parse($this->activated_at)->addMonth()->endOfMonth();
+		if ($this->wantsToLeave) {
+			return Carbon::parse($this->wants_to_leave_at)->addMonth()->endOfMonth();
 		}
 		return Carbon::parse($this->activated_at)->addMonth()->startOfMonth();
 	}
 
-	public function getStateAttribute()
+	public function getStateAttribute(): string
 	{
 		if ($this->is_active && $this->wants_to_leave) {
 			return 'wantsToLeave';

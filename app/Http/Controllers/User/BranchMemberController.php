@@ -33,9 +33,9 @@ class BranchMemberController extends Controller
 			},
 			'branchUserMemberShips.branch'
 		])->whereHas('branchUserMemberShips', function ($query) {
-			$query->whereExists(function ($query) {
-				$query->where('branch_id', 1)->whereNotNull('activated_at');
-			})->whereNull('activated_at');
+			$query->where('branch_id', 1)->whereNotNull('activated_at');
+		})->whereHas('branchUserMemberShips', function ($query) {
+			$query->whereNull('activated_at');
 		});
 
 		return UserResource::collection($users->paginate(9, '*', $request->page, $request->page));

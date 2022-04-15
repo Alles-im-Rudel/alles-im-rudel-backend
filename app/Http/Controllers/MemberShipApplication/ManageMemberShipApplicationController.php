@@ -34,7 +34,7 @@ class ManageMemberShipApplicationController extends Controller
 			'branchUserMemberShips',
 			'branchUserMemberShips.branch',
 		])->whereHas('branchUserMemberShips', function ($query) {
-			return $query->whereNull('activated_at');
+			$query->where('branch_id', 1)->whereNull('activated_at');
 		});
 
 		return UserResource::collection($users->paginate(9, '*', $request->page, $request->page));

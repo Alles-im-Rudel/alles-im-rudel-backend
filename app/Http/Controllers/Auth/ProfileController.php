@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ProfileIndexRequest;
 use App\Http\Requests\Auth\ProfileMainSummonerRequest;
-use App\Http\Requests\Auth\ProfileUpdateBranchesRequest;
 use App\Http\Requests\Auth\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\Branch;
@@ -17,7 +16,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use function DeepCopy\deep_copy;
 
