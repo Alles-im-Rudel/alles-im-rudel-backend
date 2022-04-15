@@ -57,6 +57,7 @@ class ManageMemberShipApplicationController extends Controller
 			'activated_at' => now()
 		]);
 
+		/*todo Email ist noch falsch und mit Notification ersetzen*/
 		Mail::to($user->email)->send(new MemberShipAcceptMail($user));
 
 		event(new BirthdayChanged($user));
@@ -76,6 +77,7 @@ class ManageMemberShipApplicationController extends Controller
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 
+		/*todo Email ist noch falsch und mit Notification ersetzen*/
 		Mail::to($user->email)->send(new MemberShipRejectMail($user));
 
 		$bankAccount = BankAccount::find($user->bank_account_id);

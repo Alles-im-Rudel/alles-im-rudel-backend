@@ -97,11 +97,10 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::get('', [SEPAController::class, 'index']);
 	});
 
-	Route::group(['prefix' => 'branch-members'], static function () {
+	Route::group(['prefix' => 'manage-branch-applications'], static function () {
 		Route::get('', [BranchMemberController::class, 'index']);
-		Route::get('{user}', [BranchMemberController::class, 'show']);
-		Route::put('accept/{user}', [BranchMemberController::class, 'accept']);
-		Route::put('reject/{user}', [BranchMemberController::class, 'reject']);
+		Route::put('accept/{branchUserMemberShip}', [BranchMemberController::class, 'accept']);
+		Route::put('reject/{branchUserMemberShip}', [BranchMemberController::class, 'reject']);
 	});
 
 	Route::group(['prefix' => 'appointments'], static function () {
