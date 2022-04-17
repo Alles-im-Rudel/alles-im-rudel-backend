@@ -6,23 +6,21 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\HtmlString;
 
-class VerifyEmailNotification extends VerifyEmail
+class MembershipRejectNotification extends VerifyEmail
 {
     /**
      * Get the mail representation of the notification.
      *
      * @param mixed $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return MailMessage
      */
     public function toMail($notifiable): MailMessage
     {
-        $verificationUrl = $this->verificationUrl($notifiable);
-
         return (new MailMessage)
-            ->subject('E-Mail verifizieren')
+            ->subject('Mitgliedsaufnahmeantrag abgelehnt')
             ->greeting('Hallo ' . $notifiable->first_name . ',')
-            ->line(new HtmlString('dein Beitrittsantrag ist erfolgreich bei uns eingegangen!<br>Bitte verifiziere deine E-Mail, um den Antrag zu bestätigen.'))
-            ->action('E-Mail verifizieren', $verificationUrl)
+            ->line('wir möchten dir für dein Interesse am Beitritt zu Alles im Rudel e.V. danken.')
+            ->line('Leider müssen wir dir mitteilen, dass dein Mitgliedsaufnahmeantrag abgelehnt wurde.')
             ->salutation(new HtmlString('Viele Grüße<br>Silas, Nick & Timm'));
     }
 }

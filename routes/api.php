@@ -48,9 +48,7 @@ Route::get('branches', [BranchController::class, 'index']);
 
 Route::get('get-mandate-refernce-id', [MandatController::class, 'index']);
 
-Route::group(['prefix' => 'member-ship-application'], static function () {
-	Route::post('', [MemberShipApplicationController::class, 'index']);
-});
+Route::post('member-ship-applications', [MemberShipApplicationController::class, 'store']);
 
 // Profile
 Route::group(['prefix' => 'profile'], static function () {

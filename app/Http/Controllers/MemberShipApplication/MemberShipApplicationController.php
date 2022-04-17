@@ -26,7 +26,7 @@ class MemberShipApplicationController extends Controller
 	 * @return \Illuminate\Http\JsonResponse
 	 * @throws \JsonException
 	 */
-	public function index(MemberShipApplicationRequest $request): JsonResponse
+	public function store(MemberShipApplicationRequest $request): JsonResponse
 	{
 		$bankAccount = BankAccount::create([
 			'first_name'     => $request->accountFirstName,

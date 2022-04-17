@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers\MemberShipApplication;
 
-
 use App\Events\BirthdayChanged;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MemberShipApplication\ManageMemberShipApplicationIndexRequest;
 use App\Http\Resources\UserResource;
-use App\Mail\MemberShipAcceptMail;
-use App\Mail\MemberShipRejectMail;
 use App\Models\BankAccount;
 use App\Models\BranchUserMemberShip;
 use App\Models\User;
+use App\Notifications\MembershipAcceptNotification;
+use App\Notifications\MembershipRejectNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 
 class ManageMemberShipApplicationController extends Controller
 {
@@ -57,9 +54,7 @@ class ManageMemberShipApplicationController extends Controller
 			'activated_at' => now()
 		]);
 
-		/*todo Email ist noch falsch und mit Notification ersetzen*/
-		Mail::to($user->email)->send(new MemberShipAcceptMail($user));
-
+        $user->notify(new MembershipAcceptNotification());
 		event(new BirthdayChanged($user));
 
 		return response()->json([
@@ -77,13 +72,10 @@ class ManageMemberShipApplicationController extends Controller
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 
-		/*todo Email ist noch falsch und mit Notification ersetzen*/
-		Mail::to($user->email)->send(new MemberShipRejectMail($user));
-
+        $user->notify(new MembershipRejectNotification());
 		$bankAccount = BankAccount::find($user->bank_account_id);
 
 		$user->forceDelete();
-
 		$bankAccount->delete();
 
 		return response()->json([

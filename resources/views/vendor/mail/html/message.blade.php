@@ -1,27 +1,28 @@
 @component('mail::layout')
-{{-- Header --}}
-@slot('header')
-@component('mail::header', ['url' => config('app.url')])
-{{ config('app.name') }}
-@endcomponent
-@endslot
+    {{-- Body --}}
+    {{ $slot }}
 
-{{-- Body --}}
-{{ $slot }}
+    {{-- Footer --}}
+    @slot('footer')
+        <tr>
+            <td>
+                <table class="footer" align="center" width="500" cellpadding="0" cellspacing="0" role="presentation">
+                    <tr>
+                        <td class="content-cell" align="center">
+                            <a href="{{ env('APP_FRONTEND_URL') }}" style="display: inline-block; margin-bottom: 8px;">
+                                <img
+                                    src="{{ env('APP_FRONTEND_URL') . '/assets/logos/logo-white-slim.png' }}"
+                                    class="logo"
+                                    alt="Alles im Rudel Logo"
+                                >
+                            </a>
 
-{{-- Subcopy --}}
-@isset($subcopy)
-@slot('subcopy')
-@component('mail::subcopy')
-{{ $subcopy }}
-@endcomponent
-@endslot
-@endisset
-
-{{-- Footer --}}
-@slot('footer')
-@component('mail::footer')
-© {{ date('Y') }} {{ config('app.name') }}. @lang('All rights reserved.')
-@endcomponent
-@endslot
+                            <br>
+                            © {{ date('Y') }} Alles im Rudel e.V.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    @endslot
 @endcomponent
