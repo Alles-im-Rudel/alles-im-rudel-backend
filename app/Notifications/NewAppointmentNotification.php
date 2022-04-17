@@ -47,20 +47,7 @@ class NewAppointmentNotification extends Notification
             ->subject('Neues Event')
             ->greeting('Hallo ' . $notifiable->first_name . ',')
             ->line('es wurde ein neues Event mit dem Titel "' . $this->appointment->title . '" erstellt!')
-            ->action('Zum Kalendar', env('APP_FRONTEND_URL') . '/calendar')
+            ->action('Zum Kalender', env('APP_FRONTEND_URL') . '/calendar')
             ->salutation(new HtmlString('Viele Grüße<br>Silas, Nick & Timm'));
-    }
-
-    /**
-     * @return string
-     */
-    protected function getTags(): string
-    {
-        $tags = '';
-
-        foreach ($this->post->tags as $tag) {
-            $tags .= $tag->name . ' ';
-        }
-        return $tags;
     }
 }
