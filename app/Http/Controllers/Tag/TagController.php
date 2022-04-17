@@ -18,7 +18,7 @@ class TagController extends Controller
 	/**
 	 * @return AnonymousResourceCollection
 	 */
-	public function all(): AnonymousResourceCollection
+	public function index(): AnonymousResourceCollection
 	{
 		return TagResouce::collection(Tag::all());
 	}

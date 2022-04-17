@@ -16,10 +16,12 @@ class DatabaseSeeder extends Seeder
 		$this->call(LevelsSeeder::class);
 		$this->call(PermissionsSeeder::class);
 		$this->call(UserGroupsSeeder::class);
-		$this->call(UsersSeeder::class);
 		$this->call(QueueTypeSeeder::class);
+		$this->call(CountrySeeder::class);
+        $this->call(UsersSeeder::class);
+        $this->call(BranchSeeder::class);
 		$this->call(ClashSeeder::class);
 		$this->call(TagSeeder::class);
-        $this->call(InstagramProfileSeeder::class);
+		$this->call(InstagramProfileSeeder::class);
 	}
 }

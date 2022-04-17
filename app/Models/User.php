@@ -7,6 +7,7 @@ use App\Traits\Relations\BelongsToLevel;
 use App\Traits\Relations\BelongsToManySummoners;
 use App\Traits\Relations\BelongsToManyUserGroups;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -16,6 +17,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\Builder;
+use ShiftOneLabs\LaravelCascadeDeletes\CascadesDeletes;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -26,16 +28,25 @@ class User extends Authenticatable
 		HasRoles,
 		BelongsToLevel,
 		BelongsToManyUserGroups,
+		CascadesDeletes,
 		BelongsToManySummoners;
 
 	public const DEVELOPER_ID = 1;
 
+	protected $cascadeDeletes = ['branchUserMemberShips'];
+
 	protected $fillable = [
+		'salutation',
 		'first_name',
 		'last_name',
-		'username',
 		'email',
+		'phone',
+		'street',
+		'postcode',
+		'city',
 		'birthday',
+		'country_id',
+		'bank_account_id',
 		'activated_at',
 		'level_id',
 		'email_verified_at',
@@ -44,7 +55,9 @@ class User extends Authenticatable
 	];
 
 	protected $appends = [
-		'age'
+		'age',
+		'is_active',
+		'full_name'
 	];
 
 	/**
@@ -84,7 +97,7 @@ class User extends Authenticatable
 				}
 			}
 		}
-		return $permissionCollection->where('name', $permission)->first() ? true : false;
+		return (bool) $permissionCollection->where('name', $permission)->first();
 	}
 
 	/**
@@ -224,9 +237,42 @@ class User extends Authenticatable
 		return $this->hasMany(Like::class, 'user_id', 'id');
 	}
 
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function country(): BelongsTo
+	{
+		return $this->belongsTo(Country::class);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function bankAccount(): BelongsTo
+	{
+		return $this->belongsTo(BankAccount::class);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function branchUserMemberShips(): HasMany
+	{
+		return $this->hasMany(BranchUserMemberShip::class);
+	}
+
 	public function getAgeAttribute(): int
 	{
 		return Carbon::now()->diffInYears(Carbon::parse($this->birthday));
 	}
 
+	public function getIsActiveAttribute(): bool
+	{
+		return (bool) $this->activated_at;
+	}
+
+	public function getFullNameAttribute(): string
+	{
+		return $this->first_name.' '.$this->last_name;
+	}
 }

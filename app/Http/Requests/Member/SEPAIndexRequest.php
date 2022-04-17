@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Member;
 
 use App\Traits\Requests\RequestHelper;
 use Illuminate\Foundation\Http\FormRequest;
 
-class MemberIndexRequest extends FormRequest
+class SEPAIndexRequest extends FormRequest
 {
 	use RequestHelper;
 
 	public function prepareForValidation(): void
 	{
-		$this->convertToInteger('page');
-		$this->convertToString('search');
+
 	}
 
 	/**
@@ -22,9 +21,6 @@ class MemberIndexRequest extends FormRequest
 	 */
 	public function rules(): array
 	{
-		return [
-			'page'   => 'required|integer',
-			'search' => 'nullable|string',
-		];
+		return [];
 	}
 }

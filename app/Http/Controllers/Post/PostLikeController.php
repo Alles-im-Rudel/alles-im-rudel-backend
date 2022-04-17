@@ -16,7 +16,7 @@ class PostLikeController extends Controller
 	 * @param  Post  $post
 	 * @return JsonResponse
 	 */
-	public function checkLiked(Post $post): JsonResponse
+	public function check(Post $post): JsonResponse
 	{
 		return response()->json([
 			'liked' => Auth::user()->hasLikedPost($post)
@@ -30,19 +30,23 @@ class PostLikeController extends Controller
 	public function change(Post $post): JsonResponse
 	{
 		if (Auth::user()->hasLikedPost($post)) {
-			Like::where('user_id', Auth::id())
+			Like::query()
+                ->where('user_id', Auth::id())
 				->where('likeable_id', $post->id)
-				->where('likeable_type', get_class($post))->first()->delete();
+				->where('likeable_type', Post::class)
+                ->delete();
+
 			return response()->json([
 				'liked' => false
 			]);
 		}
+
 		$post->likes()->create([
 			'user_id' => Auth::id()
 		]);
+
 		return response()->json([
 			'liked' => true
 		]);
 	}
-
 }

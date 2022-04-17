@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 class UsersSeeder extends BaseSeeder
 {
     public ?string $model = User::class;
-    public string $updateOrCreateKey = 'email';
+    public string $updateOrCreateKey = 'id';
 
     public function afterwards(): void
     {
@@ -25,55 +25,22 @@ class UsersSeeder extends BaseSeeder
 
         return [
             [
+                'id'                => User::DEVELOPER_ID,
                 'level_id'          => Level::DEVELOPER,
-                'first_name'        => 'Dev',
-                'last_name'         => 'Dev',
-                'username'          => 'dev',
+                'first_name'        => 'Alles',
+                'last_name'         => 'im Rudel',
                 'password'          => $changeMe,
                 'email'             => 'allesimrudel@gmail.com',
+                'salutation'        => 'Boss',
+                'phone'             => '+49 176 55234699',
+                'street'            => 'Norderstraße 23',
+                'postcode'          => '25335',
+                'city'              => 'Elmshorn',
+                'country_id'        => 1,
+                'birthday'          => '1990-01-01',
                 'email_verified_at' => $now,
                 'activated_at'      => $now,
-            ],
-            [
-                'level_id'          => Level::ADMINISTRATOR,
-                'first_name'        => 'Silas',
-                'last_name'         => 'Beckmann',
-                'username'          => 'silas098',
-                'password'          => $changeMe,
-                'email'             => 'silas.beckmann@t-online.de',
-                'email_verified_at' => $now,
-                'activated_at'      => $now,
-            ],
-            [
-                'level_id'          => Level::ADMINISTRATOR,
-                'first_name'        => 'Timm',
-                'last_name'         => 'Vollborn',
-                'username'          => 'RedCount99',
-                'password'          => $changeMe,
-                'email'             => 'timm.vollborn@allesimrudel.de',
-                'email_verified_at' => $now,
-                'activated_at'      => $now,
-            ],
-            [
-                'level_id'          => Level::ADMINISTRATOR,
-                'first_name'        => 'Nick',
-                'last_name'         => 'Nickels',
-                'username'          => 'AIR NJ',
-                'password'          => $changeMe,
-                'email'             => 'nick.nickels@allesimrudel.de',
-                'email_verified_at' => $now,
-                'activated_at'      => $now,
-            ],
-            [
-                'level_id'          => Level::MEMBER,
-                'first_name'        => 'Till',
-                'last_name'         => 'Tilldooo',
-                'username'          => 'Tilldooo',
-                'password'          => $changeMe,
-                'email'             => 'changemeplease@mail.de',
-                'email_verified_at' => $now,
-                'activated_at'      => $now,
-            ],
+            ]
         ];
     }
 }
