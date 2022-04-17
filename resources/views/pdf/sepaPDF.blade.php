@@ -6,12 +6,12 @@
 <body>
 <h1>SEPA-Lastschrift-Mandat für eine SEPA-Basis-Lastschrift</h1>
 <p>
-    Alles im Rudel <br>
+    Alles im Rudel e.V.<br>
     Norderstraße 23 <br>
     25335 Elmshorn <br>
     Deutschland
 </p>
-<p>Gläubiger-Id: {{ $creditorIdentificationNumber }}</p><br>
+<p>Gläubiger-ID: {{ $creditorIdentificationNumber }}</p><br>
 
 <p>Mandatsrefernz: {{ $mandateReference }}</p>
 <h1>SEPA-Lastschrift-Mandat</h1>

@@ -77,10 +77,10 @@ class MemberShipApplicationController extends Controller
 		}
 
 		$data = [
-			'fullName'                     => $user->account_first_name.' '.$user->account_last_name,
-			'street'                       => $bankAccount->account_street,
-			'postcode'                     => $bankAccount->account_postcode,
-			'city'                         => $bankAccount->account_city,
+			'fullName'                     => $bankAccount->first_name.' '.$bankAccount->last_name,
+			'street'                       => $bankAccount->street,
+			'postcode'                     => $bankAccount->postcode,
+			'city'                         => $bankAccount->city,
 			'country'                      => $request->accountCountry,
 			'iban'                         => $bankAccount->iban,
 			'bic'                          => $bankAccount->bic,
