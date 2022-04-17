@@ -58,11 +58,7 @@ class MemberShip extends Model
 		return $this->belongsToMany(Branch::class)
 			->whereNull('deleted_at')
 			->withTimestamps()
-			->withPivot(['id'])
-			->withPivot(['activated_at'])
-			->withPivot(['wanted_to_leave_at'])
-			->withPivot(['exported_at'])
-			->withPivot(['deleted_at']);
+			->withPivot(['id', 'activated_at', 'wanted_to_leave_at', 'exported_at', 'deleted_at']);
 	}
 
 	/**
@@ -72,11 +68,7 @@ class MemberShip extends Model
 	{
 		return $this->belongsToMany(Branch::class)
 			->withTimestamps()
-			->withPivot(['id'])
-			->withPivot(['activated_at'])
-			->withPivot(['wanted_to_leave_at'])
-			->withPivot(['exported_at'])
-			->withPivot(['deleted_at']);
+			->withPivot(['id', 'activated_at', 'wanted_to_leave_at', 'exported_at', 'deleted_at']);
 	}
 
 	/**

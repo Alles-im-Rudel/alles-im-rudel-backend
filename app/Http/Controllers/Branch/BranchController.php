@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\MemberShip;
+namespace App\Http\Controllers\Branch;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\BranchResource;
@@ -14,6 +14,6 @@ class BranchController extends Controller
 	 */
 	public function index(): AnonymousResourceCollection
 	{
-		return BranchResource::collection(Branch::withCount('members')->get());
+		return BranchResource::collection(Branch::withCount('branchUserMemberShips')->get());
 	}
 }

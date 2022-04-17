@@ -12,15 +12,17 @@ use App\Http\Controllers\Lol\LolApiController;
 use App\Http\Controllers\Lol\SummonerController;
 use App\Http\Controllers\Lol\SummonerInfoController;
 use App\Http\Controllers\Lol\SummonerPickerController;
-use App\Http\Controllers\MemberShip\BranchController;
-use App\Http\Controllers\MemberShip\MandatController;
+use App\Http\Controllers\Branch\BranchController;
+use App\Http\Controllers\MemberShipApplication\ManageMemberShipApplicationController;
+use App\Http\Controllers\MemberShipApplication\MandatController;
+use App\Http\Controllers\MemberShipApplication\MemberShipApplicationController;
 use App\Http\Controllers\Permission\PermissionController;
 use App\Http\Controllers\Post\PostCommentController;
 use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\Post\PostLikeController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\User\BranchMemberController;
-use App\Http\Controllers\User\MemberController;
+use App\Http\Controllers\User\SEPAController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\User\UserImageController;
 use App\Http\Controllers\User\UserPickerController;
@@ -46,9 +48,7 @@ Route::get('branches', [BranchController::class, 'index']);
 
 Route::get('get-mandate-refernce-id', [MandatController::class, 'index']);
 
-Route::group(['prefix' => 'members'], static function () {
-	Route::post('register', [MemberController::class, 'register']);
-});
+Route::post('member-ship-applications', [MemberShipApplicationController::class, 'store']);
 
 // Profile
 Route::group(['prefix' => 'profile'], static function () {
@@ -57,10 +57,10 @@ Route::group(['prefix' => 'profile'], static function () {
 
 // Posts
 Route::group(['prefix' => 'posts'], static function () {
-    Route::get('', [PostController::class, 'index']);
-    Route::get('{post}', [PostController::class, 'show']);
+	Route::get('', [PostController::class, 'index']);
+	Route::get('{post}', [PostController::class, 'show']);
 
-    Route::get('{post}/comments', [PostCommentController::class, 'comments']);
+	Route::get('{post}/comments', [PostCommentController::class, 'comments']);
 });
 
 /**
@@ -69,35 +69,37 @@ Route::group(['prefix' => 'posts'], static function () {
 
 Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 
-    // Comments
-    Route::group(['prefix' => 'comments'], static function () {
-        Route::post('', [CommentController::class, 'store']);
-    });
-
-    // Posts
-    Route::group(['prefix' => 'posts'], static function () {
-        Route::post('', [PostController::class, 'store']);
-        Route::post('{post}', [PostController::class, 'update']); // file uploads do not work with PUT
-        Route::delete('{post}', [PostController::class, 'delete']);
-
-        // Likes
-        Route::get('{post}/like', [PostLikeController::class, 'check']);
-        Route::put('{post}/like', [PostLikeController::class, 'change']);
-    });
-
-
-	Route::group(['prefix' => 'members'], static function () {
-		Route::get('', [MemberController::class, 'index']);
-		Route::get('{user}', [MemberController::class, 'show']);
-		Route::put('accept/{user}', [MemberController::class, 'accept']);
-		Route::put('reject/{user}', [MemberController::class, 'reject']);
+	// Comments
+	Route::group(['prefix' => 'comments'], static function () {
+		Route::post('', [CommentController::class, 'store']);
 	});
 
-	Route::group(['prefix' => 'branch-members'], static function () {
+	// Posts
+	Route::group(['prefix' => 'posts'], static function () {
+		Route::post('', [PostController::class, 'store']);
+		Route::post('{post}', [PostController::class, 'update']); // file uploads do not work with PUT
+		Route::delete('{post}', [PostController::class, 'delete']);
+
+		// Likes
+		Route::get('{post}/like', [PostLikeController::class, 'check']);
+		Route::put('{post}/like', [PostLikeController::class, 'change']);
+	});
+
+	Route::group(['prefix' => 'manage-member-ship-applications'], static function () {
+		Route::get('', [ManageMemberShipApplicationController::class, 'index']);
+		Route::put('accept/{user}', [ManageMemberShipApplicationController::class, 'accept']);
+		Route::put('reject/{user}', [ManageMemberShipApplicationController::class, 'reject']);
+	});
+
+	Route::group(['prefix' => 'sepa-data'], static function () {
+		Route::get('', [SEPAController::class, 'index']);
+		Route::put('exported/{branchUserMemberShip}', [SEPAController::class, 'exported']);
+	});
+
+	Route::group(['prefix' => 'manage-branch-applications'], static function () {
 		Route::get('', [BranchMemberController::class, 'index']);
-		Route::get('{user}', [BranchMemberController::class, 'show']);
-		Route::put('accept/{user}', [BranchMemberController::class, 'accept']);
-		Route::put('reject/{user}', [BranchMemberController::class, 'reject']);
+		Route::put('accept/{branchUserMemberShip}', [BranchMemberController::class, 'accept']);
+		Route::put('reject/{branchUserMemberShip}', [BranchMemberController::class, 'reject']);
 	});
 
 	Route::group(['prefix' => 'appointments'], static function () {
@@ -117,8 +119,11 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 	Route::group(['prefix' => 'profile'], static function () {
 		Route::get('', [ProfileController::class, 'index']);
 		Route::put('', [ProfileController::class, 'update']);
-		Route::put('branches', [ProfileController::class, 'updateBranches']);
+		Route::put('leave-branch/{branchUserMemberShip}', [ProfileController::class, 'leaveBranch']);
+		Route::put('join-branch/{branch}', [ProfileController::class, 'joinBranch']);
+		Route::put('cancel-branch/{branchUserMemberShip}', [ProfileController::class, 'cancelBranch']);
 		Route::put('main-summoner', [ProfileController::class, 'mainSummoner']);
+		Route::post('image', [ProfileController::class, 'updateImage']);
 		Route::delete('', [ProfileController::class, 'delete']);
 	});
 

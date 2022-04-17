@@ -5,15 +5,17 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ProfileIndexRequest;
 use App\Http\Requests\Auth\ProfileMainSummonerRequest;
-use App\Http\Requests\Auth\ProfileUpdateBranchesRequest;
 use App\Http\Requests\Auth\ProfileUpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Branch;
+use App\Models\BranchUserMemberShip;
 use App\Models\Summoner;
 use App\Models\User;
+use App\Services\Images\ImageGenerator;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use function DeepCopy\deep_copy;
 
@@ -29,23 +31,31 @@ class ProfileController extends Controller
 		$userId = Auth::id();
 
 		return new UserResource(User::with([
-			'summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail', 'memberShip',
-			'memberShip.branches' => function ($query) {
-				$query->whereNull('branch_member_ship.wanted_to_leave_at');
-			},
+			'summoners',
+			'userGroups',
+			'mainSummoner',
+			'image',
+			'thumbnail',
+			'branchUserMemberShips',
+			'branchUserMemberShips.branch'
 		])->find($userId));
 	}
 
-	public function update(ProfileUpdateRequest $request)
+	/**
+	 * @param  \App\Http\Requests\Auth\ProfileUpdateRequest  $request
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function update(ProfileUpdateRequest $request): JsonResponse
 	{
-		$user = User::find(Auth::id());
+		/** @var User $user */
+		$user = Auth::user();
 		$originalUser = deep_copy($user);
 
-		if (!$user) {
-			return response(null, Response::HTTP_UNAUTHORIZED);
-		}
-
+		$user->first_name = $request->firstName;
+		$user->last_name = $request->lastName;
 		$user->email = $request->email;
+		$user->salutation = $request->salutation;
+		$user->phone = $request->phone;
 
 		if ($request->password && $request->passwordRepeat) {
 			if ($request->password !== $request->passwordRepeat) {
@@ -57,11 +67,6 @@ class ProfileController extends Controller
 		}
 
 		$user->save();
-
-		if ($request->phone) {
-			$user->memberShip->phone = $request->phone;
-			$user->memberShip->save();
-		}
 
 		if ($originalUser->email !== $user->email) {
 			$user->wants_email_notification = false;
@@ -76,58 +81,57 @@ class ProfileController extends Controller
 	}
 
 	/**
-	 * @param  \App\Http\Requests\Auth\ProfileUpdateBranchesRequest  $request
+	 * @param  \App\Models\BranchUserMemberShip  $branchUserMemberShip
 	 * @return \Illuminate\Http\JsonResponse
 	 */
-	public function updateBranches(ProfileUpdateBranchesRequest $request): JsonResponse
+	public function leaveBranch(BranchUserMemberShip $branchUserMemberShip): JsonResponse
 	{
-		$user = User::where("id", Auth::id())->with([
-			'memberShip', 'memberShip.branches' => function ($query) {
-				$query->whereNull('branch_member_ship.wanted_to_leave_at');
-			},
-		])->first();
+		$branchUserMemberShip->wants_to_leave_at = now();
+		$branchUserMemberShip->exported_at = null;
+		$branchUserMemberShip->save();
 
-		$newBranches = $request->branchIds;
-		$originalBranches = collect(collect($user->memberShip->branches)->map(function ($item) {
-			return $item->id;
-		}));
+		return response()->json([
+			'message' => 'Der Spartenaustrittsantrag ist erfolgreich eingegangen.',
+		], Response::HTTP_OK);
+	}
 
-		$toRemove = $originalBranches->diff($newBranches);
-		$toAdd = collect($newBranches)->diff($originalBranches);
+	/**
+	 * @param  \App\Models\Branch  $branch
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function joinBranch(Branch $branch): JsonResponse
+	{
+		/** @var User $user */
+		$user = Auth::user();
 
-		if (
-			DB::table('branch_member_ship')
-				->where('member_ship_id', $user->memberShip->id)
-				->whereNull('deleted_at')
-				->whereNotNull('wanted_to_leave_at')
-				->whereIn('branch_id', $toAdd)->exists()
-		) {
-			DB::table('branch_member_ship')
-				->where('member_ship_id', $user->memberShip->id)
-				->whereNull('deleted_at')
-				->whereNotNull('wanted_to_leave_at')
-				->whereIn('branch_id', $toAdd)->update(['wanted_to_leave_at' => null]);
-		} else {
-			$user->memberShip->branches()->attach($toAdd);
-		}
-		if (count($toRemove) > 0) {
-			DB::table('branch_member_ship')
-				->where('member_ship_id', $user->memberShip->id)
-				->whereIn('branch_id', $toRemove)
-				->update(['wanted_to_leave_at' => now()]);
-		}
-
-		$user->fresh();
-		$user->load([
-			'summoners', 'userGroups', 'mainSummoner', 'image', 'thumbnail', 'memberShip',
-			'memberShip.branches' => function ($query) {
-				$query->whereNull('branch_member_ship.wanted_to_leave_at');
-			},
+		BranchUserMemberShip::create([
+			'user_id'   => $user->id,
+			'branch_id' => $branch->id
 		]);
 
 		return response()->json([
-			'message' => 'Die Sparten wurden erfolgreich bearbeitet.',
-			'data'    => new UserResource($user),
+			'message' => 'Der Spartenbeitritsantrag ist erfolgreich eingegangen.',
+		], Response::HTTP_OK);
+	}
+
+	/**
+	 * @param  \App\Models\BranchUserMemberShip  $branchUserMemberShip
+	 * @return \Illuminate\Http\JsonResponse
+	 */
+	public function cancelBranch(BranchUserMemberShip $branchUserMemberShip): JsonResponse
+	{
+		if ($branchUserMemberShip->wants_to_leave) {
+			$branchUserMemberShip->wants_to_leave_at = null;
+			$branchUserMemberShip->save();
+
+			return response()->json([
+				'message' => 'Der Spartenaustrittsantrag ist erfolgreich zurückgezogen.',
+			], Response::HTTP_OK);
+		}
+
+		$branchUserMemberShip->delete();
+		return response()->json([
+			'message' => 'Der Spartenbeitrirsantrag ist erfolgreich zurückgezogen wurden.',
 		], Response::HTTP_OK);
 	}
 
@@ -154,8 +158,39 @@ class ProfileController extends Controller
 		], Response::HTTP_OK);
 	}
 
+	//todo: implement profile delete
 	public function delete()
 	{
 
+	}
+
+	/**
+	 * @param  Request  $request
+	 * @return \App\Http\Resources\UserResource
+	 * @throws \Illuminate\Validation\ValidationException
+	 */
+	public function updateImage(Request $request): UserResource
+	{
+		$this->validate($request, [
+			'image' => 'required|file|mimes:jpg,jpeg,png'
+		]);
+
+		/** @var User $user */
+		$user = Auth::user();
+
+		$originalFileName = optional($request->file('image'))->getClientOriginalName();
+		$image = ImageGenerator::resizeImageIfNeeded($request->file('image'));
+		$thumbnail = ImageGenerator::createThumbnail($request->file('image'));
+
+		$user->image()->delete();
+		$user->image()->create([
+			'image'          => $image->encode('data-url'),
+			'thumbnail'      => $thumbnail->encode('data-url'),
+			'file_name'      => $originalFileName,
+			'file_mime_type' => $image->mime(),
+			'file_size'      => $image->filesize()
+		]);
+
+		return new UserResource($user);
 	}
 }

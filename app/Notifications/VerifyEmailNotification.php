@@ -8,45 +8,21 @@ use Illuminate\Support\HtmlString;
 
 class VerifyEmailNotification extends VerifyEmail
 {
-	/**
-	 * Create a new notification instance.
-	 *
-	 * @return void
-	 */
-	public function __construct()
-	{
-		//
-	}
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param mixed $notifiable
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+    public function toMail($notifiable): MailMessage
+    {
+        $verificationUrl = $this->verificationUrl($notifiable);
 
-	/**
-	 * Get the mail representation of the notification.
-	 *
-	 * @param  mixed  $notifiable
-	 * @return MailMessage
-	 */
-	public function toMail($notifiable): MailMessage
-	{
-		$verificationUrl = $this->verificationUrl($notifiable);
-
-		return (new MailMessage)
-			->subject('E-Mail verifizieren')
-			->greeting('Hallo '.$notifiable->first_name.',')
-			->line(new HtmlString('vielen Dank für dein Interesse an einem Beitritt zu Alles im Rudel e.V.<br><br>Dein Mitgliedsaufnahmeantrag ist bei uns eingegangen und wird nun von uns bearbeitet. Sobald dieser durch uns bearbeitet wurde, benachrichtigen wir dich automatisch per E-Mail.<br><br>Bitte bestätige noch deine E-Mail durch Klick auf den folgenden Button.'))
-			->action('E-Mail verifizieren', url($verificationUrl))
-			->line('Viele Grüße')
-			->salutation(new HtmlString('<b>Timm, Silas & Nick</b><br>Vorstand von Alles im Rudel e.V.'));
-	}
-
-	/**
-	 * Get the array representation of the notification.
-	 *
-	 * @param  mixed  $notifiable
-	 * @return array
-	 */
-	public function toArray($notifiable): array
-	{
-		return [
-			//
-		];
-	}
+        return (new MailMessage)
+            ->subject('E-Mail verifizieren')
+            ->greeting('Hallo ' . $notifiable->first_name . ',')
+            ->line(new HtmlString('dein Beitrittsantrag ist erfolgreich bei uns eingegangen!<br>Bitte verifiziere deine E-Mail, um den Antrag zu bestätigen.'))
+            ->action('E-Mail verifizieren', $verificationUrl)
+            ->salutation(new HtmlString('Viele Grüße<br>Silas, Nick & Timm'));
+    }
 }

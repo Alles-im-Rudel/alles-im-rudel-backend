@@ -1,13 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\MemberShip;
+namespace App\Http\Controllers\MemberShipApplication;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\BranchResource;
-use App\Models\Branch;
-use App\Models\MemberShip;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
 class MandatController extends Controller
@@ -17,7 +14,7 @@ class MandatController extends Controller
 	 */
 	public function index(): JsonResponse
 	{
-		$max = MemberShip::max('id');
+		$max = User::max('id');
 		if ($max) {
 			$id = 'AIR '.($max + 1);
 			return response()->json([
