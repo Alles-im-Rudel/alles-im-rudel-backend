@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Alles im Rudel e.V.</title>
+    <title>Mitgliedsaufnahmeantrag abgelehnt</title>
 </head>
 <body>
-<h1>Hallo {{ $user->first_name }} {{ $user->last_name }}</h1>
-
-<p>Du wurdest abgelehnt</p>
-
-<p>Grüße Vorstand</p>
+<h1>Mitgliedsaufnahmeantrag abgelehnt</h1>
+<p>Hallo {{ $user->first_name }},<br><br>leider müssen wir dir mitteilen, dass dein Mitgliedsaufnahmeantrag abgelehnt
+    wurde.<br>Beste Grüße<br><b>Timm, Silas & Nick</b><br>Vorstand von Alles im Rudel e.V.</p>
 </body>
 </html>
