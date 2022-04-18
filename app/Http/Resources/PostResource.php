@@ -25,7 +25,7 @@ class PostResource extends JsonResource
 
             'likes' => $this->when($this->likes_count !== null, $this->likes_count),
 
-            'user'      => new UserResource($this->whenLoaded('user')),
+            'user'      => new PostUserResource($this->whenLoaded('user')),
             'tag'       => new TagResouce($this->whenLoaded('tag')),
             'thumbnail' => new ImageResource($this->whenLoaded('thumbnail')),
             'image'     => new ImageResource($this->whenLoaded('image')),
