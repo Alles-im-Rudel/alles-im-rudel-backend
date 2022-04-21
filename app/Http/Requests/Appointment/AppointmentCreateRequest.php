@@ -39,7 +39,7 @@ class AppointmentCreateRequest extends FormRequest
 			'text'      => 'required|string',
 			'color'     => 'required|string',
 			'tagIds'    => 'nullable|array',
-			'tagsIds.*' => 'nullable|integer|exists:appointments,id',
+			'tagsIds.*' => 'nullable|integer|exists:tags,id',
 			'startAt'   => 'required|date',
 			'endAt'     => 'nullable|date',
 			'isAllDay'  => 'required|boolean'
