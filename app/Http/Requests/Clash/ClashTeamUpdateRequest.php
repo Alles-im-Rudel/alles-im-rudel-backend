@@ -36,7 +36,7 @@ class ClashTeamUpdateRequest extends FormRequest
             'name'               => 'required|max:255|unique:clash_teams,name,' . $this->clashTeam->id,
             'leaderId'           => 'required|integer|exists:users,id',
             'deletedMemberIds'   => 'nullable|array',
-            'deletedMemberIds.*' => 'nullable|integer|exists:clash_team_members,id',
+            'deletedMemberIds.*' => 'nullable|integer|exists:clash_members,id',
             'newMembers'         => 'nullable|array'
         ];
     }
