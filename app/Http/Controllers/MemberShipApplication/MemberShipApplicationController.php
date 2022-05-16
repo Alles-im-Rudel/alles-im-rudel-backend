@@ -35,7 +35,7 @@ class MemberShipApplicationController extends Controller
 			'postcode'       => $request->accountPostcode,
 			'city'           => $request->accountCity,
 			'bic'            => $request->bic,
-			'iban'           => $request->iban,
+			'iban'           => str_replace(' ', '', $request->iban),
 			'country_id'     => Country::where("name", $request->accountCountry)->first()->id,
 			'signature_city' => $request->accountSignatureCity,
 		]);

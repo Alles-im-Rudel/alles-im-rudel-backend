@@ -23,15 +23,32 @@ class UserUpdateRequest extends FormRequest
 	public function prepareForValidation(): void
 	{
 		$this->convertToInteger('userId');
-		$this->convertToInteger('levelId');
+		$this->convertToString('salutation');
 		$this->convertToString('firstName');
 		$this->convertToString('lastName');
-		$this->convertToString('email');
+		$this->convertToString('street');
+		$this->convertToString('postcode');
+		$this->convertToString('city');
+		$this->convertToString('country');
 		$this->convertToCarbonDate('birthday');
+		$this->convertToString('email');
+		$this->convertToString('phone');
 		$this->convertToBoolean('wantsEmailNotification');
 		$this->convertToBoolean('isActive');
+		$this->convertToInteger('levelId');
 		$this->convertToString('password');
 		$this->convertToString('passwordRepeat');
+
+		$this->convertToString('bankAccountbic');
+		$this->convertToString('bankAccountIban');
+		$this->convertToString('bankAccountFirstName');
+		$this->convertToString('bankAccountLastName');
+		$this->convertToString('bankAccountStreet');
+		$this->convertToString('bankAccountPostcode');
+		$this->convertToString('bankAccountCity');
+		$this->convertToString('bankAccountCountry');
+
+
 	}
 
 	/**
@@ -43,15 +60,27 @@ class UserUpdateRequest extends FormRequest
 	{
 		return [
 			'userId'                 => 'required|integer|exists:users,id',
-			'levelId'                => 'required|integer|exists:levels,id',
-			'firstName'              => 'nullable|max:30|min:2',
-			'lastName'               => 'nullable|max:30|min:2',
+			'salutation'             => 'required|max:30|min:2',
+			'firstName'              => 'required|max:30|min:2',
+			'lastName'               => 'required|max:30|min:2',
+			'street'                 => 'required|max:50|min:2',
+			'postcode'               => 'required|max:6|min:5',
+			'country'                => 'required|max:30|min:2',
+			'birthday'               => 'required|date',
 			'email'                  => 'required|email|max:50|min:3',
+			'phone'                  => 'required|max:20|min:5',
 			'wantsEmailNotification' => 'required|bool',
-			'birthday'               => 'nullable|date',
 			'isActive'               => 'required|boolean',
+			'levelId'                => 'required|integer|exists:levels,id',
 			'password'               => 'nullable|string',
 			'passwordRepeat'         => 'nullable|string',
+			'bankAccountBic'         => 'required|max:30|min:10',
+			'bankAccountIban'        => 'required|max:30|min:10',
+			'bankAccountFirstName'   => 'required|max:30|min:2',
+			'bankAccountLastName'    => 'required|max:30|min:2',
+			'bankAccountStreet'      => 'required|max:50|min:2',
+			'bankAccountPostcode'    => 'required|max:6|min:5',
+			'bankAccountCountry'     => 'required|max:30|min:2',
 		];
 	}
 }

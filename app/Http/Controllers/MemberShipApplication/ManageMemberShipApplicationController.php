@@ -8,7 +8,9 @@ use App\Http\Requests\MemberShipApplication\ManageMemberShipApplicationIndexRequ
 use App\Http\Resources\UserResource;
 use App\Models\BankAccount;
 use App\Models\BranchUserMemberShip;
+use App\Models\Level;
 use App\Models\User;
+use App\Models\UserGroup;
 use App\Notifications\MembershipAcceptNotification;
 use App\Notifications\MembershipRejectNotification;
 use Illuminate\Http\JsonResponse;
@@ -48,13 +50,27 @@ class ManageMemberShipApplicationController extends Controller
 		}
 
 		$user->activated_at = now();
+		$user->level_id = Level::MEMBER;
 		$user->save();
 
-		BranchUserMemberShip::where('user_id', $user->id)->update([
+		$branchUserMemberShips = BranchUserMemberShip::where('user_id', $user->id);
+		$branchUserMemberShips->update([
 			'activated_at' => now()
 		]);
 
-        $user->notify(new MembershipAcceptNotification());
+		foreach ($branchUserMemberShips as $branchUserMemberShip) {
+			if ($branchUserMemberShip->branch_id === 1) {
+				$user->userGroups()->attach(UserGroup::MEMBER_ID);
+			}
+			if ($branchUserMemberShip->branch_id === 2) {
+				$user->userGroups()->attach(UserGroup::AIRSOFT_MEMBER_ID);
+			}
+			if ($branchUserMemberShip->branch_id === 3) {
+				$user->userGroups()->attach(UserGroup::E_SPORTS_MEMBER_ID);
+			}
+		}
+
+		$user->notify(new MembershipAcceptNotification());
 		event(new BirthdayChanged($user));
 
 		return response()->json([
@@ -72,7 +88,7 @@ class ManageMemberShipApplicationController extends Controller
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 
-        $user->notify(new MembershipRejectNotification());
+		$user->notify(new MembershipRejectNotification());
 		$bankAccount = BankAccount::find($user->bank_account_id);
 
 		$user->forceDelete();

@@ -13,6 +13,7 @@ use App\Http\Requests\User\UserSyncPermissionRequest;
 use App\Http\Requests\User\UserSyncUserGroupRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\UserResource;
+use App\Models\Country;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -55,8 +56,10 @@ class UserController extends BaseController
 	{
 		$this->orderByJson($request->sortBy);
 		$this->onlyTrashed($request->onlyTrashed);
+		$this->whereHas('branchUserMemberShips', $request->branchId);
 		$this->search("%{$request->search}%")
-			->withCount('roles', 'permissions', 'userGroups', 'thumbnail');
+			->withCount('roles', 'permissions', 'userGroups', 'thumbnail', 'branchUserMemberShips');
+		
 		$this->getQuery()->levelScope();
 		return UserResource::collection($this->paginate($request->perPage, $request->page));
 	}
@@ -81,7 +84,18 @@ class UserController extends BaseController
 	 */
 	public function show(UserShowRequest $request, User $user): UserResource
 	{
-		$user->loadMissing('permissions', 'roles', 'userGroups', 'mainSummoner', 'thumbnail', 'image');
+		$user->loadMissing([
+			'permissions',
+			'roles',
+			'userGroups',
+			'thumbnail',
+			'image',
+			'country',
+			'bankAccount.signature',
+			'bankAccount.country',
+			'branchUserMemberShips.branch',
+			'mainSummoner'
+		]);
 		return new UserResource($user);
 	}
 
@@ -123,13 +137,30 @@ class UserController extends BaseController
 		$originalUser = deep_copy($user);
 
 		$userData = [
+			'salutation'               => $request->salutation,
 			'first_name'               => $request->firstName,
 			'last_name'                => $request->lastName,
-			'email'                    => $request->email,
+			'street'                   => $request->street,
+			'postcode'                 => $request->postcode,
+			'city'                     => $request->city,
+			'country_id'               => Country::where("name", $request->country)->first()->id,
 			'birthday'                 => $request->birthday,
-			'level_id'                 => $request->levelId,
-			'activated_at'             => $request->isActive ? now() : null,
+			'email'                    => $request->email,
+			'phone'                    => $request->phone,
 			'wants_email_notification' => $user->email_verified_at && $request->wantsEmailNotification,
+			'activated_at'             => $request->isActive ? now() : null,
+			'level_id'                 => $request->levelId,
+		];
+
+		$bankAccountData = [
+			'bic'        => $request->bankAccountBic,
+			'iban'       => str_replace(' ', '', $request->bankAccountIban),
+			'first_name' => $request->bankAccountFirstName,
+			'last_name'  => $request->bankAccountLastName,
+			'street'     => $request->bankAccountStreet,
+			'postcode'   => $request->bankAccountPostcode,
+			'city'       => $request->bankAccountCity,
+			'country_id' => Country::where("name", $request->bankAccountCountry)->first()->id,
 		];
 
 		if ($request->password && $request->passwordRepeat) {
@@ -142,6 +173,7 @@ class UserController extends BaseController
 		}
 
 		$user->update($userData);
+		$user->bankAccount()->update($bankAccountData);
 
 		if ($user->birthday !== $originalUser->birthday) {
 			event(new BirthdayChanged($user));
@@ -154,7 +186,18 @@ class UserController extends BaseController
 			$user->sendEmailVerificationNotification();
 		}
 
-		$user->loadMissing('permissions', 'roles', 'userGroups');
+		$user->loadMissing(
+			'permissions',
+			'roles',
+			'userGroups',
+			'thumbnail',
+			'image',
+			'country',
+			'bankAccount.signature',
+			'bankAccount.country',
+			'branchUserMemberShips.branch',
+			'mainSummoner'
+		);
 
 		return response()->json([
 			'message' => 'Der Benutzer wurde erfolgreich bearbeitet.',
@@ -214,18 +257,18 @@ class UserController extends BaseController
 	 */
 	public function checkEmail($email): JsonResponse
 	{
-        $validator = Validator::make(['email' => $email], [
-            'email' => 'required|email|unique:users,email'
-        ]);
+		$validator = Validator::make(['email' => $email], [
+			'email' => 'required|email|unique:users,email'
+		]);
 
-        try {
-            $isValid = $validator->validate();
-        } catch (ValidationException $exception) {
-            $isValid = false;
-        }
+		try {
+			$isValid = $validator->validate();
+		} catch (ValidationException $exception) {
+			$isValid = false;
+		}
 
-        return response()->json([
-            'isValid' => $isValid
-        ], Response::HTTP_OK);
+		return response()->json([
+			'isValid' => $isValid
+		], Response::HTTP_OK);
 	}
 }

@@ -24,6 +24,7 @@ class UserIndexRequest extends FormRequest
 	{
 		$this->convertToInteger('perPage');
 		$this->convertToInteger('page');
+		$this->convertToInteger('branchId');
 		$this->convertToString('search');
 		$this->convertToString('sortBy');
 	}
@@ -36,10 +37,11 @@ class UserIndexRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'perPage' => 'required|integer',
-			'page'    => 'required|integer|min:1',
-			'search'  => 'nullable|string',
-			'sortBy'  => 'nullable|string',
+			'perPage'  => 'required|integer',
+			'page'     => 'required|integer|min:1',
+			'branchId' => 'nullable|integer|exists:branches,id',
+			'search'   => 'nullable|string',
+			'sortBy'   => 'nullable|string',
 		];
 	}
 }

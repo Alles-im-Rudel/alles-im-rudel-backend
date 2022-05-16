@@ -94,22 +94,24 @@ trait SummonerTrait
 			return false;
 		}
 		foreach ($leagueEntries as $leagueEntry) {
-			$summoner->leagueEntries()->updateOrCreate(
-				[
-					'summoner_id' => $leagueEntry['summonerId'],
-					'queue_type'  => $leagueEntry['queueType']
-				], [
-				'league_id'     => $leagueEntry['leagueId'],
-				'tier'          => $leagueEntry['tier'],
-				'rank'          => $leagueEntry['rank'],
-				'league_points' => (int) $leagueEntry['leaguePoints'],
-				'wins'          => (int) $leagueEntry['wins'],
-				'losses'        => (int) $leagueEntry['losses'],
-				'hot_streak'    => (bool) $leagueEntry['hotStreak'],
-				'veteran'       => (bool) $leagueEntry['veteran'],
-				'fresh_blood'   => (bool) $leagueEntry['freshBlood'],
-				'inactive'      => (bool) $leagueEntry['inactive'],
-			]);
+			if ($leagueEntry['queueType'] !== "RANKED_TFT_PAIRS") {
+				$summoner->leagueEntries()->updateOrCreate(
+					[
+						'summoner_id' => $leagueEntry['summonerId'],
+						'queue_type'  => $leagueEntry['queueType']
+					], [
+					'league_id'     => $leagueEntry['leagueId'] ?: null,
+					'tier'          => $leagueEntry['tier'] ?: null,
+					'rank'          => $leagueEntry['rank'] ?: null,
+					'league_points' => (int) $leagueEntry['leaguePoints'],
+					'wins'          => (int) $leagueEntry['wins'],
+					'losses'        => (int) $leagueEntry['losses'],
+					'hot_streak'    => (bool) $leagueEntry['hotStreak'],
+					'veteran'       => (bool) $leagueEntry['veteran'],
+					'fresh_blood'   => (bool) $leagueEntry['freshBlood'],
+					'inactive'      => (bool) $leagueEntry['inactive'],
+				]);
+			}
 		}
 		return true;
 	}

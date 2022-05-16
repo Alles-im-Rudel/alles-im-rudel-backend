@@ -60,6 +60,21 @@ class BaseController extends Controller
 	}
 
 	/**
+	 * @param string $model
+	 * @param $modelId
+	 * @return Builder
+	 */
+	protected function whereHas(string $model, $modelId): Builder
+	{
+		if ($model && $modelId) {
+			$this->builder->whereHas($model, function ($query) use ($modelId) {
+				$query->where('branch_id', $modelId);
+			});
+		}
+		return $this->builder;
+	}
+
+	/**
 	 * @param  string|null  $orderBy
 	 * @param  bool|null  $descending
 	 * @return Builder

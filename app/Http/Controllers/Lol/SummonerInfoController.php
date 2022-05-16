@@ -61,7 +61,7 @@ class SummonerInfoController extends BaseController
 		$summoner = $this->getSummonerByName($summoner->name);
 
 		try {
-			$response = Http::get(env('RIOT_API_MATCH_URL').'/lol/match/v5/matches/by-puuid/'.$summoner->puuid.'/ids?start='.$request->beginIndex.'&count='.$request->endIndex.'&api_key='.env('RIOT_API_KEY'));
+			$response = Http::get('https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/'.$summoner->puuid.'/ids?start='.$request->beginIndex.'&count='.$request->endIndex.'&api_key='.env('RIOT_API_KEY'));
 		} catch (Exception $exception) {
 			Log::error($exception);
 			return [];
@@ -98,7 +98,7 @@ class SummonerInfoController extends BaseController
 	protected function getMatch(string $gameId): ?array
 	{
 		try {
-			$response = Http::get(env('RIOT_API_MATCH_URL').'/lol/match/v5/matches/'.$gameId.'?api_key='.env('RIOT_API_KEY'))->json();
+			$response = Http::get('https://europe.api.riotgames.com/lol/match/v5/matches/'.$gameId.'?api_key='.env('RIOT_API_KEY'))->json();
 		} catch (ConnectionException $exception) {
 			Log::error($exception);
 			return null;

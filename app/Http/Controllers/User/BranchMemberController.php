@@ -8,6 +8,7 @@ use App\Http\Requests\Member\BranchMemberIndexRequest;
 use App\Http\Resources\UserResource;
 use App\Models\BranchUserMemberShip;
 use App\Models\User;
+use App\Models\UserGroup;
 use App\Notifications\BranchMembershipAcceptNotification;
 use App\Notifications\BranchMembershipRejectNotification;
 use Illuminate\Http\JsonResponse;
@@ -54,8 +55,20 @@ class BranchMemberController extends Controller
 		$branchUserMemberShip->activated_at = now();
 		$branchUserMemberShip->save();
 
+
         /** @var User $user */
 		$user = User::query()->find($branchUserMemberShip->user_id);
+
+		if ($branchUserMemberShip->branch_id === 1) {
+			$user->userGroups()->attach(UserGroup::MEMBER_ID);
+		}
+		if ($branchUserMemberShip->branch_id === 2) {
+			$user->userGroups()->attach(UserGroup::AIRSOFT_MEMBER_ID);
+		}
+		if ($branchUserMemberShip->branch_id === 3) {
+			$user->userGroups()->attach(UserGroup::E_SPORTS_MEMBER_ID);
+		}
+
         $user->notify(new BranchMembershipAcceptNotification());
 
 		return response()->json([
