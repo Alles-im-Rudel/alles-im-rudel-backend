@@ -29,8 +29,6 @@ class RegisterController extends Controller
 			'password'          => Hash::make($request->password),
 		]);
 
-		$user->userGroups()->sync(UserGroup::GUEST_ID);
-
 		$user->memberShip()->create([
 			'country_id'   => $request->countryId,
 			'phone'        => $request->phone,

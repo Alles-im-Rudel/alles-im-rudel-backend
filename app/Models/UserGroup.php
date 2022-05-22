@@ -36,18 +36,6 @@ class UserGroup extends Model
 	public const E_SPORTS_MEMBER_ID = 7;
 	public const AIRSOFT_MEMBER_ID = 8;
 
-	/*
-	 * Prospect
-	 */
-	public const AIRSOFT_PROSPECT_ID = 9;
-	public const E_SPORTS_PROSPECT_ID = 12;
-
-	/*
-	 * Guests
-	 */
-    public const GUEST_ID = 10;
-	public const FRIEND_ID = 13;
-
 	protected $fillable = [
 		'display_name',
 		'color',
