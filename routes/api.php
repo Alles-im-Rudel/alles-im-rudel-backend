@@ -24,6 +24,7 @@ use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\User\BranchMemberController;
 use App\Http\Controllers\User\SEPAController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\UserDownloadController;
 use App\Http\Controllers\User\UserImageController;
 use App\Http\Controllers\User\UserPickerController;
 use App\Http\Controllers\UserGroup\UserGroupController;
@@ -136,13 +137,16 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::put('sync-permissions/{user}', [UserController::class, 'syncPermissions']);
 		Route::put('sync-user-groups/{user}', [UserController::class, 'syncUserGroups']);
 		Route::post('', [UserController::class, 'store']);
+		Route::get('download', [UserDownloadController::class, 'index']);
 		Route::get('{user}', [UserController::class, 'show']);
 		Route::put('{user}', [UserController::class, 'update']);
 		Route::delete('{user}', [UserController::class, 'delete']);
 	});
+
 	Route::group(['prefix' => 'permissions'], static function () {
 		Route::get('', [PermissionController::class, 'index']);
 	});
+
 	Route::group(['prefix' => 'user-groups'], static function () {
 		Route::get('', [UserGroupController::class, 'index']);
 		Route::get('all', [UserGroupController::class, 'all']);
@@ -152,6 +156,7 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::put('{userGroup}', [UserGroupController::class, 'update']);
 		Route::delete('{userGroup}', [UserGroupController::class, 'delete']);
 	});
+
 	Route::group(['prefix' => 'summoners'], static function () {
 		Route::get('', [SummonerController::class, 'index']);
 		Route::get('show', [SummonerController::class, 'show']);
@@ -165,13 +170,18 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::put('detach-main-user/{summoner}', [SummonerController::class, 'detachMainUser']);
 		Route::put('attach-main-user/{summoner}', [SummonerController::class, 'attachMainUser']);
 	});
+
 	Route::group(['prefix' => 'lol'], static function () {
 		Route::get('', [LolApiController::class, 'index']);
 	});
+
 	Route::group(['prefix' => 'clash'], static function () {
 		Route::post('', [ClashController::class, 'create']);
 		Route::get('member-picker', [ClashMemberPickerController::class, 'index']);
 		Route::put('{clashTeam}', [ClashController::class, 'update']);
 		Route::delete('{clashTeam}', [ClashController::class, 'delete']);
+	});
+	Route::group(['prefix' => 'branches'], static function () {
+		Route::get('filterd', [BranchController::class, 'filterd']);
 	});
 });

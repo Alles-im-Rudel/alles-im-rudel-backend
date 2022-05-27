@@ -19,7 +19,7 @@ class SEPAController extends Controller
 	 */
 	public function index(SEPAIndexRequest $request): JsonResponse
 	{
-		if (!Auth::user()->can('members.mamage')) {
+		if (!Auth::user()->can('members.manage')) {
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 
@@ -51,7 +51,7 @@ class SEPAController extends Controller
 	 */
 	public function exported(BranchUserMemberShip $branchUserMemberShip): JsonResponse
 	{
-		if (!Auth::user()->can('members.mamage')) {
+		if (!Auth::user()->can('members.manage')) {
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 

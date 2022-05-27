@@ -26,11 +26,12 @@ class BranchMemberController extends Controller
 	 */
 	public function index(BranchMemberIndexRequest $request): AnonymousResourceCollection
 	{
-		$users = User::with([
+		$branchIds = Auth::user()->getAvailableBranchIds();
+		$users = User::canSee()->with([
 			'country',
 			'bankAccount',
-			'branchUserMemberShips' => function ($query) {
-				$query->whereNull('activated_at');
+			'branchUserMemberShips' => function ($query) use($branchIds) {
+				$query->whereNull('activated_at')->whereIn('branch_id', $branchIds);
 			},
 			'branchUserMemberShips.branch'
 		])->whereHas('branchUserMemberShips', function ($query) {
@@ -48,7 +49,7 @@ class BranchMemberController extends Controller
 	 */
 	public function accept(BranchUserMemberShip $branchUserMemberShip): JsonResponse
 	{
-		if (!Auth::user()->can('members.mamage')) {
+		if (!Auth::user()->can('members.manage.new_branch')) {
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 
@@ -82,7 +83,7 @@ class BranchMemberController extends Controller
 	 */
 	public function reject(BranchUserMemberShip $branchUserMemberShip): JsonResponse
 	{
-		if (!Auth::user()->can('members.mamage')) {
+		if (!Auth::user()->can('members.manage.new_branch')) {
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 

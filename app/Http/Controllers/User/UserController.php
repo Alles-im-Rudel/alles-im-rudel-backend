@@ -60,7 +60,7 @@ class UserController extends BaseController
 		$this->search("%{$request->search}%")
 			->withCount('roles', 'permissions', 'userGroups', 'thumbnail', 'branchUserMemberShips');
 		
-		$this->getQuery()->levelScope();
+		$this->getQuery()->levelScope()->canSee();
 		return UserResource::collection($this->paginate($request->perPage, $request->page));
 	}
 

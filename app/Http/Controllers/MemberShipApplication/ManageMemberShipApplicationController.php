@@ -45,7 +45,7 @@ class ManageMemberShipApplicationController extends Controller
 	 */
 	public function accept(User $user): JsonResponse
 	{
-		if (!Auth::user()->can('members.mamage')) {
+		if (!Auth::user()->can('members.manage')) {
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 
@@ -54,9 +54,6 @@ class ManageMemberShipApplicationController extends Controller
 		$user->save();
 
 		$branchUserMemberShips = BranchUserMemberShip::where('user_id', $user->id);
-		$branchUserMemberShips->update([
-			'activated_at' => now()
-		]);
 
 		foreach ($branchUserMemberShips as $branchUserMemberShip) {
 			if ($branchUserMemberShip->branch_id === 1) {
@@ -69,6 +66,10 @@ class ManageMemberShipApplicationController extends Controller
 				$user->userGroups()->attach(UserGroup::E_SPORTS_MEMBER_ID);
 			}
 		}
+
+		$branchUserMemberShips->update([
+			'activated_at' => now()
+		]);
 
 		$user->notify(new MembershipAcceptNotification());
 		event(new BirthdayChanged($user));
@@ -84,7 +85,7 @@ class ManageMemberShipApplicationController extends Controller
 	 */
 	public function reject(User $user): JsonResponse
 	{
-		if (!Auth::user()->can('members.mamage')) {
+		if (!Auth::user()->can('members.manage')) {
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 

@@ -38,8 +38,11 @@ class PermissionsSeeder extends Seeder
             'users.store',
 			'users.update',
 			'users.show',
+			'users.show.bank_accounts',
+			'users.show.branches',
 			'users.delete',
 			'users.like',
+			'users.download',
 			// UserGroups
 			'user_groups.index',
 			'user_groups.show',
@@ -83,7 +86,13 @@ class PermissionsSeeder extends Seeder
 			// Dashboard
 			'dashboard.index',
 			// Member
-			'members.mamage'
+			'members.manage',
+			'members.manage.new',
+			'members.manage.new_branch',
+			'members.manage.sepa',
+			'members.allesimrudel',
+			'members.airsoft',
+			'members.e_sports'
 		];
 	}
 }

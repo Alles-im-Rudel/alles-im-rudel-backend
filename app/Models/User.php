@@ -111,19 +111,23 @@ class User extends Authenticatable
 	}
 
 	/**
-	 * @param  \Illuminate\Database\Eloquent\Builder  $query
-	 * @return \Illuminate\Database\Eloquent\Builder
+	 * @return array
 	 */
-	public function scopeMember(Builder $query): Builder
+	public function getAvailableBranchIds():array
 	{
-		return $query->where(static function (Builder $query) {
-			$query->whereBetween('level_id', [Level::PROSPECT, Level::ADMINISTRATOR])
-				->orWhere(static function (Builder $query) {
-					$query->whereHas('userGroups', function ($query) {
-						$query->whereBetween('level_id', [Level::PROSPECT, Level::ADMINISTRATOR]);
-					});
-				});
-		});
+		$branchIds = [];
+		$camMemeberAllesimRudel = $this->can('members.allesimrudel');
+		if ($camMemeberAllesimRudel) {
+			$branchIds[] = Branch::AIR;
+		}
+		if ($camMemeberAllesimRudel || $this->can('members.airsoft')) {
+			$branchIds[] = Branch::AIRSOFT;
+		}
+		if ($camMemeberAllesimRudel || $this->can('members.e_sports')) {
+			$branchIds[] = Branch::ESPORTS;
+		}
+
+		return $branchIds;
 	}
 
 	/**
@@ -136,6 +140,19 @@ class User extends Authenticatable
 			$query->where('level_id', '<=', Auth::user()->getMaxLevelId())
 				->whereDoesntHave('userGroups', function ($query) {
 					$query->where('level_id', '>', Auth::user()->getMaxLevelId());
+				});
+		});
+	}
+
+	/**
+	 * @param  \Illuminate\Database\Eloquent\Builder  $query
+	 * @return \Illuminate\Database\Eloquent\Builder
+	 */
+	public function scopeCanSee(Builder $query): Builder
+	{
+		return $query->where(static function (Builder $query) {
+				$query->whereHas('branchUserMemberShips', function ($query) {
+					$query->whereIn('branch_id', Auth::user()->getAvailableBranchIds());
 				});
 		});
 	}
