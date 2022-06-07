@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Membership;
 
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class MembershipRejectNotification extends VerifyEmail
+class MembershipRejectNotification extends Notification
 {
     /**
      * Get the mail representation of the notification.
@@ -21,6 +21,6 @@ class MembershipRejectNotification extends VerifyEmail
             ->greeting('Hallo ' . $notifiable->first_name . ',')
             ->line('wir möchten dir für dein Interesse am Beitritt zu Alles im Rudel e.V. danken.')
             ->line('Leider müssen wir dir mitteilen, dass dein Mitgliedsaufnahmeantrag abgelehnt wurde.')
-            ->salutation(new HtmlString('Viele Grüße<br>Silas, Nick & Timm'));
+            ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas, Nick'));
     }
 }

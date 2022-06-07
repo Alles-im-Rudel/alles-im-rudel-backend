@@ -9,13 +9,12 @@ use App\Http\Resources\UserResource;
 use App\Models\BranchUserMemberShip;
 use App\Models\User;
 use App\Models\UserGroup;
-use App\Notifications\BranchMembershipAcceptNotification;
-use App\Notifications\BranchMembershipRejectNotification;
+use App\Notifications\Branches\BranchMembershipAcceptNotification;
+use App\Notifications\Branches\BranchMembershipRejectNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 
 class BranchMemberController extends Controller
 {

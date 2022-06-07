@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Branches;
 
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class BranchMembershipAcceptNotification extends VerifyEmail
+class BranchMembershipAcceptNotification extends Notification
 {
     /**
      * Get the mail representation of the notification.
@@ -20,6 +20,6 @@ class BranchMembershipAcceptNotification extends VerifyEmail
             ->subject('Spartenaufnahmeantrag abgelehnt')
             ->greeting('Hallo ' . $notifiable->first_name . ',')
             ->line('wir freuen uns sehr, dir mitteilen zu können, dass dein Spartenaufnahmeantrag angenommen wurde.')
-            ->salutation(new HtmlString('Viele Grüße<br>Silas, Nick & Timm'));
+            ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas & Nick'));
     }
 }

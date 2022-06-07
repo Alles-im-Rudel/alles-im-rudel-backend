@@ -23,6 +23,6 @@ class VerifyEmailNotification extends VerifyEmail
             ->greeting('Hallo ' . $notifiable->first_name . ',')
             ->line(new HtmlString('dein Beitrittsantrag ist erfolgreich bei uns eingegangen!<br>Bitte verifiziere deine E-Mail, um den Antrag zu bestätigen.'))
             ->action('E-Mail verifizieren', $verificationUrl)
-            ->salutation(new HtmlString('Viele Grüße<br>Silas, Nick & Timm'));
+            ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas & Nick'));
     }
 }
