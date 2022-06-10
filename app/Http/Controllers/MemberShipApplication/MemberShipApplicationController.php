@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\MemberShipApplication;
 
+use App\Classes\Discord\DiscordMassege;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MemberShipApplication\MemberShipApplicationRequest;
 use App\Models\BankAccount;
@@ -9,6 +10,7 @@ use App\Models\BranchUserMemberShip;
 use App\Models\Country;
 use App\Models\Level;
 use App\Models\User;
+use App\Notifications\Discord\NewMemberDiscordNotification;
 use App\Services\Images\ImageGenerator;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
@@ -96,6 +98,9 @@ class MemberShipApplicationController extends Controller
 			$pdf->output());
 
 		$user->sendEmailVerificationNotification();
+
+		$message = new DiscordMassege('Neuer Mittgliedsantrag', $user->full_name." möchte Mitglied werden.");
+		$message->sendMessage();
 
 		return response()->json([
 			"message" => "Deine Anfrage wurde erfolgreich erstellt. Bitte bestätige deine Email!! Wir werden deine Anfrage schnellstmöglich bearbeiten.",

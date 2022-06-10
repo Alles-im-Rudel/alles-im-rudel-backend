@@ -23,4 +23,15 @@ class MembershipRejectNotification extends Notification
             ->line('Leider müssen wir dir mitteilen, dass dein Mitgliedsaufnahmeantrag abgelehnt wurde.')
             ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas, Nick'));
     }
+
+	/**
+	 * Get the notification's channels.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return array
+	 */
+	public function via($notifiable): array
+	{
+		return ['mail'];
+	}
 }

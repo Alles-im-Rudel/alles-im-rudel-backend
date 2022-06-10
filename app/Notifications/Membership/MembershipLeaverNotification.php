@@ -23,4 +23,15 @@ class MembershipLeaverNotification extends Notification
             ->line('Solltest du es dir in der Zwischenzeit anders überlegen, kannst du deine Austrittserklärung jederzeit über unsere Website zurückziehen.')
             ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas & Nick'));
     }
+
+	/**
+	 * Get the notification's channels.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return array
+	 */
+	public function via($notifiable): array
+	{
+		return ['mail'];
+	}
 }

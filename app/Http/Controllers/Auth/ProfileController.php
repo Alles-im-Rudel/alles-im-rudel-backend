@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Classes\Discord\DiscordMassege;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ProfileIndexRequest;
 use App\Http\Requests\Auth\ProfileMainSummonerRequest;
@@ -12,6 +13,7 @@ use App\Models\BranchUserMemberShip;
 use App\Models\Summoner;
 use App\Models\User;
 use App\Services\Images\ImageGenerator;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -86,12 +88,29 @@ class ProfileController extends Controller
 	 */
 	public function leaveBranch(BranchUserMemberShip $branchUserMemberShip): JsonResponse
 	{
+		/** @var User $user */
+		$user = Auth::user();
+
+		$date = Carbon::now()->addMonth()->endOfMonth()->format('d.m.Y');
+		$branchUserMemberShip->loadMissing('branch');
 		$branchUserMemberShip->wants_to_leave_at = now();
 		$branchUserMemberShip->exported_at = null;
 		$branchUserMemberShip->save();
 
+		if ($branchUserMemberShip->branch_id !== 1) {
+			$message = new DiscordMassege('Spartenaustritt', $user->full_name." möchte die Sparte ". $branchUserMemberShip->branch->name ." verlassen.");
+			$message->sendMessage();
+
+			return response()->json([
+				'message' => 'Der Spartenaustrittsantrag ist erfolgreich eingegangen und wird am '.$date.' wirksam.',
+			], Response::HTTP_OK);
+		}
+
+		$message = new DiscordMassege('Vereinsaustritt', $user->full_name." möchte den Verein verlassen.");
+		$message->sendMessage();
+
 		return response()->json([
-			'message' => 'Der Spartenaustrittsantrag ist erfolgreich eingegangen.',
+			'message' => 'Der Vereinsaustrittsantrag ist erfolgreich eingegangen und wird am '.$date.' wirksam.',
 		], Response::HTTP_OK);
 	}
 
@@ -109,8 +128,11 @@ class ProfileController extends Controller
 			'branch_id' => $branch->id
 		]);
 
+		$message = new DiscordMassege('Neuer Spartenantrag', $user->full_name." möchte ". $branch->name ." beitreten.");
+		$message->sendMessage();
+
 		return response()->json([
-			'message' => 'Der Spartenbeitritsantrag ist erfolgreich eingegangen.',
+			'message' => 'Der Spartenbeitrittsantrag ist erfolgreich eingegangen.',
 		], Response::HTTP_OK);
 	}
 
@@ -120,18 +142,41 @@ class ProfileController extends Controller
 	 */
 	public function cancelBranch(BranchUserMemberShip $branchUserMemberShip): JsonResponse
 	{
-		if ($branchUserMemberShip->wants_to_leave) {
-			$branchUserMemberShip->wants_to_leave_at = null;
-			$branchUserMemberShip->save();
+		/** @var User $user */
+		$user = Auth::user();
 
+		$branchUserMemberShip->loadMissing('branch');
+
+		if ($branchUserMemberShip->branch_id !== 1) {
+			$message = new DiscordMassege('Spartenaustritt zurückgezogen', $user->full_name." möchte die Sparte ". $branchUserMemberShip->branch->name ." doch nicht verlassen.");
+			$message->sendMessage();
+
+			if ($branchUserMemberShip->wants_to_leave) {
+				$branchUserMemberShip->wants_to_leave_at = null;
+				$branchUserMemberShip->save();
+
+
+
+				return response()->json([
+					'message' => 'Der Spartenaustrittsantrag wurde erfolgreich zurückgezogen.',
+				], Response::HTTP_OK);
+			}
+
+			$branchUserMemberShip->delete();
 			return response()->json([
-				'message' => 'Der Spartenaustrittsantrag ist erfolgreich zurückgezogen.',
+				'message' => 'Der Spartenbeitrittsantrag wurde erfolgreich zurückgezogen.',
 			], Response::HTTP_OK);
 		}
 
-		$branchUserMemberShip->delete();
+		$branchUserMemberShip->wants_to_leave_at = null;
+		$branchUserMemberShip->exported_at = now();
+		$branchUserMemberShip->save();
+
+		$message = new DiscordMassege('Vereinsaustritt zurückgezogen', $user->full_name." möchte den Verein doch nicht verlassen.");
+		$message->sendMessage();
+
 		return response()->json([
-			'message' => 'Der Spartenbeitrirsantrag ist erfolgreich zurückgezogen wurden.',
+			'message' => 'Der Vereinsaustritt wurde erfolgreich zurückgezogen.',
 		], Response::HTTP_OK);
 	}
 

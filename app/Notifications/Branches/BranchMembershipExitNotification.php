@@ -23,4 +23,15 @@ class BranchMembershipExitNotification extends Notification
             ->line('Schicke uns gerne wieder einen Spartenaufnahmeantrag über unsere Website, wenn du wieder Lust hast mit dabei zu sein.')
             ->salutation(new HtmlString('Schweren Herzens<br>Timm, Silas & Nick'));
     }
+
+	/**
+	 * Get the notification's channels.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return array
+	 */
+	public function via($notifiable): array
+	{
+		return ['mail'];
+	}
 }

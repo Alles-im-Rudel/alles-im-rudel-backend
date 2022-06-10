@@ -22,4 +22,15 @@ class MembershipAcceptNotification extends Notification
             ->line('wir freuen uns sehr, dir mitteilen zu können, dass dein Mitgliedsaufnahmeantrag angenommen wurde und heißen dich hiermit herzlich willkommen bei Alles im Rudel e.V.!')
             ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas & Nick'));
     }
+
+	/**
+	 * Get the notification's channels.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return array
+	 */
+	public function via($notifiable): array
+	{
+		return ['mail'];
+	}
 }

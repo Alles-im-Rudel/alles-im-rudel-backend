@@ -53,7 +53,7 @@ class ManageMemberShipApplicationController extends Controller
 		$user->level_id = Level::MEMBER;
 		$user->save();
 
-		$branchUserMemberShips = BranchUserMemberShip::where('user_id', $user->id);
+		$branchUserMemberShips = BranchUserMemberShip::where('user_id', $user->id)->get();
 
 		foreach ($branchUserMemberShips as $branchUserMemberShip) {
 			if ($branchUserMemberShip->branch_id === 1) {
@@ -65,11 +65,10 @@ class ManageMemberShipApplicationController extends Controller
 			if ($branchUserMemberShip->branch_id === 3) {
 				$user->userGroups()->attach(UserGroup::E_SPORTS_MEMBER_ID);
 			}
+			$branchUserMemberShip->update([
+				'activated_at' => now()
+			]);
 		}
-
-		$branchUserMemberShips->update([
-			'activated_at' => now()
-		]);
 
 		$user->notify(new MembershipAcceptNotification());
 		event(new BirthdayChanged($user));

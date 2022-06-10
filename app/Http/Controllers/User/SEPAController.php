@@ -55,17 +55,11 @@ class SEPAController extends Controller
 			return response()->json(["msg" => "Keine Berechtigung"], 403);
 		}
 
-
 		$branchUserMemberShip->exported_at = now();
-
-		if ($branchUserMemberShip->wants_to_leave) {
-			$branchUserMemberShip->deleted_at = now();
-		}
-
 		$branchUserMemberShip->save();
 
 		return response()->json([
-			"message" => "Eintrage bearbeitet",
+			"message" => "Eintrag bearbeitet",
 		], Response::HTTP_OK);
 	}
 

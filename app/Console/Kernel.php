@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\CheckForLeavers;
 use App\Console\Commands\ImportRiotVersionsCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -26,6 +27,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command(ImportRiotVersionsCommand::class)->daily();
+        $schedule->command(CheckForLeavers::class)->lastDayOfMonth('23:59');
     }
 
     /**
