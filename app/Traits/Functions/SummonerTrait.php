@@ -54,9 +54,6 @@ trait SummonerTrait
 	 */
 	public function reloadSummoner(Summoner $summoner): bool
 	{
-
-		$summoner = $this->getSummonerByName($summoner->name);
-
 		$http = new Client();
 		try {
 			$response = $http->get(env('RIOT_API_URL').'/lol/summoner/v4/summoners/by-account/'.$summoner->account_id.'?api_key='.env('RIOT_API_KEY'));
