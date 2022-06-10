@@ -5,6 +5,7 @@ namespace App\Exports\UsersExport\Sheets;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -19,12 +20,14 @@ abstract class BaseBranchSheet implements FromQuery, WithTitle, WithHeadings, Wi
 	private $search;
 	private $branchId;
 	private $sheetName;
+	private $user;
 
 	public function __construct(?string $search)
 	{
 		$this->search = $search;
 		$this->branchId = $this->getBranchId();
 		$this->sheetName = $this->getSheetName();
+		$this->user = Auth::user();
 	}
 
 	/**
@@ -71,7 +74,7 @@ abstract class BaseBranchSheet implements FromQuery, WithTitle, WithHeadings, Wi
 
 	public function headings(): array
 	{
-		return [
+		$headings = [
 			'Vorname',
 			'Nachname',
 			'Geburstag',
@@ -81,10 +84,13 @@ abstract class BaseBranchSheet implements FromQuery, WithTitle, WithHeadings, Wi
 			'Postleitzahl',
 			'Stadt',
 			'Land',
-			'Kontoinhaber',
-			'IBAN',
-			'BIC'
 		];
+
+		if ($this->user->can('members.allesimrudel')) {
+			array_push($headings, 'Kontoinhaber', 'IBAN', 'BIC');
+		}
+
+		return $headings;
 	}
 
 	/**
@@ -93,7 +99,7 @@ abstract class BaseBranchSheet implements FromQuery, WithTitle, WithHeadings, Wi
 	 */
 	public function map($row): array
 	{
-		return [
+		$map = [
 			$row->first_name,
 			$row->last_name,
 			Carbon::parse($row->birthday)->format('d.m.Y'),
@@ -103,10 +109,16 @@ abstract class BaseBranchSheet implements FromQuery, WithTitle, WithHeadings, Wi
 			$row->postcode,
 			$row->city,
 			$row->country->name,
-			$row->bankAccount->first_name.' '.$row->bankAccount->last_name,
-			$row->bankAccount->iban,
-			$row->bankAccount->bic,
 		];
+
+		if ($this->user->can('members.allesimrudel')) {
+			array_push($map,
+				$row->bankAccount->first_name.' '.$row->bankAccount->last_name,
+				$row->bankAccount->iban,
+				$row->bankAccount->bic,);
+		}
+
+		return $map;
 	}
 
 	public function columnFormats(): array
@@ -119,8 +131,7 @@ abstract class BaseBranchSheet implements FromQuery, WithTitle, WithHeadings, Wi
 	public function styles(Worksheet $sheet): array
 	{
 		return [
-			1    => ['font' => ['bold' => true]],
-
+			1 => ['font' => ['bold' => true]],
 		];
 	}
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Branches;
 
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
 
-class BranchMembershipRejectNotification extends VerifyEmail
+class BranchMembershipRejectNotification extends Notification
 {
     /**
      * Get the mail representation of the notification.
@@ -20,6 +20,17 @@ class BranchMembershipRejectNotification extends VerifyEmail
             ->subject('Spartenaufnahmeantrag abgelehnt')
             ->greeting('Hallo ' . $notifiable->first_name . ',')
             ->line('leider müssen wir dir mitteilen, dass dein Spartenaufnahmeantrag abgelehnt wurde.')
-            ->salutation(new HtmlString('Viele Grüße<br>Silas, Nick & Timm'));
+            ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas, Nick'));
     }
+
+	/**
+	 * Get the notification's channels.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return array
+	 */
+	public function via($notifiable): array
+	{
+		return ['mail'];
+	}
 }

@@ -48,6 +48,6 @@ class NewPostNotification extends Notification
             ->greeting('Hallo ' . $notifiable->first_name . ',')
             ->line('es wurde ein neuer Post mit dem Titel "' . $this->post->title . '" erstellt!')
             ->action('Post ansehen', env('APP_FRONTEND_URL') . '/posts/' . $this->post->id)
-            ->salutation(new HtmlString('Viele Grüße<br>Silas, Nick & Timm'));
+            ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas & Nick'));
     }
 }

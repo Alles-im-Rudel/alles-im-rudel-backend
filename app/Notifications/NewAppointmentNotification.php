@@ -48,6 +48,6 @@ class NewAppointmentNotification extends Notification
             ->greeting('Hallo ' . $notifiable->first_name . ',')
             ->line('es wurde ein neues Event mit dem Titel "' . $this->appointment->title . '" erstellt!')
             ->action('Zum Kalender', env('APP_FRONTEND_URL') . '/calendar')
-            ->salutation(new HtmlString('Viele Grüße<br>Silas, Nick & Timm'));
+            ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas & Nick'));
     }
 }

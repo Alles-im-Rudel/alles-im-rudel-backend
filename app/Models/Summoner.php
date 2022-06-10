@@ -47,6 +47,6 @@ class Summoner extends Model
 	 */
 	public function leagueEntries(): HasMany
 	{
-		return $this->hasMany(LeagueEntry::class, 'summoner_id', 'summoner_id');
+		return $this->hasMany(LeagueEntry::class, 'summoner_id', 'summoner_id')->orderBy('queue_type','DESC');
 	}
 }
