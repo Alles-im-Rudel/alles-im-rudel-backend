@@ -91,7 +91,7 @@ class UserGroupController extends BaseController
 		$userGroup->loadMissing('permissions', 'roles', 'users');
 
 		return response()->json([
-			'message'   => 'Die Benutzergruppe wurde bearbeitet gelöscht.',
+			'message'   => 'Die Benutzergruppe wurde bearbeitet.',
 			'userGroup' => new UserGroupResource($userGroup)
 		], Response::HTTP_OK);
 	}
@@ -105,7 +105,7 @@ class UserGroupController extends BaseController
 	{
 		$userGroup->syncPermissions($request->permissionIds);
 		return response()->json([
-			'message' => 'Die Berechtigungen wurden erfolgreich mit der Benutzergruppe verknüpft'
+			'message' => 'Die Berechtigungen wurden erfolgreich mit der Benutzergruppe verknüpft.'
 		], Response::HTTP_OK);
 	}
 
@@ -118,7 +118,7 @@ class UserGroupController extends BaseController
 	{
 		$userGroup->users()->sync($request->userIds);
 		return response()->json([
-			'message' => 'Die Berechtigungen wurden erfolgreich mit dem Benutzer verknüpft'
+			'message' => 'Die Berechtigungen wurden erfolgreich mit dem Benutzer verknüpft.'
 		], Response::HTTP_OK);
 	}
 
@@ -133,7 +133,7 @@ class UserGroupController extends BaseController
 			$userGroup->delete();
 		} catch (Exception $e) {
 			return response()->json([
-				'message' => 'Die Benutzergruppe konnte nicht gelöscht werde!.',
+				'message' => 'Die Benutzergruppe konnte nicht gelöscht werden!',
 			], Response::HTTP_OK);
 		}
 
