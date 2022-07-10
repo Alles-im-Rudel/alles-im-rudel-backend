@@ -99,7 +99,7 @@ class MemberShipApplicationController extends Controller
 
 		$user->sendEmailVerificationNotification();
 
-		$message = new DiscordMassege('Neuer Mittgliedsantrag', $user->full_name." möchte Mitglied werden.");
+		$message = new DiscordMassege('Neuer Mitgliedsantrag', $user->full_name." möchte Mitglied werden.");
 		$message->sendMessage();
 
 		return response()->json([
