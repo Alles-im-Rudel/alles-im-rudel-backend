@@ -4,7 +4,6 @@ use App\Http\Controllers\Appointment\AppointmentController;
 use App\Http\Controllers\Appointment\AppointmentLikeController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ProfileController;
-use App\Http\Controllers\Comment\CommentController;
 use App\Http\Controllers\Level\LevelController;
 use App\Http\Controllers\Lol\ClashController;
 use App\Http\Controllers\Lol\ClashMemberPickerController;
@@ -16,10 +15,10 @@ use App\Http\Controllers\Branch\BranchController;
 use App\Http\Controllers\MemberShipApplication\ManageMemberShipApplicationController;
 use App\Http\Controllers\MemberShipApplication\MandatController;
 use App\Http\Controllers\MemberShipApplication\MemberShipApplicationController;
+use App\Http\Controllers\Minecraft\Player\MinecraftPlayerController;
+use App\Http\Controllers\Minecraft\Whitelist\MinecraftWhitelistController;
 use App\Http\Controllers\Permission\PermissionController;
-use App\Http\Controllers\Post\PostCommentController;
 use App\Http\Controllers\Post\PostController;
-use App\Http\Controllers\Post\PostLikeController;
 use App\Http\Controllers\Tag\TagController;
 use App\Http\Controllers\User\BranchMemberController;
 use App\Http\Controllers\User\SEPAController;
@@ -53,7 +52,7 @@ Route::post('member-ship-applications', [MemberShipApplicationController::class,
 
 // Profile
 Route::group(['prefix' => 'profile'], static function () {
-	Route::get('/check-email/{email}', [UserController::class, 'checkEmail']);
+    Route::get('/check-email/{email}', [UserController::class, 'checkEmail']);
 });
 
 // Posts
@@ -62,111 +61,120 @@ Route::group(['prefix' => 'posts'], static function () {
 	Route::get('{post}', [PostController::class, 'show']);
 });
 
+Route::get('minecraft/whitelist', [MinecraftWhitelistController::class, 'index']);
+
 /**
  * Authenticated routes
  */
 
 Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 
-	// Posts
+    // Posts
 	Route::group(['prefix' => 'posts'], static function () {
 		Route::post('', [PostController::class, 'store']);
 		Route::post('{post}', [PostController::class, 'update']); // file uploads do not work with PUT
 		Route::delete('{post}', [PostController::class, 'delete']);
 	});
 
-	Route::group(['prefix' => 'manage-member-ship-applications'], static function () {
-		Route::get('', [ManageMemberShipApplicationController::class, 'index']);
-		Route::put('accept/{user}', [ManageMemberShipApplicationController::class, 'accept']);
-		Route::put('reject/{user}', [ManageMemberShipApplicationController::class, 'reject']);
-	});
+    Route::group(['prefix' => 'manage-member-ship-applications'], static function () {
+        Route::get('', [ManageMemberShipApplicationController::class, 'index']);
+        Route::put('accept/{user}', [ManageMemberShipApplicationController::class, 'accept']);
+        Route::put('reject/{user}', [ManageMemberShipApplicationController::class, 'reject']);
+    });
 
-	Route::group(['prefix' => 'sepa-data'], static function () {
-		Route::get('', [SEPAController::class, 'index']);
-		Route::put('exported/{branchUserMemberShip}', [SEPAController::class, 'exported']);
-	});
+    Route::group(['prefix' => 'sepa-data'], static function () {
+        Route::get('', [SEPAController::class, 'index']);
+        Route::put('exported/{branchUserMemberShip}', [SEPAController::class, 'exported']);
+    });
 
-	Route::group(['prefix' => 'manage-branch-applications'], static function () {
-		Route::get('', [BranchMemberController::class, 'index']);
-		Route::put('accept/{branchUserMemberShip}', [BranchMemberController::class, 'accept']);
-		Route::put('reject/{branchUserMemberShip}', [BranchMemberController::class, 'reject']);
-	});
+    Route::group(['prefix' => 'manage-branch-applications'], static function () {
+        Route::get('', [BranchMemberController::class, 'index']);
+        Route::put('accept/{branchUserMemberShip}', [BranchMemberController::class, 'accept']);
+        Route::put('reject/{branchUserMemberShip}', [BranchMemberController::class, 'reject']);
+    });
 
-	Route::group(['prefix' => 'appointments'], static function () {
-		Route::get('', [AppointmentController::class, 'index']);
-		Route::get('{appointment}', [AppointmentController::class, 'show']);
-		Route::post('', [AppointmentController::class, 'store']);
-		Route::put('{appointment}', [AppointmentController::class, 'update']);
-		Route::delete('{appointment}', [AppointmentController::class, 'delete']);
-		Route::get('{appointment}/check', [AppointmentLikeController::class, 'checkLiked']);
-		Route::put('{appointment}/change', [AppointmentLikeController::class, 'change']);
-	});
+    Route::group(['prefix' => 'appointments'], static function () {
+        Route::get('', [AppointmentController::class, 'index']);
+        Route::get('{appointment}', [AppointmentController::class, 'show']);
+        Route::post('', [AppointmentController::class, 'store']);
+        Route::put('{appointment}', [AppointmentController::class, 'update']);
+        Route::delete('{appointment}', [AppointmentController::class, 'delete']);
+        Route::get('{appointment}/check', [AppointmentLikeController::class, 'checkLiked']);
+        Route::put('{appointment}/change', [AppointmentLikeController::class, 'change']);
+    });
 
-	Route::group(['prefix' => 'levels'], static function () {
-		Route::get('', [LevelController::class, 'index']);
-	});
+    Route::group(['prefix' => 'levels'], static function () {
+        Route::get('', [LevelController::class, 'index']);
+    });
 
-	Route::group(['prefix' => 'profile'], static function () {
-		Route::get('', [ProfileController::class, 'index']);
-		Route::put('', [ProfileController::class, 'update']);
-		Route::put('leave-branch/{branchUserMemberShip}', [ProfileController::class, 'leaveBranch']);
-		Route::put('join-branch/{branch}', [ProfileController::class, 'joinBranch']);
-		Route::put('cancel-branch/{branchUserMemberShip}', [ProfileController::class, 'cancelBranch']);
-		Route::put('main-summoner', [ProfileController::class, 'mainSummoner']);
-		Route::post('image', [ProfileController::class, 'updateImage']);
-		Route::delete('', [ProfileController::class, 'delete']);
-	});
+    Route::group(['prefix' => 'profile'], static function () {
+        Route::get('', [ProfileController::class, 'index']);
+        Route::put('', [ProfileController::class, 'update']);
+        Route::put('leave-branch/{branchUserMemberShip}', [ProfileController::class, 'leaveBranch']);
+        Route::put('join-branch/{branch}', [ProfileController::class, 'joinBranch']);
+        Route::put('cancel-branch/{branchUserMemberShip}', [ProfileController::class, 'cancelBranch']);
+        Route::put('main-summoner', [ProfileController::class, 'mainSummoner']);
+        Route::post('image', [ProfileController::class, 'updateImage']);
+        Route::delete('', [ProfileController::class, 'delete']);
+    });
 
-	Route::group(['prefix' => 'users'], static function () {
-		Route::get('', [UserController::class, 'index']);
-		Route::get('all', [UserController::class, 'all']);
-		Route::get('picker', [UserPickerController::class, 'index']);
-		Route::put('sync-permissions/{user}', [UserController::class, 'syncPermissions']);
+    Route::group(['prefix' => 'users'], static function () {
+        Route::get('', [UserController::class, 'index']);
+        Route::get('all', [UserController::class, 'all']);
+        Route::get('picker', [UserPickerController::class, 'index']);
+        Route::put('sync-permissions/{user}', [UserController::class, 'syncPermissions']);
 		Route::put('sync-user-groups/{user}', [UserController::class, 'syncUserGroups']);
-		Route::get('download', [UserDownloadController::class, 'index']);
-		Route::get('{user}', [UserController::class, 'show']);
-		Route::put('{user}', [UserController::class, 'update']);
-		Route::delete('{user}', [UserController::class, 'delete']);
-	});
+        Route::get('download', [UserDownloadController::class, 'index']);
+        Route::get('{user}', [UserController::class, 'show']);
+        Route::put('{user}', [UserController::class, 'update']);
+        Route::delete('{user}', [UserController::class, 'delete']);
+    });
 
-	Route::group(['prefix' => 'permissions'], static function () {
-		Route::get('', [PermissionController::class, 'index']);
-	});
+    Route::group(['prefix' => 'permissions'], static function () {
+        Route::get('', [PermissionController::class, 'index']);
+    });
 
-	Route::group(['prefix' => 'user-groups'], static function () {
-		Route::get('', [UserGroupController::class, 'index']);
-		Route::get('all', [UserGroupController::class, 'all']);
-		Route::get('{userGroup}', [UserGroupController::class, 'show']);
-		Route::put('sync-permissions/{userGroup}', [UserGroupController::class, 'syncPermissions']);
-		Route::put('sync-users/{userGroup}', [UserGroupController::class, 'syncUsers']);
-		Route::put('{userGroup}', [UserGroupController::class, 'update']);
-		Route::delete('{userGroup}', [UserGroupController::class, 'delete']);
-	});
+    Route::group(['prefix' => 'user-groups'], static function () {
+        Route::get('', [UserGroupController::class, 'index']);
+        Route::get('all', [UserGroupController::class, 'all']);
+        Route::get('{userGroup}', [UserGroupController::class, 'show']);
+        Route::put('sync-permissions/{userGroup}', [UserGroupController::class, 'syncPermissions']);
+        Route::put('sync-users/{userGroup}', [UserGroupController::class, 'syncUsers']);
+        Route::put('{userGroup}', [UserGroupController::class, 'update']);
+        Route::delete('{userGroup}', [UserGroupController::class, 'delete']);
+    });
 
-	Route::group(['prefix' => 'summoners'], static function () {
-		Route::get('', [SummonerController::class, 'index']);
-		Route::get('show', [SummonerController::class, 'show']);
-		Route::get('active-game/{summoner}', [SummonerController::class, 'activeGame']);
-		Route::get('info-champions/{summoner}', [SummonerInfoController::class, 'champions']);
-		Route::get('info-matches/{summoner}', [SummonerInfoController::class, 'matches']);
-		Route::get('check-active-game/{summoner}', [SummonerController::class, 'checkActiveGame']);
+    Route::group(['prefix' => 'summoners'], static function () {
+        Route::get('', [SummonerController::class, 'index']);
+        Route::get('show', [SummonerController::class, 'show']);
+        Route::get('active-game/{summoner}', [SummonerController::class, 'activeGame']);
+        Route::get('info-champions/{summoner}', [SummonerInfoController::class, 'champions']);
+        Route::get('info-matches/{summoner}', [SummonerInfoController::class, 'matches']);
+        Route::get('check-active-game/{summoner}', [SummonerController::class, 'checkActiveGame']);
 		Route::get('picker', [SummonerPickerController::class, 'index']);
 		Route::get('reload/{summoner}', [SummonerController::class, 'reload']);
 		Route::put('detach-main-user/{summoner}', [SummonerController::class, 'detachMainUser']);
 		Route::put('attach-main-user/{summoner}', [SummonerController::class, 'attachMainUser']);
 	});
 
-	Route::group(['prefix' => 'lol'], static function () {
-		Route::get('', [LolApiController::class, 'index']);
-	});
+    Route::group(['prefix' => 'lol'], static function () {
+        Route::get('', [LolApiController::class, 'index']);
+    });
 
-	Route::group(['prefix' => 'clash'], static function () {
-		Route::post('', [ClashController::class, 'create']);
-		Route::get('member-picker', [ClashMemberPickerController::class, 'index']);
-		Route::put('{clashTeam}', [ClashController::class, 'update']);
-		Route::delete('{clashTeam}', [ClashController::class, 'delete']);
-	});
-	Route::group(['prefix' => 'branches'], static function () {
-		Route::get('filterd', [BranchController::class, 'filterd']);
-	});
+    Route::group(['prefix' => 'clash'], static function () {
+        Route::post('', [ClashController::class, 'create']);
+        Route::get('member-picker', [ClashMemberPickerController::class, 'index']);
+        Route::put('{clashTeam}', [ClashController::class, 'update']);
+        Route::delete('{clashTeam}', [ClashController::class, 'delete']);
+    });
+
+    Route::group(['prefix' => 'branches'], static function () {
+        Route::get('filterd', [BranchController::class, 'filterd']);
+    });
+
+    Route::group(['prefix' => 'minecraft/players'], static function () {
+        Route::get('', [MinecraftPlayerController::class, 'index']);
+        Route::post('', [MinecraftPlayerController::class, 'store']);
+        Route::delete('', [MinecraftPlayerController::class, 'delete']);
+    });
 });
