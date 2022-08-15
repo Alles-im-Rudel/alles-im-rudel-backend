@@ -60,8 +60,6 @@ Route::group(['prefix' => 'profile'], static function () {
 Route::group(['prefix' => 'posts'], static function () {
 	Route::get('', [PostController::class, 'index']);
 	Route::get('{post}', [PostController::class, 'show']);
-
-	Route::get('{post}/comments', [PostCommentController::class, 'comments']);
 });
 
 /**
@@ -70,20 +68,11 @@ Route::group(['prefix' => 'posts'], static function () {
 
 Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 
-	// Comments
-	Route::group(['prefix' => 'comments'], static function () {
-		Route::post('', [CommentController::class, 'store']);
-	});
-
 	// Posts
 	Route::group(['prefix' => 'posts'], static function () {
 		Route::post('', [PostController::class, 'store']);
 		Route::post('{post}', [PostController::class, 'update']); // file uploads do not work with PUT
 		Route::delete('{post}', [PostController::class, 'delete']);
-
-		// Likes
-		Route::get('{post}/like', [PostLikeController::class, 'check']);
-		Route::put('{post}/like', [PostLikeController::class, 'change']);
 	});
 
 	Route::group(['prefix' => 'manage-member-ship-applications'], static function () {
@@ -132,11 +121,8 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::get('', [UserController::class, 'index']);
 		Route::get('all', [UserController::class, 'all']);
 		Route::get('picker', [UserPickerController::class, 'index']);
-		Route::post('image/{user}', [UserImageController::class, 'store']);
-		Route::delete('image/{user}', [UserImageController::class, 'delete']);
 		Route::put('sync-permissions/{user}', [UserController::class, 'syncPermissions']);
 		Route::put('sync-user-groups/{user}', [UserController::class, 'syncUserGroups']);
-		Route::post('', [UserController::class, 'store']);
 		Route::get('download', [UserDownloadController::class, 'index']);
 		Route::get('{user}', [UserController::class, 'show']);
 		Route::put('{user}', [UserController::class, 'update']);
@@ -163,7 +149,6 @@ Route::group(['middleware' => ['auth:api', 'verified']], static function () {
 		Route::get('active-game/{summoner}', [SummonerController::class, 'activeGame']);
 		Route::get('info-champions/{summoner}', [SummonerInfoController::class, 'champions']);
 		Route::get('info-matches/{summoner}', [SummonerInfoController::class, 'matches']);
-		Route::get('info/{summoner}', [SummonerInfoController::class, 'index']);
 		Route::get('check-active-game/{summoner}', [SummonerController::class, 'checkActiveGame']);
 		Route::get('picker', [SummonerPickerController::class, 'index']);
 		Route::get('reload/{summoner}', [SummonerController::class, 'reload']);

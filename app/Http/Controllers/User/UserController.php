@@ -100,34 +100,6 @@ class UserController extends BaseController
 	}
 
 	/**
-	 * @param  UserStoreRequest  $request
-	 * @return JsonResponse
-	 */
-	public function store(UserStoreRequest $request): JsonResponse
-	{
-		try {
-			User::create([
-				'first_name'               => $request->firstName,
-				'last_name'                => $request->lastName,
-				'email'                    => $request->email,
-				'birthday'                 => $request->birthday,
-				'level_id'                 => $request->levelId,
-				'wants_email_notification' => $request->wantsEmailNotification,
-				'activated_at'             => $request->isActive ? now() : null,
-				'password'                 => Hash::make($request->password)
-			]);
-		} catch (Exception $exception) {
-			return response()->json([
-				"message" => "Benutzer konnte nicht erstellt werden."
-			], Response::HTTP_INTERNAL_SERVER_ERROR);
-		}
-
-		return response()->json([
-			"message" => "Benutzer erstellt."
-		], Response::HTTP_OK);
-	}
-
-	/**
 	 * @param  UserUpdateRequest  $request
 	 * @param  User  $user
 	 * @return JsonResponse

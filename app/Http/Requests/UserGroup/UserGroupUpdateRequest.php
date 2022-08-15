@@ -17,7 +17,7 @@ class UserGroupUpdateRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::check();
+		return Auth::user()->can('user_groups.update');
 	}
 
 	public function prepareForValidation(): void

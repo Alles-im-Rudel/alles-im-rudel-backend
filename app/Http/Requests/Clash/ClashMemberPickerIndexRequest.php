@@ -17,7 +17,7 @@ class ClashMemberPickerIndexRequest extends FormRequest
 	 */
 	public function authorize(): bool
 	{
-		return Auth::check();
+		return Auth::user()->can('clash_team.create');
 	}
 
 	public function prepareForValidation(): void
