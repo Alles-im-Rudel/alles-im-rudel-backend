@@ -74,7 +74,7 @@ class UserUpdateRequest extends FormRequest
 			'levelId'                => 'required|integer|exists:levels,id',
 			'password'               => 'nullable|string',
 			'passwordRepeat'         => 'nullable|string',
-			'bankAccountBic'         => 'required|max:30|min:10',
+			'bankAccountBic'         => 'required|max:30|min:8',
 			'bankAccountIban'        => 'required|max:30|min:10',
 			'bankAccountFirstName'   => 'required|max:30|min:2',
 			'bankAccountLastName'    => 'required|max:30|min:2',
