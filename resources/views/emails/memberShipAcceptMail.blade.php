@@ -6,7 +6,7 @@
 <body>
 <h1>Willkommen bei Alles im Rudel e.V.</h1>
 <p>Hallo {{ $user->first_name }},<br><br>wir freuen uns sehr, dir mitteilen zu können, dass dein Mitgliedsaufnahmeantrag
-    angenommen wurde und heißen dich hiermit herzlich willkommen bei Alles im Rudel e.V.<br>Beste Grüße<br><b>Timm, Silas & Nick</b>
+    angenommen wurde und heißen dich hiermit herzlich willkommen bei Alles im Rudel e.V.<br>Beste Grüße<br><b>Nick, Ulli & Timm</b>
     Vorstand von Alles im Rudel e.V.</p>
 </body>
 </html>

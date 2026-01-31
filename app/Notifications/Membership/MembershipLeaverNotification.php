@@ -21,7 +21,7 @@ class MembershipLeaverNotification extends Notification
             ->greeting('Hallo ' . $notifiable->first_name . ',')
             ->line('wir haben deine Vereinsaustrittserklärung zur Kenntnis genommen und dein Vereinsaustritt wird somit zum INSERT-VARIABLE gültig.')
             ->line('Solltest du es dir in der Zwischenzeit anders überlegen, kannst du deine Austrittserklärung jederzeit über unsere Website zurückziehen.')
-            ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas & Nick'));
+            ->salutation(new HtmlString('Viele Grüße<br>Nick, Ulli & Timm'));
     }
 
 	/**

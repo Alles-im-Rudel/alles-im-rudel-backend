@@ -20,7 +20,7 @@ class MembershipAcceptNotification extends Notification
             ->subject('Mitgliedsaufnahmeantrag angenommen')
             ->greeting('Hallo ' . $notifiable->first_name . ',')
             ->line('wir freuen uns sehr, dir mitteilen zu können, dass dein Mitgliedsaufnahmeantrag angenommen wurde und heißen dich hiermit herzlich willkommen bei Alles im Rudel e.V.!')
-            ->salutation(new HtmlString('Viele Grüße<br>Timm, Silas & Nick'));
+            ->salutation(new HtmlString('Viele Grüße<br>Nick, Ulli & Timm'));
     }
 
 	/**
